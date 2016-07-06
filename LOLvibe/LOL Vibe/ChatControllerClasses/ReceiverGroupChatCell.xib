@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="Ubuntu-R.ttf">
+            <string>Ubuntu</string>
+        </mutableArray>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReceiverChatMsgCell" rowHeight="65" id="jul-U5-FRS" customClass="ReceiverGroupChatCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="60"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="jul-U5-FRS" id="BUx-bj-gSU">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="59.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fol-MQ-UjP">
+                        <rect key="frame" x="14" y="0.0" width="278" height="56"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gqT-lv-x2t">
+                                <rect key="frame" x="8" y="3" width="248" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="248" id="IpC-3O-poj"/>
+                                    <constraint firstAttribute="height" constant="17" id="hPX-9X-s3d"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                <color key="textColor" red="0.50196081400000003" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" text="nim id est laborum. Nam " translatesAutoresizingMaskIntoConstraints="NO" id="DH4-cB-5xC">
+                                <rect key="frame" x="8" y="15" width="270" height="26"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="26" id="EtI-Gg-tSY"/>
+                                    <constraint firstAttribute="width" constant="270" id="ivT-QK-JwW"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <connections>
+                                    <outlet property="delegate" destination="jul-U5-FRS" id="dnl-hu-Obw"/>
+                                </connections>
+                            </textView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10:13" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dxJ-d8-2CH">
+                                <rect key="frame" x="222" y="43" width="51" height="8"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="8" id="W9Z-oS-8g1"/>
+                                    <constraint firstAttribute="width" constant="51" id="vpH-Up-qq2"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Ubuntu" family="Ubuntu" pointSize="9"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="DH4-cB-5xC" secondAttribute="trailing" id="6DI-H7-6wp"/>
+                            <constraint firstItem="DH4-cB-5xC" firstAttribute="leading" secondItem="fol-MQ-UjP" secondAttribute="leading" constant="8" id="A60-zc-iel"/>
+                            <constraint firstItem="DH4-cB-5xC" firstAttribute="top" secondItem="gqT-lv-x2t" secondAttribute="bottom" constant="-5" id="IIt-bk-ZxJ"/>
+                            <constraint firstItem="gqT-lv-x2t" firstAttribute="top" secondItem="fol-MQ-UjP" secondAttribute="top" constant="3" id="UeA-c3-MPK"/>
+                            <constraint firstAttribute="bottom" secondItem="dxJ-d8-2CH" secondAttribute="bottom" constant="5" id="abs-VV-T7d"/>
+                            <constraint firstAttribute="trailing" secondItem="dxJ-d8-2CH" secondAttribute="trailing" constant="5" id="cXF-2H-rYO"/>
+                            <constraint firstItem="gqT-lv-x2t" firstAttribute="leading" secondItem="fol-MQ-UjP" secondAttribute="leading" constant="8" id="ld3-5t-kRf"/>
+                        </constraints>
+                    </view>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="adU-i4-YLW">
+                        <rect key="frame" x="10" y="6" width="4" height="7"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="7" id="E7F-k8-swo"/>
+                            <constraint firstAttribute="width" constant="4" id="GYK-7h-yyc"/>
+                        </constraints>
+                    </imageView>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                <constraints>
+                    <constraint firstItem="fol-MQ-UjP" firstAttribute="leading" secondItem="adU-i4-YLW" secondAttribute="trailing" id="AfQ-NK-Pi9"/>
+                    <constraint firstItem="adU-i4-YLW" firstAttribute="leading" secondItem="BUx-bj-gSU" secondAttribute="leading" constant="10" id="QyO-5b-TpQ"/>
+                    <constraint firstItem="adU-i4-YLW" firstAttribute="top" secondItem="BUx-bj-gSU" secondAttribute="top" constant="6" id="eMb-Yw-TNF"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="fol-MQ-UjP" secondAttribute="trailing" constant="28" id="kSi-A1-tbo"/>
+                    <constraint firstAttribute="bottom" secondItem="fol-MQ-UjP" secondAttribute="bottom" constant="3" id="qPw-nc-zqK"/>
+                    <constraint firstItem="fol-MQ-UjP" firstAttribute="top" secondItem="BUx-bj-gSU" secondAttribute="top" id="zcl-ee-5zz"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <connections>
+                <outlet property="chatMessageTxt" destination="DH4-cB-5xC" id="Eyi-T3-rrZ"/>
+                <outlet property="chatTimeLbl" destination="dxJ-d8-2CH" id="hQ7-VW-G2t"/>
+                <outlet property="chatUserLbl" destination="gqT-lv-x2t" id="uON-ql-Sax"/>
+                <outlet property="msgTxtHeightConstraint" destination="EtI-Gg-tSY" id="0hX-G0-uPC"/>
+                <outlet property="msgTxtWidthConstraint" destination="ivT-QK-JwW" id="qMz-mf-LsP"/>
+                <outlet property="viewBg" destination="fol-MQ-UjP" id="Mfh-6I-SNP"/>
+            </connections>
+            <point key="canvasLocation" x="181" y="154.5"/>
+        </tableViewCell>
+    </objects>
+</document>

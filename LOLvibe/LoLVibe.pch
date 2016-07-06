@@ -1,0 +1,27 @@
+//
+//  LoLVibe.pch
+//  LOLvibe
+//
+//  Created by Jaydip Godhani on 22/05/16.
+//  Copyright © 2016 Dreamcodesolution. All rights reserved.
+//
+
+#ifndef LoLVibe_pch
+#define LoLVibe_pch
+
+#import <UIKit/UIKit.h>
+#import "GlobalConstants.h"
+#import "NKeyChain.h"
+#import "Utility.h"
+#import "AFNetworking.h"
+#import "XmppHelper.h"
+#import <CoreData/CoreData.h>
+#import "UIImageView+WebCache.h"
+#import "ServiceConstant.h"
+#import "ChatConversation.h"
+#import "Global.h"
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif /* LoLVibe_pch */

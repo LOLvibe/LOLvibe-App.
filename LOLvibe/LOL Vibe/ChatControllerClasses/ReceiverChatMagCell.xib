@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="OpenSans-Regular.ttf">
+            <string>OpenSans</string>
+            <string>OpenSans</string>
+        </mutableArray>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReceiverChatMsgCell" rowHeight="48" id="oBJ-jW-xfl" customClass="ReceiverChatMsgCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="oBJ-jW-xfl" id="fRm-Az-vpx">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="47.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bXA-IN-Kfx">
+                        <rect key="frame" x="9" y="0.0" width="286" height="45"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rQE-v2-fgB">
+                                <rect key="frame" x="6" y="-2" width="280" height="29"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="280" id="5k6-YR-3ar"/>
+                                    <constraint firstAttribute="height" constant="29" id="6m7-xH-QMp"/>
+                                </constraints>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yI2-6Y-0Ff">
+                                <rect key="frame" x="232" y="30" width="50" height="12"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="12" id="V1V-Q6-mWu"/>
+                                    <constraint firstAttribute="width" constant="50" id="d8K-oS-PDi"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="9"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="rQE-v2-fgB" firstAttribute="top" secondItem="bXA-IN-Kfx" secondAttribute="top" constant="-2" id="7JA-zj-Xay"/>
+                            <constraint firstAttribute="trailing" secondItem="yI2-6Y-0Ff" secondAttribute="trailing" constant="4" id="OeP-pz-ITT"/>
+                            <constraint firstAttribute="bottom" secondItem="yI2-6Y-0Ff" secondAttribute="bottom" constant="3" id="gZG-ea-DNR"/>
+                            <constraint firstItem="rQE-v2-fgB" firstAttribute="leading" secondItem="bXA-IN-Kfx" secondAttribute="leading" constant="6" id="pAI-Qy-SgK"/>
+                            <constraint firstAttribute="trailing" secondItem="rQE-v2-fgB" secondAttribute="trailing" id="sDK-p2-M1f"/>
+                        </constraints>
+                    </view>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Npe-mN-SrI">
+                        <rect key="frame" x="4" y="0.0" width="14" height="11"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="11" id="2Tl-8v-WDr"/>
+                            <constraint firstAttribute="width" constant="14" id="MbS-e4-Qqa"/>
+                        </constraints>
+                    </imageView>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                <constraints>
+                    <constraint firstItem="Npe-mN-SrI" firstAttribute="top" secondItem="fRm-Az-vpx" secondAttribute="top" id="2qA-0r-G1p"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="bXA-IN-Kfx" secondAttribute="trailing" constant="21" id="k7u-CK-CYW"/>
+                    <constraint firstItem="bXA-IN-Kfx" firstAttribute="top" secondItem="fRm-Az-vpx" secondAttribute="top" id="sXU-3w-6rg"/>
+                    <constraint firstAttribute="bottom" secondItem="bXA-IN-Kfx" secondAttribute="bottom" constant="2" id="yLB-l1-6el"/>
+                    <constraint firstItem="bXA-IN-Kfx" firstAttribute="leading" secondItem="Npe-mN-SrI" secondAttribute="trailing" constant="-9" id="yMb-1v-i4C"/>
+                    <constraint firstItem="Npe-mN-SrI" firstAttribute="leading" secondItem="fRm-Az-vpx" secondAttribute="leading" constant="4" id="yx8-t1-r9g"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <connections>
+                <outlet property="chatMessageTxt" destination="rQE-v2-fgB" id="kCV-Je-ByC"/>
+                <outlet property="chatTimeLbl" destination="yI2-6Y-0Ff" id="QUa-Eh-3wb"/>
+                <outlet property="msgTxtHeightConstraint" destination="6m7-xH-QMp" id="Kst-zY-jhh"/>
+                <outlet property="msgTxtWidthConstraint" destination="5k6-YR-3ar" id="IQV-VO-5lp"/>
+                <outlet property="viewBg" destination="bXA-IN-Kfx" id="Z30-Mc-UE8"/>
+            </connections>
+            <point key="canvasLocation" x="259" y="-77"/>
+        </tableViewCell>
+    </objects>
+</document>

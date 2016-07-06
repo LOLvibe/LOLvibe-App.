@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="CustomTabBarView">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" tag="1" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W11-pV-LFs">
+                    <rect key="frame" x="64" y="0.0" width="64" height="49"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="49" id="5ks-i2-pXU"/>
+                    </constraints>
+                    <state key="normal" image="notification.png">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="selected" image="notification_selected.png"/>
+                    <connections>
+                        <action selector="tabBtnClicked:" destination="iN0-l3-epB" eventType="touchUpInside" id="VVU-TU-K3F"/>
+                    </connections>
+                </button>
+                <button opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X8X-xx-cdT">
+                    <rect key="frame" x="128" y="0.0" width="64" height="49"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="49" id="Sfl-kJ-HT9"/>
+                    </constraints>
+                    <state key="normal">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="tabBtnClicked:" destination="iN0-l3-epB" eventType="touchUpInside" id="2A8-N1-NIc"/>
+                    </connections>
+                </button>
+                <button opaque="NO" tag="3" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dag-ix-7da">
+                    <rect key="frame" x="192" y="0.0" width="64" height="49"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="49" id="v2F-iD-jdE"/>
+                    </constraints>
+                    <state key="normal" image="chat.png">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="selected" image="chat_select.png"/>
+                    <connections>
+                        <action selector="tabBtnClicked:" destination="iN0-l3-epB" eventType="touchUpInside" id="agW-Ze-v75"/>
+                    </connections>
+                </button>
+                <button opaque="NO" tag="4" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TzW-NQ-82S">
+                    <rect key="frame" x="256" y="0.0" width="64" height="49"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="49" id="gMu-nV-nUq"/>
+                    </constraints>
+                    <state key="normal" image="profile.png">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="selected" image="profile_selected.png"/>
+                    <connections>
+                        <action selector="tabBtnClicked:" destination="iN0-l3-epB" eventType="touchUpInside" id="zBp-dA-QqK"/>
+                    </connections>
+                </button>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="vibe_camera.png" translatesAutoresizingMaskIntoConstraints="NO" id="NoD-G0-J9n">
+                    <rect key="frame" x="135" y="0.0" width="50" height="49"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="49" id="5Bm-KP-45A"/>
+                        <constraint firstAttribute="width" constant="50" id="vCA-Nj-bkH"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7cx-tQ-KVv">
+                    <rect key="frame" x="0.0" y="0.0" width="64" height="49"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="49" id="NL5-gw-GZI"/>
+                    </constraints>
+                    <state key="normal" image="home.png">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="selected" image="home_selected.png"/>
+                    <connections>
+                        <action selector="tabBtnClicked:" destination="iN0-l3-epB" eventType="touchUpInside" id="g3e-dH-aN2"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="W11-pV-LFs" firstAttribute="leading" secondItem="7cx-tQ-KVv" secondAttribute="trailing" id="1UN-DA-YBm"/>
+                <constraint firstAttribute="bottom" secondItem="W11-pV-LFs" secondAttribute="bottom" id="2dc-Ta-NRD"/>
+                <constraint firstAttribute="bottom" secondItem="dag-ix-7da" secondAttribute="bottom" id="4Kl-RA-31S"/>
+                <constraint firstItem="X8X-xx-cdT" firstAttribute="width" secondItem="TzW-NQ-82S" secondAttribute="width" id="Cmn-fW-MbT"/>
+                <constraint firstItem="TzW-NQ-82S" firstAttribute="leading" secondItem="dag-ix-7da" secondAttribute="trailing" id="MQs-y0-2ju"/>
+                <constraint firstItem="X8X-xx-cdT" firstAttribute="width" secondItem="dag-ix-7da" secondAttribute="width" id="OrZ-rx-sAm"/>
+                <constraint firstItem="NoD-G0-J9n" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="QCn-ni-m9p"/>
+                <constraint firstItem="dag-ix-7da" firstAttribute="leading" secondItem="X8X-xx-cdT" secondAttribute="trailing" id="QJa-DU-3z3"/>
+                <constraint firstAttribute="bottom" secondItem="X8X-xx-cdT" secondAttribute="bottom" id="SPO-5Q-FmN"/>
+                <constraint firstItem="X8X-xx-cdT" firstAttribute="width" secondItem="7cx-tQ-KVv" secondAttribute="width" id="UtM-0S-TJI"/>
+                <constraint firstAttribute="bottom" secondItem="TzW-NQ-82S" secondAttribute="bottom" id="WT0-fy-sz0"/>
+                <constraint firstAttribute="bottom" secondItem="7cx-tQ-KVv" secondAttribute="bottom" id="Zeh-4R-Qn7"/>
+                <constraint firstItem="X8X-xx-cdT" firstAttribute="width" secondItem="W11-pV-LFs" secondAttribute="width" id="cve-Y2-MjS"/>
+                <constraint firstItem="NoD-G0-J9n" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="kJL-zK-dIN"/>
+                <constraint firstItem="7cx-tQ-KVv" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="kZx-RB-VaT"/>
+                <constraint firstAttribute="bottom" secondItem="W11-pV-LFs" secondAttribute="bottom" id="seg-RC-agE"/>
+                <constraint firstAttribute="bottom" secondItem="dag-ix-7da" secondAttribute="bottom" id="tKb-WS-bXb"/>
+                <constraint firstItem="X8X-xx-cdT" firstAttribute="leading" secondItem="W11-pV-LFs" secondAttribute="trailing" id="tOQ-Fx-qAq"/>
+                <constraint firstAttribute="bottom" secondItem="X8X-xx-cdT" secondAttribute="bottom" id="vDk-Wh-AQm"/>
+                <constraint firstAttribute="bottom" secondItem="TzW-NQ-82S" secondAttribute="bottom" id="vVW-9g-zmd"/>
+                <constraint firstAttribute="bottom" secondItem="7cx-tQ-KVv" secondAttribute="bottom" id="vxv-WK-nUi"/>
+                <constraint firstAttribute="trailing" secondItem="TzW-NQ-82S" secondAttribute="trailing" id="vya-FB-ZV0"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="btn1" destination="7cx-tQ-KVv" id="Uwr-Hu-HYo"/>
+                <outlet property="btn2" destination="W11-pV-LFs" id="4cF-9X-yjw"/>
+                <outlet property="btn3" destination="X8X-xx-cdT" id="lnE-fJ-Yq4"/>
+                <outlet property="btn4" destination="dag-ix-7da" id="Sko-uR-GRL"/>
+                <outlet property="btn5" destination="TzW-NQ-82S" id="twC-9Y-zOU"/>
+            </connections>
+            <point key="canvasLocation" x="8" y="1027.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="chat.png" width="30" height="30"/>
+        <image name="chat_select.png" width="30" height="30"/>
+        <image name="home.png" width="30" height="25"/>
+        <image name="home_selected.png" width="30" height="25"/>
+        <image name="notification.png" width="25" height="29"/>
+        <image name="notification_selected.png" width="25" height="30"/>
+        <image name="profile.png" width="30" height="30"/>
+        <image name="profile_selected.png" width="30" height="30"/>
+        <image name="vibe_camera.png" width="50" height="41"/>
+    </resources>
+</document>
