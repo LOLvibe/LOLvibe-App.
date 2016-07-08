@@ -37,6 +37,7 @@
     
     txtAddComment.layer.cornerRadius = 3.0;
     txtAddComment.layer.masksToBounds = YES;
+
     btnSendOut.layer.cornerRadius = 3.0;
     btnSendOut.layer.masksToBounds = YES;
     
@@ -80,8 +81,11 @@
     UIImageView *imgProfile     = (UIImageView *)[cell viewWithTag:101];
     UILabel *lblName            = (UILabel *)[cell viewWithTag:102];
     UITextView *txtComment      = (UITextView *)[cell viewWithTag:103];
-    
     UILabel *lblTime            = (UILabel *)[cell viewWithTag:108];
+    UIButton *btnOption         = (UIButton *)[cell viewWithTag:999];
+    
+    [btnOption addTarget:self action:@selector(btnOptionReply:)
+        forControlEvents:UIControlEventTouchUpInside];
 
     NSDictionary *dictComment = [[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row];
     
@@ -111,9 +115,13 @@
     UIButton *btnReply          = (UIButton *)[cell viewWithTag:106];
     UILabel *lblLikeCounter     = (UILabel *)[cell viewWithTag:107];
     UILabel *lblTime            = (UILabel *)[cell viewWithTag:108];
+    UIButton *btnOption         = (UIButton *)[cell viewWithTag:999];
     
+    [btnOption addTarget:self action:@selector(btnOptionComment:)
+        forControlEvents:UIControlEventTouchUpInside];
+
     NSDictionary *dictComment = [arrComment objectAtIndex:section];
-    
+   
     imgProfile.layer.cornerRadius = imgProfile.frame.size.height/2;
     imgProfile.layer.masksToBounds = YES;
     
@@ -186,6 +194,40 @@
     [txtAddComment becomeFirstResponder];
 }
 
+#pragma mark --Comment Like and Unlike --
+
+-(void)btnOptionComment:(UIButton *)sender
+{
+    UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
+    NSIndexPath *indexPath = [tblComment indexPathForCell:cell];
+    
+    [self showOptions:[arrComment objectAtIndex:indexPath.section]];
+}
+
+-(void)btnOptionReply:(UIButton *)sender
+{
+    UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
+    NSIndexPath *indexPath = [tblComment indexPathForCell:cell];
+    
+    [self showOptions:[arrComment objectAtIndex:indexPath.section]];
+}
+
+-(void)callReportMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"feed_id"] forKey:@"report_for_id"];
+    [dictPara setValue:[dict valueForKey:@"user_id"] forKey:@"to_user_id"];
+    [dictPara setValue:@"comment" forKey:@"report_for"];
+    
+    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [report callWebServiceWithURLDict:REPORT_POST_COMMENT
+                        andHTTPMethod:@"POST"
+                          andDictData:dictPara
+                          withLoading:YES
+                     andWebServiceTag:@"report"
+                             setToken:YES];
+}
 
 
 #pragma mark --Comment Like and Unlike --
@@ -267,6 +309,39 @@
     }
 }
 
+
+#pragma mark --Selt Opetion
+-(void)showOptions:(NSDictionary *)dictPostDetail
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleActionSheet];
+
+    UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Delete"
+                                                       style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
+                                                           
+                                                       }];
+    
+    UIAlertAction *report = [UIAlertAction actionWithTitle:@"REPORT!" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+    }];
+    
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    
+    
+    if([[dictPostDetail valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId])
+    {
+        [alert addAction:facebook];
+    }
+    else
+    {
+        [alert addAction:report];
+    }
+
+    [alert addAction:cancel];
+
+    [self presentViewController:alert animated:YES completion:nil];
+}
 
 
 #pragma mark Webservice Delegate Method

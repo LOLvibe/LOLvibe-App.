@@ -404,6 +404,63 @@
     [self performSegueWithIdentifier:@"show_places" sender:strSelectedFriend];
 }
 
+-(void)callRepostMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara =[[NSMutableDictionary alloc]init];
+    WebService *vibePostWS = [[WebService alloc]initWithView:self.view andDelegate:self];
+    
+    if([[dict valueForKey:@"post_type"] isEqualToString:@"photo"])
+    {
+        [dictPara setValue:[dict valueForKey:@"post_type"] forKey:@"post_type"];
+        [dictPara setValue:[dict valueForKey:@"location_text"] forKey:@"location_text"];
+        
+        [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
+        [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
+        
+        [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
+        
+        [vibePostWS callWebServiceWithURLDict:CREATE_POST
+                                andHTTPMethod:@"POST"
+                                  andDictData:dictPara
+                                  withLoading:NO
+                             andWebServiceTag:@"vibePostWS"
+                                     setToken:YES];
+    }
+    else
+    {
+        [dictPara setValue:[dict valueForKey:@"post_latitude"] forKey:@"latitude"];
+        [dictPara setValue:[dict valueForKey:@"post_longitude"] forKey:@"longitude"];
+        [dictPara setValue:[dict valueForKey:@"post_type"] forKey:@"post_type"];
+        [dictPara setValue:[dict valueForKey:@"location_text"] forKey:@"location_text"];
+        [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
+        [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
+        
+        [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
+        
+        [vibePostWS callWebServiceWithURLDict:CREATE_POST
+                                andHTTPMethod:@"POST"
+                                  andDictData:dictPara
+                                  withLoading:NO
+                             andWebServiceTag:@"vibePostWS"
+                                     setToken:YES];
+    }
+}
+-(void)callReportMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"feed_id"] forKey:@"report_for_id"];
+    [dictPara setValue:[dict valueForKey:@"user_id"] forKey:@"to_user_id"];
+    [dictPara setValue:@"post" forKey:@"report_for"];
+    
+    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [report callWebServiceWithURLDict:REPORT_POST_COMMENT
+                        andHTTPMethod:@"POST"
+                          andDictData:dictPara
+                          withLoading:YES
+                     andWebServiceTag:@"report"
+                             setToken:YES];
+}
 #pragma mark PrepareForSegue Method
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -439,6 +496,28 @@
                 
                 [self.array addObject:[dictResult valueForKey:@"post"]];
                 [collectionViewPost reloadData];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if ([tagStr isEqualToString:@"report"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This post is reported. Admin will review the post and take the action."];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if ([tagStr isEqualToString:@"vibePostWS"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }
             else
             {

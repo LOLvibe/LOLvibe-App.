@@ -14,7 +14,8 @@
 @protocol OptionClassDelegate <NSObject>
 @optional
 -(void)callDeleteMethod:(NSDictionary *)dict;
-
+-(void)callRepostMethod:(NSDictionary *)dict;
+-(void)callReportMethod:(NSDictionary *)dict;
 @end
 
 @interface OptionClass : NSObject <FBSDKSharingDelegate,UIDocumentInteractionControllerDelegate>

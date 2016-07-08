@@ -15,14 +15,14 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" tag="101" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ESq-Dr-kbU">
-                        <rect key="frame" x="65" y="12" width="40" height="40"/>
+                        <rect key="frame" x="40" y="12" width="40" height="40"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="40" id="X6K-c7-H5E"/>
                             <constraint firstAttribute="height" constant="40" id="jQG-Yd-7QL"/>
                         </constraints>
                     </imageView>
                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" tag="103" contentMode="scaleToFill" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nik-OM-fdh">
-                        <rect key="frame" x="113" y="29.5" width="199" height="30"/>
+                        <rect key="frame" x="88" y="29" width="197" height="30"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                         <fontDescription key="fontDescription" type="system" pointSize="10"/>
@@ -39,7 +39,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" tag="102" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Prrasd bj dbsvh" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rJY-PC-R0F">
-                        <rect key="frame" x="113" y="11" width="133" height="17.5"/>
+                        <rect key="frame" x="88" y="11" width="158" height="17.5"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="17.5" id="Y4T-6Z-ABn"/>
                         </constraints>
@@ -47,19 +47,34 @@
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <button opaque="NO" tag="999" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o7A-sL-jnX">
+                        <rect key="frame" x="285" y="33" width="30" height="31"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="30" id="3lH-VU-ctC"/>
+                            <constraint firstAttribute="height" constant="31" id="PCQ-Kw-LXU"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="41"/>
+                        <inset key="titleEdgeInsets" minX="0.0" minY="-20" maxX="0.0" maxY="0.0"/>
+                        <state key="normal" title="...">
+                            <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="teP-Qz-9Hw" firstAttribute="leading" secondItem="rJY-PC-R0F" secondAttribute="trailing" constant="4" id="221-l2-tKV"/>
                     <constraint firstItem="Nik-OM-fdh" firstAttribute="top" secondItem="rJY-PC-R0F" secondAttribute="bottom" constant="1" id="37F-Br-vR7"/>
-                    <constraint firstItem="ESq-Dr-kbU" firstAttribute="leading" secondItem="BYF-Z8-ty0" secondAttribute="leading" constant="65" id="5J6-5w-hk5"/>
+                    <constraint firstItem="ESq-Dr-kbU" firstAttribute="leading" secondItem="BYF-Z8-ty0" secondAttribute="leading" constant="40" id="5J6-5w-hk5"/>
                     <constraint firstItem="rJY-PC-R0F" firstAttribute="top" secondItem="BYF-Z8-ty0" secondAttribute="top" constant="11" id="6C4-4D-jWe"/>
                     <constraint firstAttribute="bottom" secondItem="Nik-OM-fdh" secondAttribute="bottom" constant="5" id="6Gp-T6-V7f"/>
                     <constraint firstItem="ESq-Dr-kbU" firstAttribute="top" secondItem="BYF-Z8-ty0" secondAttribute="top" constant="12" id="EJq-2j-XpA"/>
+                    <constraint firstItem="o7A-sL-jnX" firstAttribute="leading" secondItem="Nik-OM-fdh" secondAttribute="trailing" id="fgf-O5-qA0"/>
+                    <constraint firstAttribute="bottom" secondItem="o7A-sL-jnX" secondAttribute="bottom" constant="0.5" id="i9E-ga-yhv"/>
                     <constraint firstItem="Nik-OM-fdh" firstAttribute="leading" secondItem="ESq-Dr-kbU" secondAttribute="trailing" constant="8" id="nfS-OY-7Tg"/>
                     <constraint firstItem="teP-Qz-9Hw" firstAttribute="top" secondItem="BYF-Z8-ty0" secondAttribute="top" constant="6" id="qb9-St-52x"/>
+                    <constraint firstAttribute="trailing" secondItem="o7A-sL-jnX" secondAttribute="trailing" constant="5" id="vKP-1e-dFr"/>
                     <constraint firstAttribute="trailing" secondItem="teP-Qz-9Hw" secondAttribute="trailing" constant="10" id="wyG-Dv-ja3"/>
                     <constraint firstItem="rJY-PC-R0F" firstAttribute="leading" secondItem="ESq-Dr-kbU" secondAttribute="trailing" constant="8" id="zKX-TL-RaH"/>
-                    <constraint firstAttribute="trailing" secondItem="Nik-OM-fdh" secondAttribute="trailing" constant="8" id="zoi-yW-ym6"/>
                 </constraints>
             </tableViewCellContentView>
             <point key="canvasLocation" x="246" y="225.5"/>

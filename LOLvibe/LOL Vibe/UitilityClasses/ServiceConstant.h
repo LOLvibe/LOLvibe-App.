@@ -77,7 +77,7 @@
 #define SEARCH_PEOPLE                   (ServiceDomain @"search")
 #define TOP_POST                        (ServiceDomain @"most_liked_post")
 #define TRENDING_POST                   (ServiceDomain @"most_commented_post")
-
+#define REPORT_POST_COMMENT             (ServiceDomain @"report")
 #define kPref                           [NSUserDefaults standardUserDefaults]
 
 #define kRefressProfile                 @"Refress Profile"

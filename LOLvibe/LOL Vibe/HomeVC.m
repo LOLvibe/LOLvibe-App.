@@ -217,7 +217,7 @@
                                                            RLTapResponderAttributeName:hashTagTapAction}];
         
         NSDictionary *dictObj = [arrFeed objectAtIndex:indexPath.row];
-
+        
         NSString *strURL = [dictObj valueForKey:@"image"];
         
         [imgMain sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"post_bg.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
@@ -270,7 +270,7 @@
         [btnAddFriend addTarget:self action:@selector(isFriendOrNot:) forControlEvents:UIControlEventTouchUpInside];
         [btnLocationInvite addTarget:self action:@selector(btnLocationInvite:) forControlEvents:UIControlEventTouchUpInside];
         [btnLocationInvite addTarget:self action:@selector(btnLocationInvite:) forControlEvents:UIControlEventTouchUpInside];
-                
+        
         if ([[dictObj valueForKey:@"vibe_name"] length] > 0)
         {
             lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[dictObj valueForKey:@"vibe_name"]];
@@ -519,7 +519,7 @@
     
     CGPoint location = [sender locationInView:coolectionFeed];
     NSIndexPath *indexPath = [coolectionFeed indexPathForItemAtPoint:location];
-
+    
     NSString *strSelectedFriend = [[arrFeed objectAtIndex:indexPath.row] valueForKey:@"website"];
     
     WebBrowserVc *web = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"WebBrowserVc"];
@@ -533,7 +533,7 @@
 {
     CGPoint location = [sender locationInView:coolectionFeed];
     NSIndexPath *indexPath = [coolectionFeed indexPathForItemAtPoint:location];
-
+    
     if([[[arrFeed objectAtIndex:indexPath.row] valueForKey:@"user_id"] integerValue] != [[LoggedInUser sharedUser].userId integerValue])
     {
         [self performSegueWithIdentifier:@"profile" sender:[arrFeed objectAtIndex:indexPath.row]];
@@ -646,6 +646,65 @@
     [self performSegueWithIdentifier:@"show_places" sender:strSelectedFriend];
 }
 
+-(void)callRepostMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara =[[NSMutableDictionary alloc]init];
+    WebService *vibePostWS = [[WebService alloc]initWithView:self.view andDelegate:self];
+    
+    if([[dict valueForKey:@"post_type"] isEqualToString:@"photo"])
+    {
+        [dictPara setValue:[dict valueForKey:@"post_type"] forKey:@"post_type"];
+        [dictPara setValue:[dict valueForKey:@"location_text"] forKey:@"location_text"];
+        
+        [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
+        [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
+       
+        [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
+        
+        [vibePostWS callWebServiceWithURLDict:CREATE_POST
+                                  andHTTPMethod:@"POST"
+                                    andDictData:dictPara
+                                    withLoading:NO
+                               andWebServiceTag:@"vibePostWS"
+                                       setToken:YES];
+    }
+    else
+    {
+        [dictPara setValue:[dict valueForKey:@"post_latitude"] forKey:@"latitude"];
+        [dictPara setValue:[dict valueForKey:@"post_longitude"] forKey:@"longitude"];
+        [dictPara setValue:[dict valueForKey:@"post_type"] forKey:@"post_type"];
+        [dictPara setValue:[dict valueForKey:@"location_text"] forKey:@"location_text"];
+        [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
+        [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
+        
+        [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
+        
+        [vibePostWS callWebServiceWithURLDict:CREATE_POST
+                                andHTTPMethod:@"POST"
+                                  andDictData:dictPara
+                                  withLoading:NO
+                             andWebServiceTag:@"vibePostWS"
+                                     setToken:YES];
+    }
+}
+
+-(void)callReportMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"feed_id"] forKey:@"report_for_id"];
+    [dictPara setValue:[dict valueForKey:@"user_id"] forKey:@"to_user_id"];
+    [dictPara setValue:@"post" forKey:@"report_for"];
+    
+    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [report callWebServiceWithURLDict:REPORT_POST_COMMENT
+                          andHTTPMethod:@"POST"
+                            andDictData:dictPara
+                            withLoading:YES
+                       andWebServiceTag:@"report"
+                               setToken:YES];
+}
+
 #pragma mark PrepareForSegue Method
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -679,7 +738,6 @@
     sheet.tag = 1111;
     [sheet showInView:self.view];
 }
-
 
 #pragma mark - UIActionSheet Delegate Methods
 - (void)actionSheet:(UIActionSheet *)menu didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -732,80 +790,6 @@
     return nil;
 }
 
-#pragma mark ----Share in social Media--
--(void)openActionSheet:(NSDictionary *)dictValue imageShare:(UIImage *)imgSahre
-{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
-                                                                   message:nil
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-    UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Facebook"
-                                                       style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                           if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook])
-                                                           {
-                                                               SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
-                                                               
-                                                               [controller setInitialText:[NSString stringWithFormat:@"%@",[dictValue valueForKey:@"location_text"]]];
-                                                               [controller addImage:imgSahre];
-                                                               [controller addURL:[NSURL URLWithString:@"https://itunes.apple.com/in/app/fix-duplicate-manage-duplicate/id1095988098?mt=8"]];
-                                                               [self presentViewController:controller animated:YES completion:Nil];
-                                                           }
-                                                       }];
-    
-    
-    
-    UIAlertAction *twitter = [UIAlertAction actionWithTitle:@"Twitter" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
-        {
-            SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-            
-            [controller setInitialText:[NSString stringWithFormat:@"%@",[dictValue valueForKey:@"location_text"]]];
-            [controller addImage:imgSahre];
-            
-            [self presentViewController:controller animated:YES completion:Nil];
-        }
-    }];
-    
-    //    UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Instagram" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-    //        [self instaGramWallPost:imgSahre];
-    //    }];
-    
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
-    
-    [alert addAction:facebook];
-    [alert addAction:twitter];
-    [alert addAction:cancel];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-
--(void)instaGramWallPost:(UIImage *)imgShare
-{
-    NSURL *instagramURL = [NSURL URLWithString:@"instagram://app"];
-    
-    if([[UIApplication sharedApplication] canOpenURL:instagramURL]) //check for App is install or not
-    {
-        UIImage *imageToUse = imgShare;
-        NSString *documentDirectory=[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
-        NSString *saveImagePath=[documentDirectory stringByAppendingPathComponent:@"Image.igo"];
-        NSData *imageData=UIImagePNGRepresentation(imageToUse);
-        [imageData writeToFile:saveImagePath atomically:YES];
-        NSURL *imageURL=[NSURL fileURLWithPath:saveImagePath];
-        self.documentController=[[UIDocumentInteractionController alloc]init];
-        self.documentController = [UIDocumentInteractionController interactionControllerWithURL:imageURL];
-        self.documentController.delegate = self;
-        self.documentController.annotation = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Testing"], @"InstagramCaption", nil];
-        self.documentController.UTI = @"com.instagram.exclusivegram";
-        UIViewController *vc = [UIApplication sharedApplication].keyWindow.rootViewController;
-        [self.documentController presentOpenInMenuFromRect:CGRectMake(1, 1, 1, 1) inView:vc.view animated:YES];
-    }
-    else
-    {
-        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Instagram not install in your IPhone"];
-    }
-}
-
-
 #pragma mark --Webservice Delegate Method--
 -(void)webserviceCallFinishedWithSuccess:(BOOL)success andResponseObject:(id)responseObj andError:(NSError *)error forWebServiceTag:(NSString *)tagStr
 {
@@ -822,7 +806,6 @@
                 [coolectionFeed reloadData];
                 
                 [coolectionFeed scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
-                
             }
             else
             {
@@ -846,6 +829,29 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if ([tagStr isEqualToString:@"report"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This post is reported. Admin will review the post and take the action."];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if ([tagStr isEqualToString:@"vibePostWS"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [self getFeed:YES];
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }
             else

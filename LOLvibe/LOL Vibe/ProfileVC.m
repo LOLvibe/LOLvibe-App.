@@ -1049,6 +1049,8 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
+                 [[NSNotificationCenter defaultCenter] postNotificationName:kRefressHomeFeed object:nil];
+                
                 if (btnLocationPost.selected)
                 {
                     [self getLocationFeed];

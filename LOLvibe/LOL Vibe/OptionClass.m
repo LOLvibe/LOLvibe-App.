@@ -33,6 +33,7 @@
                                                             preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *repost = [UIAlertAction actionWithTitle:@"Repost It!" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self repostThisPost:dictPostDetail];
     }];
 
     UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Facebook"
@@ -50,7 +51,7 @@
         }];
     
     UIAlertAction *report = [UIAlertAction actionWithTitle:@"REPORT!" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        
+        [self reportThisPost:dictPostDetail];
     }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
@@ -183,7 +184,14 @@
 {
     [self.delegate callDeleteMethod:dict];
 }
-
+-(void)repostThisPost:(NSDictionary *)dict
+{
+    [self.delegate callRepostMethod:dict];
+}
+-(void)reportThisPost:(NSDictionary *)dict
+{
+    [self.delegate callReportMethod:dict];
+}
 #pragma marm --Twitter Share
 
 -(void)twitterShare:(NSDictionary *)dictValue
