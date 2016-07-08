@@ -78,6 +78,10 @@
 #define TOP_POST                        (ServiceDomain @"most_liked_post")
 #define TRENDING_POST                   (ServiceDomain @"most_commented_post")
 #define REPORT_POST_COMMENT             (ServiceDomain @"report")
+#define CHAT_NOTIFICATION               (ServiceDomain @"chat_notification")
+#define GROUP_NOTIFICATION              (ServiceDomain @"group_chat_notification")
+
+
 #define kPref                           [NSUserDefaults standardUserDefaults]
 
 #define kRefressProfile                 @"Refress Profile"

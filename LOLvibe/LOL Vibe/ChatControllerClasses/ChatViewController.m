@@ -337,10 +337,27 @@
     
     chatTextView.text = [NSLocalizedString(@"Type Message", nil) uppercaseString];
     chatTextView.textColor = [UIColor colorWithRed:93.0/255.0 green:93.0/255.00 blue:93.0/255.00 alpha:1.0];
+    [self sendNotification:msgVal];
     [self createRecentChatArray:msgVal];
     //[arrIndePathDeleted removeAllObjects];
 }
 
+#pragma mark --Notification--
+-(void)sendNotification:(NSString *)strMessage
+{
+    NSMutableDictionary *dictNoti = [[NSMutableDictionary alloc] init];
+    [dictNoti setValue:[NSString stringWithFormat:@"%@ : %@",[LoggedInUser sharedUser].userVibeName,strMessage] forKey:@"msg"];
+    [dictNoti setValue:[LoggedInUser sharedUser].userId forKey:@"user_id"];
+    [dictNoti setValue:[dictUser valueForKey:@"user_id"] forKey:@"other_user_id"];
+    
+    WebService *serNoti = [[WebService alloc] initWithView:self.view andDelegate:self];
+    [serNoti callWebServiceWithURLDict:CHAT_NOTIFICATION
+                         andHTTPMethod:@"POST"
+                           andDictData:dictNoti
+                           withLoading:NO
+                      andWebServiceTag:@"notification"
+                              setToken:NO];
+}
 
 #pragma mark Header button
 - (IBAction)btnBack:(UIButton *)sender
@@ -676,6 +693,16 @@
         }
     }
     return nil;
+}
+
+#pragma mark --Webservice Delegate Method--
+-(void)webserviceCallFinishedWithSuccess:(BOOL)success andResponseObject:(id)responseObj andError:(NSError *)error forWebServiceTag:(NSString *)tagStr
+{
+    if(success)
+    {
+        NSDictionary *dictResult = (NSDictionary *)responseObj;
+        NSLog(@"%@",dictResult);
+    }
 }
 
 #pragma mark --Keyboard show/hide notifications--
