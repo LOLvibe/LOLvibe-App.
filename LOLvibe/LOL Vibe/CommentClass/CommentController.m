@@ -117,6 +117,7 @@
     UILabel *lblTime            = (UILabel *)[cell viewWithTag:108];
     UIButton *btnOption         = (UIButton *)[cell viewWithTag:999];
     
+    btnOption.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)section];
     [btnOption addTarget:self action:@selector(btnOptionComment:)
         forControlEvents:UIControlEventTouchUpInside];
 
@@ -198,10 +199,10 @@
 
 -(void)btnOptionComment:(UIButton *)sender
 {
-    UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
-    NSIndexPath *indexPath = [tblComment indexPathForCell:cell];
+    NSInteger section = [sender.accessibilityLabel integerValue];
     
-    [self showOptions:[arrComment objectAtIndex:indexPath.section]];
+    NSLog(@"%ld",(long)section);
+    [self showOptions:[arrComment objectAtIndex:section]];
 }
 
 -(void)btnOptionReply:(UIButton *)sender
@@ -209,7 +210,7 @@
     UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
     NSIndexPath *indexPath = [tblComment indexPathForCell:cell];
     
-    [self showOptions:[arrComment objectAtIndex:indexPath.section]];
+    [self showOptions:[[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row]];
 }
 
 -(void)callReportMethod:(NSDictionary *)dict
