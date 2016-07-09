@@ -18,15 +18,16 @@
 
 @interface HomeVC () <WebServiceDelegate,CLLocationManagerDelegate,UIActionSheetDelegate,OptionClassDelegate>
 {
-    WebService *serGetFeed;
-    NSMutableArray *arrFeed;
-    NSIndexPath *indexPathSelected;
-    BOOL isLike;
-    NSInteger likeInteger;
-    
+    WebService          *serGetFeed;
+    NSMutableArray      *arrFeed;
+    NSIndexPath         *indexPathSelected;
+    BOOL                isLike;
+    NSInteger           likeInteger;
     CLLocationManager   *locationManager;
-    float   sourceLat,sourceLong;
-    float   destiLat,destiLong;
+    float               sourceLat,sourceLong;
+    float               destiLat,destiLong;
+    int                 pageCount;
+    BOOL                isEnd;
 }
 
 @end
@@ -37,9 +38,12 @@
 {
     [super viewDidLoad];
     serGetFeed = [[WebService alloc] initWithView:self.view andDelegate:self];
+    arrFeed = [[NSMutableArray alloc]init];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refressHomeFeed:) name:kRefressHomeFeed object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(RefreshScreen:) name:kRefressHomeFeed object:nil];
     isLike = NO;
+    pageCount = 1;
+    
     self.navigationItem.title = @"";
     [self getFeed:YES];
 }
@@ -91,12 +95,10 @@
     }
 }
 
-
 #pragma mark- Location Permision Method
-- (void)requestAlwaysAuthorization
+-(void)requestAlwaysAuthorization
 {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
-    // If the status is denied or only granted for when in use, display an alert
     if (status == kCLAuthorizationStatusAuthorizedWhenInUse || status == kCLAuthorizationStatusDenied)
     {
         NSString *title;
@@ -105,7 +107,6 @@
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Settings", nil];
         [alertView show];
     }
-    // The user has not enabled any location services. Request background authorization.
     else if (status == kCLAuthorizationStatusNotDetermined)
     {
         [locationManager requestAlwaysAuthorization];
@@ -116,30 +117,14 @@
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setValue:@"both" forKey:@"feed_type"];
-    [dict setValue:@"1" forKey:@"page"];
-    [dict setValue:@"50" forKey:@"limit"];
+    [dict setValue:[NSString stringWithFormat:@"%d",pageCount] forKey:@"page"];
+    [dict setValue:Post_Limit forKey:@"limit"];
     [dict setValue:@"1" forKey:@"is_home_feed"];
     
     [serGetFeed callWebServiceWithURLDict:GET_POST
                             andHTTPMethod:@"POST"
                               andDictData:dict
                               withLoading:isLoading
-                         andWebServiceTag:@"getFeed"
-                                 setToken:YES];
-}
-
--(void)refressHomeFeed:(NSNotification *)notification
-{
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    [dict setValue:@"both" forKey:@"feed_type"];
-    [dict setValue:@"1" forKey:@"page"];
-    [dict setValue:@"50" forKey:@"limit"];
-    [dict setValue:@"1" forKey:@"is_home_feed"];
-    
-    [serGetFeed callWebServiceWithURLDict:GET_POST
-                            andHTTPMethod:@"POST"
-                              andDictData:dict
-                              withLoading:YES
                          andWebServiceTag:@"getFeed"
                                  setToken:YES];
 }
@@ -544,7 +529,17 @@
 {
     return coolectionFeed.frame.size;
 }
-
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if (scrollView.contentOffset.x == roundf(scrollView.contentSize.width-scrollView.frame.size.width))
+    {
+        if (isEnd) {
+            return;
+        }
+        pageCount = pageCount+1;
+        [self getFeed:YES];
+    }
+}
 -(void)btnLike:(UIButton *)sender
 {
     sender.selected = !sender.selected;
@@ -658,15 +653,15 @@
         
         [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
         [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
-       
+        
         [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
         
         [vibePostWS callWebServiceWithURLDict:CREATE_POST
-                                  andHTTPMethod:@"POST"
-                                    andDictData:dictPara
-                                    withLoading:NO
-                               andWebServiceTag:@"vibePostWS"
-                                       setToken:YES];
+                                andHTTPMethod:@"POST"
+                                  andDictData:dictPara
+                                  withLoading:NO
+                             andWebServiceTag:@"vibePostWS"
+                                     setToken:YES];
     }
     else
     {
@@ -698,11 +693,11 @@
     WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
     
     [report callWebServiceWithURLDict:REPORT_POST_COMMENT
-                          andHTTPMethod:@"POST"
-                            andDictData:dictPara
-                            withLoading:YES
-                       andWebServiceTag:@"report"
-                               setToken:YES];
+                        andHTTPMethod:@"POST"
+                          andDictData:dictPara
+                          withLoading:YES
+                     andWebServiceTag:@"report"
+                             setToken:YES];
 }
 
 #pragma mark PrepareForSegue Method
@@ -774,7 +769,20 @@
 
 - (IBAction)RefreshScreen:(id)sender
 {
-    [self getFeed:YES];
+    pageCount = 1;
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    [dict setValue:@"both" forKey:@"feed_type"];
+    [dict setValue:[NSString stringWithFormat:@"%d",pageCount] forKey:@"page"];
+    [dict setValue:Post_Limit forKey:@"limit"];
+    [dict setValue:@"1" forKey:@"is_home_feed"];
+    
+    [serGetFeed callWebServiceWithURLDict:GET_POST
+                            andHTTPMethod:@"POST"
+                              andDictData:dict
+                              withLoading:YES
+                         andWebServiceTag:@"refresh"
+                                 setToken:YES];
 }
 
 - (UIView *)superviewWithClassName:(NSString *)className fromView:(UIView *)view
@@ -801,7 +809,28 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                arrFeed = [[NSMutableArray alloc]init];
+                [arrFeed addObjectsFromArray:[dictResult valueForKey:@"feed_info"]];
+                [coolectionFeed reloadData];
+                
+                if ([[dictResult valueForKey:@"feed_info"] count] < [Post_Limit intValue])
+                {
+                    isEnd = YES;
+                }
+                else
+                {
+                    isEnd = NO;
+                }
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if([tagStr isEqualToString:@"refresh"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [arrFeed removeAllObjects];
                 [arrFeed addObjectsFromArray:[dictResult valueForKey:@"feed_info"]];
                 [coolectionFeed reloadData];
                 
@@ -817,7 +846,6 @@
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
                 isLike = YES;
-                //[self getFeed:NO];
                 [self changeLikeInFeedArray:[[dictResult valueForKey:@"like"] intValue]];
             }
             else

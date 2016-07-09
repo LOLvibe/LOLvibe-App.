@@ -39,6 +39,9 @@
     CLLocationManager   *locationManager;
     float   sourceLat,sourceLong;
     float   destiLat,destiLong;
+    int                 pageCountPost,pageCountLoc;
+    BOOL                isEndPost,isEndLoc;
+    
     
 }
 @end
@@ -50,6 +53,7 @@
 {
     [super viewDidLoad];
     self.automaticallyAdjustsScrollViewInsets = NO;
+    pageCountPost = pageCountLoc = 1;
     
     serLogout           = [[WebService alloc]initWithView:self.view andDelegate:self];
     getFeed             = [[WebService alloc]initWithView:self.view andDelegate:self];
@@ -623,7 +627,7 @@
     }
     else if (collectionView == collectionViewGrid)
     {
-        CGFloat sizeflot = collectionViewGrid.frame.size.width - 32;
+        CGFloat sizeflot = collectionViewGrid.frame.size.width - 5;
         sizeflot = sizeflot/3;
         CGSize size = CGSizeMake(sizeflot, sizeflot);
         return size;
@@ -632,33 +636,43 @@
     {
         return locationCollection.frame.size;
     }
-    
     return CGSizeZero;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    if (btnPostGrid.selected)
+    if (btnPostPhoto.selected)
     {
         if (scrollView.contentOffset.x == roundf(scrollView.contentSize.width-scrollView.frame.size.width))
         {
-            NSLog(@"we are at the endddd");
+            if (isEndPost)
+            {
+                return;
+            }
+            pageCountPost = pageCountPost+1;
+            [self getPhotoFeed];
         }
     }
-    else if (btnPostPhoto.selected)
+    else if (btnLocationPost.selected)
     {
-        if (scrollView.contentOffset.y == roundf(scrollView.contentSize.height-scrollView.frame.size.height))
+        if (scrollView.contentOffset.x == roundf(scrollView.contentSize.width-scrollView.frame.size.width))
         {
-            NSLog(@"we are at the endddd");
+            if (isEndLoc)
+            {
+                return;
+            }
+            pageCountLoc = pageCountLoc+1;
+            [self getLocationFeed];
         }
     }
 }
+
 -(void)getPhotoFeed
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setValue:@"photo" forKey:@"feed_type"];
-    [dict setValue:@"1"     forKey:@"page"];
-    [dict setValue:@"50"    forKey:@"limit"];
+    [dict setValue:[NSString stringWithFormat:@"%d",pageCountPost]     forKey:@"page"];
+    [dict setValue:Post_Limit    forKey:@"limit"];
     [dict setValue:@"2"     forKey:@"is_home_feed"];
     [dict setValue:[dictUser valueForKey:@"user_id"] forKey:@"other_user_id"];
     
@@ -674,8 +688,8 @@
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setValue:@"location"  forKey:@"feed_type"];
-    [dict setValue:@"1"         forKey:@"page"];
-    [dict setValue:@"50"        forKey:@"limit"];
+    [dict setValue:[NSString stringWithFormat:@"%d",pageCountPost]     forKey:@"page"];
+    [dict setValue:Post_Limit    forKey:@"limit"];
     [dict setValue:@"2"         forKey:@"is_home_feed"];
     [dict setValue:[dictUser valueForKey:@"user_id"] forKey:@"other_user_id"];
     
@@ -903,6 +917,11 @@
     [self hideView:viewLocation];
     [self hideView:viewFriendList];
     [self showView:viewPhoto];
+    
+    pageCountPost = 1;
+    [arrPhotoPosts removeAllObjects];
+    
+    [self getPhotoFeed];
 }
 - (IBAction)btnPostGrid:(id)sender
 {
@@ -936,6 +955,10 @@
     [self hideView:viewGrid];
     [self hideView:viewFriendList];
     [self showView:viewLocation];
+    
+    pageCountLoc = 1;
+    [arrLocationPosts removeAllObjects];
+
     [self getLocationFeed];
 }
 
@@ -969,9 +992,17 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [arrLocationPosts removeAllObjects];
                 [arrLocationPosts addObjectsFromArray:[dictResult valueForKey:@"feed_info"]];
                 [locationCollection reloadData];
+                
+                if ([[dictResult valueForKey:@"feed_info"] count] < [Post_Limit intValue])
+                {
+                    isEndLoc = YES;
+                }
+                else
+                {
+                    isEndLoc = NO;
+                }
             }
             else
             {
@@ -982,16 +1013,22 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [arrPhotoPosts removeAllObjects];
                 [arrPhotoPosts addObjectsFromArray:[dictResult valueForKey:@"feed_info"]];
-                
                 [collectionViewPost reloadData];
                 [collectionViewGrid reloadData];
+                
+                if ([[dictResult valueForKey:@"feed_info"] count] < [Post_Limit intValue])
+                {
+                    isEndPost = YES;
+                }
+                else
+                {
+                    isEndPost = NO;
+                }
             }
             else if ([[dictResult valueForKey:@"status_code"] intValue] == 13)
             {
                 [self.view bringSubviewToFront:lockView];
-                
             }
             else
             {
@@ -1004,6 +1041,8 @@
             {
                 arrFriend = [dictResult valueForKey:@"data"];
                 [tblFriendList reloadData];
+                lblFriendCount.text = [NSString stringWithFormat:@"(%d)",(int)[arrFriend count]];
+
             }
             else
             {

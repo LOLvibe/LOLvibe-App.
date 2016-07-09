@@ -29,6 +29,7 @@
 @property(nonatomic, strong) NSString *userPassword;
 @property(nonatomic, strong) NSString *userZipcode;
 @property(nonatomic, strong) NSString *userAge;
+@property(nonatomic, strong) NSString *userAccountType;
 
 + (LoggedInUser *)sharedUser;
 - (void)readFromDisk;

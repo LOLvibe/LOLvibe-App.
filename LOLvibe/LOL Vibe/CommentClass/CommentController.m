@@ -213,24 +213,6 @@
     [self showOptions:[[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row]];
 }
 
--(void)callReportMethod:(NSDictionary *)dict
-{
-    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
-    [dictPara setValue:[dict valueForKey:@"feed_id"] forKey:@"report_for_id"];
-    [dictPara setValue:[dict valueForKey:@"user_id"] forKey:@"to_user_id"];
-    [dictPara setValue:@"comment" forKey:@"report_for"];
-    
-    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
-    
-    [report callWebServiceWithURLDict:REPORT_POST_COMMENT
-                        andHTTPMethod:@"POST"
-                          andDictData:dictPara
-                          withLoading:YES
-                     andWebServiceTag:@"report"
-                             setToken:YES];
-}
-
-
 #pragma mark --Comment Like and Unlike --
 
 -(void)likeUnLikeComment:(UIButton *)sender
@@ -239,11 +221,9 @@
     UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
     NSIndexPath *indexPath = [tblComment indexPathForCell:cell];
     
-    
     NSMutableDictionary *dictLike= [[NSMutableDictionary alloc] init];
     [dictLike setValue:[[arrComment objectAtIndex:indexPath.section] valueForKey:@"comment_id"] forKey:@"parent_id"];
     [dictLike setValue:@"comment" forKey:@"like_type"];
-    
     
     WebService *serLikeUnLike = [[WebService alloc]initWithView:self.view andDelegate:self];
     
@@ -320,15 +300,14 @@
 
     UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Delete"
                                                        style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
-                                                           
+                                                           [self deleteComment:dictPostDetail];
                                                        }];
     
     UIAlertAction *report = [UIAlertAction actionWithTitle:@"REPORT!" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [self callReportMethod:dictPostDetail];
     }];
     
-    
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
-    
     
     if([[dictPostDetail valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId])
     {
@@ -342,6 +321,37 @@
     [alert addAction:cancel];
 
     [self presentViewController:alert animated:YES completion:nil];
+}
+-(void)callReportMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"user_id"] forKey:@"to_user_id"];
+    [dictPara setValue:@"comment" forKey:@"report_for"];
+    [dictPara setValue:[dict valueForKey:@"comment_id"] forKey:@"report_for_id"];
+    
+    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [report callWebServiceWithURLDict:REPORT_POST_COMMENT
+                        andHTTPMethod:@"POST"
+                          andDictData:dictPara
+                          withLoading:YES
+                     andWebServiceTag:@"report"
+                             setToken:YES];
+}
+
+-(void)deleteComment:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"comment_id"] forKey:@"comment_id"];
+    
+    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [report callWebServiceWithURLDict:DELETE_COMMENT
+                        andHTTPMethod:@"POST"
+                          andDictData:dictPara
+                          withLoading:YES
+                     andWebServiceTag:@"delete_comment"
+                             setToken:YES];
 }
 
 
@@ -400,10 +410,32 @@
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }
         }
+        else if ([tagStr isEqualToString:@"report"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This comment is reported. Admin will review the comment and take the action."];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if ([tagStr isEqualToString:@"delete_comment"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [self getComment:NO page:@"1"];
+
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
     }
 }
-
-
 
 #pragma mark Textfield Delegate
 -(BOOL)textFieldShouldReturn:(UITextField *)textField

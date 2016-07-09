@@ -18,24 +18,26 @@
 
 @interface ProfileVC ()<UICollectionViewDataSource,UICollectionViewDelegate,WebServiceDelegate,CLLocationManagerDelegate,UIActionSheetDelegate,OptionClassDelegate>
 {
-    WebService *serLogout;
-    WebService *getFeed;
-    WebService *serFriendList;
-    WebService *serVisitFriend;
+    WebService          *serLogout;
+    WebService          *getFeed;
+    WebService          *serFriendList;
+    WebService          *serVisitFriend;
+    AppDelegate         *appDel;
+    LoggedInUser        *user;
     
-    AppDelegate *appDel;
-    LoggedInUser *user;
-    
-    NSMutableArray *arrPhotoPosts;
-    NSMutableArray *arrLocationPosts;
-    NSMutableArray *arrFriend;
-    NSMutableArray *arrVisitFriend;
+    NSMutableArray      *arrPhotoPosts;
+    NSMutableArray      *arrLocationPosts;
+    NSMutableArray      *arrFriend;
+    NSMutableArray      *arrVisitFriend;
     
     CLLocationManager   *locationManager;
-    float   sourceLat,sourceLong;
-    float   destiLat,destiLong;
+    float               sourceLat,sourceLong;
+    float               destiLat,destiLong;
     
-    NSIndexPath *indexPathUnfriend;
+    NSIndexPath         *indexPathUnfriend;
+    
+    int                 pageCountPost,pageCountLoc;
+    BOOL                isEndPost,isEndLoc;
 }
 @end
 
@@ -51,7 +53,6 @@
     serFriendList   = [[WebService alloc] initWithView:self.view andDelegate:self];
     serVisitFriend  = [[WebService alloc] initWithView:self.view andDelegate:self];
     
-    
     arrPhotoPosts       = [[NSMutableArray alloc]init];
     arrLocationPosts    = [[NSMutableArray alloc]init];
     arrFriend           = [[NSMutableArray alloc]init];
@@ -60,6 +61,10 @@
     appDel = APP_DELEGATE;
     
     self.title = @"";
+    
+    pageCountPost = pageCountLoc = 1;
+    
+    [self btnPostPhoto:nil];
 }
 -(void)viewWillAppear:(BOOL)animated
 {
@@ -70,8 +75,6 @@
     lblFullName.text = user.userFullName;
     lblVibeName.text = [NSString stringWithFormat:@"@%@",user.userVibeName];
     
-    [self getPhotoFeed];
-    [self btnPostPhoto:nil];
     
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
@@ -350,8 +353,30 @@
         lblLocation.text =[dictObj valueForKey:@"location_text"];
         lblTime.text = [dictObj valueForKey:@"created_at"];
         
-        lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[user userVibeName]];
-        lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[[user userFullName] capitalizedString],[user userAge]];
+//        lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[user userVibeName]];
+//        lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[[user userFullName] capitalizedString],[user userAge]];
+        
+//        if ([[dictObj valueForKey:@"formatted_address"] length] > 0)
+//        {
+//            NSArray *arr = [[dictObj valueForKey:@"formatted_address"] componentsSeparatedByString:@","];
+//            
+//            lblCity.text = [NSString stringWithFormat:@"%@,%@",[arr objectAtIndex:0],[arr objectAtIndex:1]];
+//        }
+//        else
+//        {
+//            lblCity.text =  @"";
+//        }
+//        
+//        lblWebsite.text = [user userWebsite];
+        
+        if ([[dictObj valueForKey:@"vibe_name"] length] > 0)
+        {
+            lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[dictObj valueForKey:@"vibe_name"]];
+        }
+        else
+        {
+            lblUserVibeName.text = @"";
+        }
         
         if ([[dictObj valueForKey:@"formatted_address"] length] > 0)
         {
@@ -364,8 +389,23 @@
             lblCity.text =  @"";
         }
         
-        lblWebsite.text = [user userWebsite];
+        if ([[dictObj valueForKey:@"website"] length] > 0)
+        {
+            lblWebsite.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"website"]];
+        }
+        else
+        {
+            lblWebsite.text =  @"";
+        }
         
+        if ([[dictObj valueForKey:@"age"] length] > 0)
+        {
+            lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[dictObj valueForKey:@"name"],[dictObj valueForKey:@"age"]];
+        }
+        else
+        {
+            lblUserFullName.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"name"]];
+        }
         NSString *strProfile = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userProfilePic];
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgProfile.image = image;
@@ -390,7 +430,7 @@
         UILabel *lblLocatopmCity    =(UILabel *)    [cell viewWithTag:105];
         
         UIView *viewBot             =(UIView *)     [cell viewWithTag:106];
-        ResponsiveLabel *lblCaption =(ResponsiveLabel *)    [cell viewWithTag:107];
+        ResponsiveLabel *lblCaption =(ResponsiveLabel *)[cell viewWithTag:107];
         UILabel *lblLocation        =(UILabel *)    [cell viewWithTag:108];
         UIButton *btnOption         =(UIButton *)   [cell viewWithTag:109];
         UIImageView *imgProfile     =(UIImageView *)[cell viewWithTag:110];
@@ -479,10 +519,36 @@
         NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
         lblCaption.text=goodMsg;
         
-        lblLocation.text =[NSString stringWithFormat:@"%@,%@",[dictObj valueForKey:@"location_text"],[dictObj valueForKey:@"created_at"]];
+        lblLocation.text =[NSString stringWithFormat:@"%@",[dictObj valueForKey:@"created_at"]];
         
-        lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[user userVibeName]];
-        lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[[user userFullName] capitalizedString],[user userAge]];
+        lblCityName.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:0];
+        lblLocatopmCity.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:1];
+        
+//        lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[user userVibeName]];
+//        lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[[user userFullName] capitalizedString],[user userAge]];
+        
+//        if ([[dictObj valueForKey:@"formatted_address"] length] > 0)
+//        {
+//            NSArray *arr = [[dictObj valueForKey:@"formatted_address"] componentsSeparatedByString:@","];
+//            
+//            lblCity.text = [NSString stringWithFormat:@"%@,%@",[arr objectAtIndex:0],[arr objectAtIndex:1]];
+//        }
+//        else
+//        {
+//            lblCity.text =  @"";
+//        }
+        
+//        lblWebsite.text = [user userWebsite];
+  
+        
+//        if ([[dictObj valueForKey:@"vibe_name"] length] > 0)
+//        {
+//            lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[dictObj valueForKey:@"vibe_name"]];
+//        }
+//        else
+//        {
+//            lblUserVibeName.text = @"";
+//        }
         
         if ([[dictObj valueForKey:@"formatted_address"] length] > 0)
         {
@@ -495,9 +561,23 @@
             lblCity.text =  @"";
         }
         
-        lblWebsite.text = [user userWebsite];
-        lblCityName.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:0];
-        lblLocatopmCity.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:1];
+        if ([[dictObj valueForKey:@"website"] length] > 0)
+        {
+            lblWebsite.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"website"]];
+        }
+        else
+        {
+            lblWebsite.text =  @"";
+        }
+        
+        if ([[dictObj valueForKey:@"age"] length] > 0)
+        {
+            lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[dictObj valueForKey:@"name"],[dictObj valueForKey:@"age"]];
+        }
+        else
+        {
+            lblUserFullName.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"name"]];
+        }
         
         NSString *strProfile = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userProfilePic];
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
@@ -542,7 +622,7 @@
     }
     else if (collectionView == collectionViewGrid)
     {
-        CGFloat sizeflot = collectionViewGrid.frame.size.width - 32;
+        CGFloat sizeflot = collectionViewGrid.frame.size.width-5;
         sizeflot = sizeflot/3;
         CGSize size = CGSizeMake(sizeflot, sizeflot);
         return size;
@@ -553,9 +633,9 @@
     }
     return CGSizeZero;
 }
--(void)tapOnWebsite:(UITapGestureRecognizer *)sender {
-    
-    
+
+-(void)tapOnWebsite:(UITapGestureRecognizer *)sender
+{
     CGPoint location = [sender locationInView:collectionViewPost];
     NSIndexPath *indexPath = [collectionViewPost indexPathForItemAtPoint:location];
     
@@ -599,27 +679,38 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    if (btnPostGrid.selected)
+    if (btnPostPhoto.selected)
     {
         if (scrollView.contentOffset.x == roundf(scrollView.contentSize.width-scrollView.frame.size.width))
         {
-            NSLog(@"we are at the endddd");
+            if (isEndPost)
+            {
+                return;
+            }
+            pageCountPost = pageCountPost+1;
+            [self getPhotoFeed];
         }
     }
-    else if (btnPostPhoto.selected)
+    else if (btnLocationPost.selected)
     {
-        if (scrollView.contentOffset.y == roundf(scrollView.contentSize.height-scrollView.frame.size.height))
+        if (scrollView.contentOffset.x == roundf(scrollView.contentSize.width-scrollView.frame.size.width))
         {
-            NSLog(@"we are at the endddd");
+            if (isEndLoc)
+            {
+                return;
+            }
+            pageCountLoc = pageCountLoc+1;
+            [self getLocationFeed];
         }
     }
 }
+
 -(void)getPhotoFeed
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setValue:@"photo" forKey:@"feed_type"];
-    [dict setValue:@"1" forKey:@"page"];
-    [dict setValue:@"50" forKey:@"limit"];
+    [dict setValue:[NSString stringWithFormat:@"%d",pageCountPost] forKey:@"page"];
+    [dict setValue:Post_Limit forKey:@"limit"];
     [dict setValue:@"2" forKey:@"is_home_feed"];
     
     [getFeed callWebServiceWithURLDict:GET_POST
@@ -634,8 +725,8 @@
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setValue:@"location" forKey:@"feed_type"];
-    [dict setValue:@"1" forKey:@"page"];
-    [dict setValue:@"50" forKey:@"limit"];
+    [dict setValue:[NSString stringWithFormat:@"%d",pageCountLoc] forKey:@"page"];
+    [dict setValue:Post_Limit forKey:@"limit"];
     [dict setValue:@"2" forKey:@"is_home_feed"];
     
     [getFeed callWebServiceWithURLDict:GET_POST
@@ -645,6 +736,7 @@
                       andWebServiceTag:@"getLocationFeed"
                               setToken:YES];
 }
+
 -(void)btnLikePhoto:(UIButton *)sender
 {
     sender.selected = !sender.selected;
@@ -760,8 +852,6 @@
                                               otherButtonTitles:nil];
     sheet.tag = 222;
     [sheet showInView:self.view];
-    
-    
 }
 -(void)callDeleteMethod:(NSDictionary *)dict
 {
@@ -814,60 +904,13 @@
                                         withLoading:YES
                                    andWebServiceTag:@"unfriend"
                                            setToken:YES];
-                
             }
             break;
     }
 }
 
-#pragma mark ----Share in social Media--
--(void)openActionSheet:(NSDictionary *)dictValue imageShare:(UIImage *)imgSahre
-{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
-                                                                   message:nil
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-    UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Facebook"
-                                                       style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                           if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook])
-                                                           {
-                                                               SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
-                                                               
-                                                               [controller setInitialText:[NSString stringWithFormat:@"%@",[dictValue valueForKey:@"location_text"]]];
-                                                               [controller addImage:imgSahre];
-                                                               
-                                                               [self presentViewController:controller animated:YES completion:Nil];
-                                                           }
-                                                       }];
-    
-    UIAlertAction *twitter = [UIAlertAction actionWithTitle:@"Twitter" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
-        {
-            SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-            
-            [controller setInitialText:[NSString stringWithFormat:@"%@",[dictValue valueForKey:@"location_text"]]];
-            [controller addImage:imgSahre];
-            
-            [self presentViewController:controller animated:YES completion:Nil];
-        }
-    }];
-    
-//    UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Instagram" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//        [self instaGramWallPost:imgSahre];
-//    }];
-    
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
-    [alert addAction:facebook];
-    [alert addAction:twitter];
-    [alert addAction:cancel];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-
 -(void)instaGramWallPost:(UIImage *)imgShare
 {
-    
-    
     NSURL *instagramURL = [NSURL URLWithString:@"instagram://app"];
     
     if([[UIApplication sharedApplication] canOpenURL:instagramURL]) //check for App is install or not
@@ -904,6 +947,11 @@
     [self hideView:viewFriendList];
     [self hideView:viewProfileVisit];
     [self showView:viewPhoto];
+    
+    pageCountPost = 1;
+    [arrPhotoPosts removeAllObjects];
+    
+    [self getPhotoFeed];
 }
 - (IBAction)btnPostGrid:(id)sender
 {
@@ -927,7 +975,8 @@
     [self showView:viewFriendList];
     [self hideView:viewLocation];
     [self hideView:viewProfileVisit];
-    [self getFriendList];
+    
+     [self getFriendList];
 }
 - (IBAction)btnProfileSeen:(id)sender
 {
@@ -939,6 +988,7 @@
     [self showView:viewProfileVisit];
     [self hideView:viewLocation];
     [self hideView:viewFriendList];
+    
     [self getVisitList];
 }
 - (IBAction)btnLocationPost:(id)sender
@@ -951,6 +1001,10 @@
     [self showView:viewLocation];
     [self hideView:viewFriendList];
     [self hideView:viewProfileVisit];
+    
+    pageCountLoc = 1;
+    [arrLocationPosts removeAllObjects];
+    
     [self getLocationFeed];
 }
 - (IBAction)btnEditProfile:(id)sender
@@ -983,9 +1037,17 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [arrLocationPosts removeAllObjects];
                 [arrLocationPosts addObjectsFromArray:[dictResult valueForKey:@"feed_info"]];
                 [locationCollection reloadData];
+                
+                if ([[dictResult valueForKey:@"feed_info"] count] < [Post_Limit intValue])
+                {
+                    isEndLoc = YES;
+                }
+                else
+                {
+                    isEndLoc = NO;
+                }
             }
             else
             {
@@ -996,11 +1058,19 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [arrPhotoPosts removeAllObjects];
                 [arrPhotoPosts addObjectsFromArray:[dictResult valueForKey:@"feed_info"]];
                 
                 [collectionViewPost reloadData];
                 [collectionViewGrid reloadData];
+                
+                if ([[dictResult valueForKey:@"feed_info"] count] < [Post_Limit intValue])
+                {
+                    isEndPost = YES;
+                }
+                else
+                {
+                    isEndPost = NO;
+                }
             }
             else
             {
@@ -1014,6 +1084,8 @@
                 [arrFriend removeAllObjects];
                 [arrFriend addObjectsFromArray:[dictResult valueForKey:@"data"]];
                 [tblFriendList reloadData];
+                lblFriendCount.text = [NSString stringWithFormat:@"(%d)",(int)[arrFriend count]];
+                
             }
             else
             {
@@ -1026,8 +1098,8 @@
             {
                 [arrVisitFriend removeAllObjects];
                 [arrVisitFriend addObjectsFromArray:[dictResult valueForKey:@"data"]];
-                
                 [tblProfileVisit reloadData];
+                lblVisitCount.text = [NSString stringWithFormat:@"(%d)",(int)[arrVisitFriend count]];
             }
             else
             {

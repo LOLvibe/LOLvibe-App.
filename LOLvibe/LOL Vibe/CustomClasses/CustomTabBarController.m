@@ -64,8 +64,12 @@
 }
 -(void)showNotification
 {
-    [self.tabBarView.btn2 setSelected:YES];
+    [self.tabBarView.btn1 setSelected:NO];
+    [self.tabBarView.btn3 setSelected:NO];
+    [self.tabBarView.btn4 setSelected:NO];
+    [self.tabBarView.btn5 setSelected:NO];
     
+    [self.tabBarView.btn2 setSelected:YES];
     [self setSelectedViewController:self.viewControllers[1]];
 }
 

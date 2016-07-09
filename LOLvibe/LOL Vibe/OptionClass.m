@@ -36,13 +36,13 @@
         [self repostThisPost:dictPostDetail];
     }];
 
-    UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Facebook"
+    UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Share to Facebook"
                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                            
                                                            [self shareInFacebook:dictPostDetail];
                                                        }];
     
-    UIAlertAction *twitter = [UIAlertAction actionWithTitle:@"Twitter" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *twitter = [UIAlertAction actionWithTitle:@"Tweet" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self twitterShare:dictPostDetail];
     }];
     
@@ -76,7 +76,7 @@
     
     
     
-    UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Facebook"
+    UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Share to Facebook"
                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                            
                                                            [self shareInFacebook:dictPostDetail];
@@ -86,7 +86,7 @@
         [self twitterShare:dictPostDetail];
     }];
     
-    UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Instagram" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Tweet" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
     
     }];
     
@@ -115,7 +115,7 @@
     
     
     
-    UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Facebook"
+    UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Share to Facebook"
                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                            
                                                            [self shareInFacebook:dictPostDetail];

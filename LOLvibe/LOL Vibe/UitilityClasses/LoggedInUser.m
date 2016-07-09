@@ -102,6 +102,11 @@ static LoggedInUser *sharedInstance = nil;
         _userAge = nil;
     }
     
+    _userAccountType = [userDefaults objectForKey:@"userAccountType"];
+    if (!_userAccountType) {
+        _userAccountType = nil;
+    }
+    
 }
 
 - (void)save
@@ -124,7 +129,7 @@ static LoggedInUser *sharedInstance = nil;
     [userDefaults setObject:_userPassword forKey:@"userPassword"];
     [userDefaults setObject:_userZipcode forKey:@"userZipcode"];
     [userDefaults setObject:_userAge   forKey:@"userAge"];
-    
+    [userDefaults setObject:_userAccountType   forKey:@"userAccountType"];
     [userDefaults synchronize];
 }
 - (void)logout
@@ -146,6 +151,7 @@ static LoggedInUser *sharedInstance = nil;
     _userPassword = @"";
     _userZipcode = @"";
     _userAge =@"";
+    _userAccountType = @"";
     
     [self save];
 }

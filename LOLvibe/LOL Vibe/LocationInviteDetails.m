@@ -303,7 +303,14 @@
                 
                 
                 lblLocation.text =[dictObj valueForKey:@"address"];
-                lblTime.text = [dictObj valueForKey:@"created_at"];
+                
+//                NSString * returnVal;
+//                NSDateFormatter * dateFromatter = [[NSDateFormatter alloc] init];
+//                [dateFromatter setDateFormat:@"dd MMMM, yyyy"];
+//                returnVal = [dateFromatter stringFromDate:[GlobalMethods getDateFromString:[dictObj valueForKey:@"create_at"]]];
+
+
+                lblDate.text = [[[dictObj valueForKey:@"create_at"] componentsSeparatedByString:@" "] objectAtIndex:0];
                 
                 NSString *strURL = [dictObj valueForKey:@"photo"];
                 

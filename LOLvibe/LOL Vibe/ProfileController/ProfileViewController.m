@@ -83,7 +83,7 @@
 
 -(void)setDefulatProperties
 {
-    arrGender = @[@"Male",@"Female"];
+    arrGender = @[@"Male",@"Female",@"Not Specified"];
     isUpdateImage = NO;
     txtName.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userFullName];
     txtVibeName.text = [NSString stringWithFormat:@"@%@",[LoggedInUser sharedUser].userVibeName];
@@ -269,6 +269,25 @@
 }
 
 #pragma mark --All Button And Swithc ACtion--
+- (IBAction)btnVerify:(id)sender {
+    
+    if ([txtEmail.text length] == 0) {
+        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Plase enter your email id to verify."];
+    }
+    else
+    {
+        WebService *verify =[[WebService alloc]initWithView:self.view andDelegate:self];
+        
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        [verify callWebServiceWithURLDict:VERIFY_USER
+                                   andHTTPMethod:@"POST"
+                                     andDictData:dict
+                                     withLoading:YES
+                                andWebServiceTag:@"verify"
+                                        setToken:YES];
+    }
+}
+
 - (IBAction)swLocation:(UISwitch *)sender
 {
     
@@ -452,6 +471,17 @@
             {
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
                 [self.navigationController popViewControllerAnimated:YES];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if ([tagStr isEqualToString:@"verify"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }
             else
             {

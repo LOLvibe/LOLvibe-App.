@@ -180,7 +180,7 @@
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    CGFloat sizeflot = collectionViewGrid.frame.size.width - 32;
+    CGFloat sizeflot = collectionViewGrid.frame.size.width - 5;
     sizeflot = sizeflot/3;
     CGSize size = CGSizeMake(sizeflot, sizeflot);
     return size;

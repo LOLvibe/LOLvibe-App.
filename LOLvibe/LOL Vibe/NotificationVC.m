@@ -398,6 +398,10 @@
             {
                 [arrRecentNotification addObject:dictValue];
             }
+            else if([[dictValue valueForKey:@"notification_type"] intValue] == 11 )
+            {
+                
+            }
             else
             {
                 [arrRequest addObject:dictValue];

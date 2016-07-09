@@ -34,9 +34,11 @@
     __weak IBOutlet UIView *viewPicker;
     __weak IBOutlet UIPickerView *pickerView;
     __weak IBOutlet UIButton *btnLogout;
+    IBOutlet UIButton *btnVerify;
 }
 
 @property (weak, nonatomic) UITextField *activeField;
+- (IBAction)btnVerify:(id)sender;
 
 - (IBAction)swLocation:(UISwitch *)sender;
 - (IBAction)swWebsite:(UISwitch *)sender;

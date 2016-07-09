@@ -13,7 +13,6 @@
 {
     IBOutlet UILabel *lblFullName;
     IBOutlet UILabel *lblVibeName;
-    IBOutlet UIButton *btnLockProfile;
     
     IBOutlet UIButton *btnPostPhoto;
     IBOutlet UIButton *btnPostGrid;
@@ -33,10 +32,12 @@
     IBOutlet UIView *viewLocation;
     
     IBOutlet UIView *viewFriendList;
-    __weak IBOutlet UITableView *tblFriendList;
+    IBOutlet UITableView *tblFriendList;
     IBOutlet UIView *viewProfileVisit;
     
-    __weak IBOutlet UITableView *tblProfileVisit;
+    IBOutlet UITableView *tblProfileVisit;
+    IBOutlet UILabel *lblFriendCount;
+    IBOutlet UILabel *lblVisitCount;
 }
 - (IBAction)btnPostPhoto:(id)sender;
 - (IBAction)btnPostGrid:(id)sender;
