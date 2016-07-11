@@ -29,6 +29,9 @@
 
 
 #define App_Name                        @"LOLvibe"
+#define APP_ITUNES_LINK                 @"https://itunes.apple.com/in/app/fix-duplicate-manage-duplicate/id1095988098?mt=8"
+#define YOUR_APP_STORE_ID               545174222
+
 #define Post_Limit                      @"20"
 
 #define GOOGLE_API_KEY                  @"AIzaSyCsWgozT4rX6EF8dWnF0nsY1USbTap_5kU"

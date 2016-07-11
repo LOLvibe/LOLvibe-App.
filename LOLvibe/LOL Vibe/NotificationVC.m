@@ -14,6 +14,7 @@
 #import "LocationInviteDetails.h"
 #import "PostDetails.h"
 #import "OtherProfileVC.h"
+#import "CommentController.h"
 
 @interface NotificationVC ()<WebServiceDelegate>
 {
@@ -112,6 +113,7 @@
         [cell.imgOther sd_setImageWithURL:[NSURL URLWithString:[[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"image"]] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             cell.imgOther.image = image;
         }];
+        cell.lblTime.text = [[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"created_at"];
         
         NSString *strname = [NSString stringWithFormat:@"%@",[[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"text"]];
         
@@ -127,6 +129,7 @@
         
         UIImageView *imgProfile         = (UIImageView *)[cell viewWithTag:101];
         UILabel *lblText                = (UILabel *)[cell viewWithTag:102];
+        UILabel *lblTime                = (UILabel *)[cell viewWithTag:111];
         UIButton *btnAccept             = (UIButton *)[cell viewWithTag:103];
         UIButton *btnDecline            = (UIButton *)[cell viewWithTag:104];
         UIButton *btnLocationInvite     = (UIButton *)[cell viewWithTag:999];
@@ -156,12 +159,12 @@
         
         lblText.attributedText = attributedText;
         
+        lblTime.text = [[arrRequest objectAtIndex:indexPath.row] valueForKey:@"created_at"];
         
         [btnAccept setHidden:NO];
         [btnDecline setHidden:NO];
-        NSString *strURL = [dictvalue valueForKey:@"image"];
         
-        strURL = [strURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+         NSString *strURL = [[dictvalue valueForKey:@"image"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         [imgLoation sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgLoation.image = image;
         }];
@@ -170,30 +173,36 @@
         {
             [btnAccept setTitle:@"Confirm" forState:UIControlStateNormal];
             [btnDecline setTitle:@"Delete" forState:UIControlStateNormal];
+            [lblTime setHidden:YES];
         }
         else if([[dictvalue valueForKey:@"notification_type"] intValue] == 5)
         {
             [btnAccept setTitle:@"Aceept" forState:UIControlStateNormal];
             [btnDecline setTitle:@"Decline" forState:UIControlStateNormal];
+            [lblTime setHidden:YES];
         }
         else if([[dictvalue valueForKey:@"notification_type"] intValue] == 2)
         {
+            [lblTime setHidden:NO];
             [btnAccept setHidden:YES];
             [btnDecline setHidden:YES];
             [imgLoation setImage:[UIImage imageNamed:@"check"]];
         }
         else if([[dictvalue valueForKey:@"notification_type"] intValue] == 6)
         {
+            [lblTime setHidden:NO];
             [btnAccept setHidden:YES];
             [btnDecline setHidden:YES];
         }
         else if([[dictvalue valueForKey:@"notification_type"] intValue] == 1)
         {
+            [lblTime setHidden:NO];
             [btnAccept setHidden:YES];
             [btnDecline setHidden:YES];
         }
         else if([[dictvalue valueForKey:@"notification_type"] intValue] == 0)
         {
+            [lblTime setHidden:NO];
             [btnAccept setHidden:YES];
             [btnDecline setHidden:YES];
         }
@@ -323,12 +332,20 @@
 -(void)btnPostDetails:(UIButton *)sender
 {
     UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
-    
     NSIndexPath *indexPath = [tblRecent indexPathForCell:cell];
-    
-    NSString *dictObj = [[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"feed_id"];
-    
-    [self performSegueWithIdentifier:@"push_to_detail" sender:dictObj];
+
+    if([[[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"notification_type"] intValue] == 4)
+    {
+        CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
+        obj.dictPost = [arrRecentNotification objectAtIndex:indexPath.row];
+        
+        [self.navigationController pushViewController:obj animated:YES];
+    }
+    else
+    {
+        NSString *dictObj = [[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"feed_id"];
+        [self performSegueWithIdentifier:@"push_to_detail" sender:dictObj];
+    }
 }
 
 #pragma mark PrepareForSegue Method

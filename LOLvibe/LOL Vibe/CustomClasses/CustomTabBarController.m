@@ -52,6 +52,15 @@
                                    self.view.frame.size.width,
                                    self.tabBarView.frame.size.height); // make it overlay your actual tab bar
     
+    self.tabBarView.lblNotif.layer.cornerRadius = 5.0;
+    self.tabBarView.lblNotif.layer.masksToBounds = YES;
+    
+    self.tabBarView.lblNotifChat.layer.cornerRadius = 5.0;
+    self.tabBarView.lblNotifChat.layer.masksToBounds = YES;
+    
+    [self.tabBarView.lblNotif setHidden:YES];
+    [self.tabBarView.lblNotifChat setHidden:YES];
+    
     self.tabBarView.delegate = self;
     
     [self.view addSubview:self.tabBarView];
@@ -73,8 +82,47 @@
     [self setSelectedViewController:self.viewControllers[1]];
 }
 
+-(void)showChatScreen
+{
+    [self.tabBarView.btn1 setSelected:NO];
+    [self.tabBarView.btn2 setSelected:NO];
+    [self.tabBarView.btn3 setSelected:NO];
+    [self.tabBarView.btn4 setSelected:YES];
+    [self.tabBarView.btn5 setSelected:NO];
+    
+    [self setSelectedViewController:self.viewControllers[3]];
+}
+-(void)showNotifIcon
+{
+    [self.tabBarView.lblNotif setHidden:NO];
+}
+
+-(void)hideNotifIcon
+{
+    [self.tabBarView.lblNotif setHidden:YES];
+}
+
+-(void)showNotifIconCHAT
+{
+    [self.tabBarView.lblNotifChat setHidden:NO];
+}
+
+-(void)hideNotifIconCHAT
+{
+    [self.tabBarView.lblNotifChat setHidden:YES];
+}
+
 -(void)tabSelectedAtIndex:(NSInteger)tabIndex
 {
+    if (tabIndex == 1)
+    {
+        [self hideNotifIcon];
+    }
+    else if (tabIndex == 3)
+    {
+        [self hideNotifIconCHAT];
+    }
+    
     [self setSelectedViewController:[self.viewControllers objectAtIndex:tabIndex]];
 }
 

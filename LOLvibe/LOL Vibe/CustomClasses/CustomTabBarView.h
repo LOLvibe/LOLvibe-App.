@@ -19,7 +19,8 @@
 {
     NSInteger lastIndex;
 }
-
+@property (strong, nonatomic) IBOutlet UILabel *lblNotif;
+@property (strong, nonatomic) IBOutlet UILabel *lblNotifChat;
 @property (strong, nonatomic) IBOutlet UIButton *btn1;
 @property (strong, nonatomic) IBOutlet UIButton *btn2;
 @property (strong, nonatomic) IBOutlet UIButton *btn3;

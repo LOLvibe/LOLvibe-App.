@@ -13,6 +13,14 @@
 
 
 -(void)showNotification;
+-(void)showChatScreen;
+
+-(void)showNotifIcon;
+-(void)hideNotifIcon;
+
+-(void)showNotifIconCHAT;
+-(void)hideNotifIconCHAT;
+
 -(void)tabSelectedAtIndex:(NSInteger)tabIndex;
 -(void)setSelectedViewController:(UIViewController *)selectedViewController;
 @end

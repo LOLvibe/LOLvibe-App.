@@ -586,19 +586,21 @@
 }
 -(void)btnOption:(UIButton *)sender
 {
-    NSIndexPath *indexPath;
-    indexPath = [coolectionFeed indexPathForItemAtPoint:[coolectionFeed convertPoint:sender.center fromView:sender.superview]];
+    UICollectionViewCell *cell = (UICollectionViewCell *)[sender findSuperViewWithClass:[UICollectionViewCell class]];
+    UIImageView *img = (UIImageView *)[cell viewWithTag:102];
+    
+    NSIndexPath *indexPath = [coolectionFeed indexPathForCell:cell];
     
     NSDictionary *dictVal = [arrFeed objectAtIndex:indexPath.row];
     OptionClass *share = [[OptionClass alloc] initWithView:self andDelegate:self];
     
     if([[dictVal valueForKey:@"user_id"] integerValue] != [[LoggedInUser sharedUser].userId integerValue])
     {
-        [share otherUserPostOptionClass:dictVal];
+        [share otherUserPostOptionClass:dictVal Image:img.image];
     }
     else
     {
-        [share selfUserPostOptionClass:dictVal];
+        [share selfUserPostOptionClass:dictVal Image:img.image];
     }
 }
 
@@ -699,6 +701,30 @@
                      andWebServiceTag:@"report"
                              setToken:YES];
 }
+
+-(void)callInstagramMethod:(NSDictionary *)dict Image:(UIImage *)image
+{
+    NSURL *instagramURL = [NSURL URLWithString:@"instagram://app"];
+    
+    if([[UIApplication sharedApplication] canOpenURL:instagramURL])
+    {
+        NSString *imagePath = [NSString stringWithFormat:@"%@/image.igo",[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject]];
+        [[NSFileManager defaultManager] removeItemAtPath:imagePath error:nil];
+        
+        [UIImageJPEGRepresentation(image, 1) writeToFile:imagePath atomically:YES];
+        
+        _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:imagePath]];
+        _documentController.delegate = self;
+        _documentController.UTI = @"com.instagram.exclusivegram";
+        
+       [_documentController presentOpenInMenuFromRect:self.view.frame inView:self.view animated:YES];
+    }
+    else
+    {
+        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Instagram not install in your IPhone"];
+    }
+}
+
 
 #pragma mark PrepareForSegue Method
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -868,7 +894,8 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This post is reported. Admin will review the post and take the action."];
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This post is reported. As of now you will not see any post of this user."];
+                [self RefreshScreen:nil];
             }
             else
             {

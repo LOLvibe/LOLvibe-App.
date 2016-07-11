@@ -198,17 +198,31 @@
         
         UIImageView *imgProfile = (UIImageView *)[cell viewWithTag:101];
         UILabel *lblName        = (UILabel *)[cell viewWithTag:102];
+        UILabel *lblVibeName1    = (UILabel *)[cell viewWithTag:103];
         UIButton *btnUnfriend   = (UIButton *)[cell viewWithTag:1];
+        
         [btnUnfriend addTarget:self action:@selector(btnUnfriend:) forControlEvents:UIControlEventTouchUpInside];
         
-        btnUnfriend.layer.cornerRadius = 5.0;
-        btnUnfriend.layer.masksToBounds = YES;
+        UIButton *btnAddFrnd    = (UIButton *)[cell viewWithTag:104];
+        
+        [btnAddFrnd addTarget:self action:@selector(btnAddFrnd:) forControlEvents:UIControlEventTouchUpInside];
+        if ([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 0)
+        {
+            btnAddFrnd.selected = NO;
+        }
+        else if([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 1)
+        {
+            btnAddFrnd.selected = YES;
+        }
         
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgProfile.image = image;
         }];
         
-        lblName.text = [NSString stringWithFormat:@"%@\n@%@",[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"name"],[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"vibe_name"]];
+        lblName.text = [NSString stringWithFormat:@"%@",[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"name"]];
+        
+        lblVibeName1.text= [NSString stringWithFormat:@"@%@",[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"vibe_name"]];
+        
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }
@@ -216,15 +230,32 @@
     {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"visit" forIndexPath:indexPath];
         
-        UIImageView *imgProfile = (UIImageView *)[cell viewWithTag:101];
+        UIImageView *imgProfile = (UIImageView *)[cell viewWithTag:100];
         UILabel *lblName        = (UILabel *)[cell viewWithTag:102];
+        UILabel *lblVibeName1   = (UILabel *)[cell viewWithTag:103];
+        UIButton *btnAddFrnd    = (UIButton *)[cell viewWithTag:104];
+        UILabel *lblTime        = (UILabel *)[cell viewWithTag:111];
+
+        [btnAddFrnd addTarget:self action:@selector(btnAddFrnd:) forControlEvents:UIControlEventTouchUpInside];
+        
+        if ([[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 0)
+        {
+            btnAddFrnd.selected = NO;
+        }
+        else if([[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 1)
+        {
+            btnAddFrnd.selected = YES;
+        }
         
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgProfile.image = image;
         }];
+        lblTime.text = [[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"created_at"];
+
+        lblName.text = [NSString stringWithFormat:@"%@",[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"name"]];
         
+        lblVibeName1.text= [NSString stringWithFormat:@"@%@",[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"vibe_name"]];
         
-        lblName.text = [NSString stringWithFormat:@"%@\n@%@",[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"name"],[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"vibe_name"]];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }
@@ -243,9 +274,6 @@
         [self performSegueWithIdentifier:@"profile" sender:[arrVisitFriend objectAtIndex:indexPath.row]];
     }
 }
-
-
-
 #pragma mark --Collectionview Delegate Method--
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
@@ -352,22 +380,6 @@
         
         lblLocation.text =[dictObj valueForKey:@"location_text"];
         lblTime.text = [dictObj valueForKey:@"created_at"];
-        
-//        lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[user userVibeName]];
-//        lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[[user userFullName] capitalizedString],[user userAge]];
-        
-//        if ([[dictObj valueForKey:@"formatted_address"] length] > 0)
-//        {
-//            NSArray *arr = [[dictObj valueForKey:@"formatted_address"] componentsSeparatedByString:@","];
-//            
-//            lblCity.text = [NSString stringWithFormat:@"%@,%@",[arr objectAtIndex:0],[arr objectAtIndex:1]];
-//        }
-//        else
-//        {
-//            lblCity.text =  @"";
-//        }
-//        
-//        lblWebsite.text = [user userWebsite];
         
         if ([[dictObj valueForKey:@"vibe_name"] length] > 0)
         {
@@ -524,31 +536,15 @@
         lblCityName.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:0];
         lblLocatopmCity.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:1];
         
-//        lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[user userVibeName]];
-//        lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[[user userFullName] capitalizedString],[user userAge]];
-        
-//        if ([[dictObj valueForKey:@"formatted_address"] length] > 0)
-//        {
-//            NSArray *arr = [[dictObj valueForKey:@"formatted_address"] componentsSeparatedByString:@","];
-//            
-//            lblCity.text = [NSString stringWithFormat:@"%@,%@",[arr objectAtIndex:0],[arr objectAtIndex:1]];
-//        }
-//        else
-//        {
-//            lblCity.text =  @"";
-//        }
-        
-//        lblWebsite.text = [user userWebsite];
-  
-        
-//        if ([[dictObj valueForKey:@"vibe_name"] length] > 0)
-//        {
-//            lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[dictObj valueForKey:@"vibe_name"]];
-//        }
-//        else
-//        {
-//            lblUserVibeName.text = @"";
-//        }
+        if ([[dictObj valueForKey:@"vibe_name"] length] > 0)
+        {
+            lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[dictObj valueForKey:@"vibe_name"]];
+        }
+        else
+        {
+            lblUserVibeName.text = @"";
+        }
+
         
         if ([[dictObj valueForKey:@"formatted_address"] length] > 0)
         {
@@ -784,21 +780,49 @@
     
     if([sender.accessibilityLabel isEqualToString:@"photo"])
     {
-        NSIndexPath *indexPath;
-        indexPath = [collectionViewPost indexPathForItemAtPoint:[collectionViewPost convertPoint:sender.center fromView:sender.superview]];
+        UICollectionViewCell *cell = (UICollectionViewCell *)[sender findSuperViewWithClass:[UICollectionViewCell class]];
+        UIImageView *img = (UIImageView *)[cell viewWithTag:102];
         
+        NSIndexPath *indexPath = [collectionViewPost indexPathForCell:cell];
+        
+
         NSDictionary *dictVal = [arrPhotoPosts objectAtIndex:indexPath.row];
-        [share UserProfileSharingOption:dictVal];
+        [share UserProfileSharingOption:dictVal Image:img.image];
         
     }
     else if ([sender.accessibilityLabel isEqualToString:@"location"])
     {
-        NSIndexPath *indexPath;
-        indexPath = [locationCollection indexPathForItemAtPoint:[locationCollection convertPoint:sender.center fromView:sender.superview]];
+        UICollectionViewCell *cell = (UICollectionViewCell *)[sender findSuperViewWithClass:[UICollectionViewCell class]];
+        UIImageView *img = (UIImageView *)[cell viewWithTag:102];
+        NSIndexPath *indexPath = [locationCollection indexPathForCell:cell];
+        
         NSDictionary *dictVal = [arrLocationPosts objectAtIndex:indexPath.row];
-        [share UserProfileSharingOption:dictVal];
+        [share UserProfileSharingOption:dictVal Image:img.image];
     }
 }
+-(void)callInstagramMethod:(NSDictionary *)dict Image:(UIImage *)image
+{
+    NSURL *instagramURL = [NSURL URLWithString:@"instagram://app"];
+    
+    if([[UIApplication sharedApplication] canOpenURL:instagramURL])
+    {
+        NSString *imagePath = [NSString stringWithFormat:@"%@/image.igo",[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject]];
+        [[NSFileManager defaultManager] removeItemAtPath:imagePath error:nil];
+        
+        [UIImageJPEGRepresentation(image, 1) writeToFile:imagePath atomically:YES];
+        
+        _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:imagePath]];
+        _documentController.delegate = self;
+        _documentController.UTI = @"com.instagram.exclusivegram";
+        
+        [_documentController presentOpenInMenuFromRect:self.view.frame inView:self.view animated:YES];
+    }
+    else
+    {
+        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Instagram not install in your IPhone"];
+    }
+}
+
 -(void)btnCommentPhoto:(UIButton *)sender
 {
     NSInteger indexPath = [sender.accessibilityLabel intValue];
@@ -867,7 +891,27 @@
                        andWebServiceTag:@"deletefeed"
                                setToken:YES];
 }
-
+-(void)btnAddFrnd:(UIButton *)sender
+{
+    if(!sender.selected)
+    {
+        UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
+        
+        NSIndexPath *indexPath = [tblProfileVisit indexPathForCell:cell];
+        
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        [dict setValue:[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"user_id"] forKey:@"other_user_id"];
+        
+        WebService *addfriend = [[WebService alloc] initWithView:self.view andDelegate:self];
+        
+        [addfriend callWebServiceWithURLDict:SEND_REQUEST
+                               andHTTPMethod:@"POST"
+                                 andDictData:dict
+                                 withLoading:YES
+                            andWebServiceTag:@"addfriend"
+                                    setToken:YES];
+    }
+}
 #pragma mark - UIActionSheet Delegate Methods
 - (void)actionSheet:(UIActionSheet *)menu didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
@@ -906,32 +950,6 @@
                                            setToken:YES];
             }
             break;
-    }
-}
-
--(void)instaGramWallPost:(UIImage *)imgShare
-{
-    NSURL *instagramURL = [NSURL URLWithString:@"instagram://app"];
-    
-    if([[UIApplication sharedApplication] canOpenURL:instagramURL]) //check for App is install or not
-    {
-        UIImage *imageToUse = imgShare;
-        NSString *documentDirectory=[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
-        NSString *saveImagePath=[documentDirectory stringByAppendingPathComponent:@"Image.igo"];
-        NSData *imageData=UIImagePNGRepresentation(imageToUse);
-        [imageData writeToFile:saveImagePath atomically:YES];
-        NSURL *imageURL=[NSURL fileURLWithPath:saveImagePath];
-        self.documentController=[[UIDocumentInteractionController alloc]init];
-        self.documentController = [UIDocumentInteractionController interactionControllerWithURL:imageURL];
-        self.documentController.delegate = self;
-        self.documentController.annotation = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Testing"], @"InstagramCaption", nil];
-        self.documentController.UTI = @"com.instagram.exclusivegram";
-        UIViewController *vc = [UIApplication sharedApplication].keyWindow.rootViewController;
-        [self.documentController presentOpenInMenuFromRect:CGRectMake(1, 1, 1, 1) inView:vc.view animated:YES];
-    }
-    else
-    {
-        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Instagram not install in your IPhone"];
     }
 }
 
@@ -1131,6 +1149,17 @@
                 {
                     [self getPhotoFeed];
                 }
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if([tagStr isEqualToString:@"addfriend"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }
             else
             {

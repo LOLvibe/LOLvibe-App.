@@ -467,11 +467,10 @@ CGFloat _currentKeyboardHeight = 0.0f;
         {
             lblCaptionCount.text = @"0";
         }
-        else{
+        else
+        {
             lblCaptionCount.text = [NSString stringWithFormat:@"%d",remaining];
         }
-
-       
         return textView.text.length + (text.length - range.length) <= 176;
     }
 }
@@ -490,28 +489,23 @@ CGFloat _currentKeyboardHeight = 0.0f;
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
         NSLog(@"tempDict = %@",dictResult);
-        
-//        if ([tagStr isEqualToString:@"getAddress"])
-//        {
-//            NSArray *results = [dictResult valueForKey:@"results"];
-//            if ([results count]> 0)
-//            {
-//                strAddress = [[results objectAtIndex:0] valueForKey:@"formatted_address"];
-//                NSLog(@"%@",strAddress);
-//            }
-//        }
+
         if ([tagStr isEqualToString:@"getNearByPlaces"])
         {
             [arrNearbyPlaces removeAllObjects];
             [arrNearbyPlaces addObjectsFromArray:[dictResult valueForKey:@"results"]];
             [tableNearbyPlaces reloadData];
         }
-        
-        if ([tagStr isEqualToString:@"vibePostWS"])
+        else if ([tagStr isEqualToString:@"vibePostWS"])
         {
             if ([[dictResult valueForKey:@"status_code"] integerValue]== 1)
             {
                 [[NSNotificationCenter defaultCenter] postNotificationName:kRefressHomeFeed object:nil];
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }
+            else if ([[dictResult valueForKey:@"status_code"] integerValue]== 14)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
                 [self dismissViewControllerAnimated:YES completion:nil];
             }
         }

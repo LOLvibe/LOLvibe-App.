@@ -12,7 +12,7 @@
 @implementation OptionClass
 @synthesize delegate;
 
--(id)initWithView:(UIViewController *)myView andDelegate:(id <OptionClassDelegate>)del
+-(id)initWithView:(id)myView andDelegate:(id <OptionClassDelegate>)del
 {
     self = [super init];
     
@@ -26,7 +26,7 @@
 
 
 #pragma mark Other User Opetoin
--(void)otherUserPostOptionClass:(NSDictionary *)dictPostDetail
+-(void)otherUserPostOptionClass:(NSDictionary *)dictPostDetail Image:(UIImage *)image;
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
                                                                    message:nil
@@ -43,11 +43,11 @@
                                                        }];
     
     UIAlertAction *twitter = [UIAlertAction actionWithTitle:@"Tweet" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self twitterShare:dictPostDetail];
+        [self twitterShare:dictPostDetail Image:image];
     }];
     
-    UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Instagram" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
+    UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Share to Instagram" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self instaGramWallPost:dictPostDetail Image:image];
         }];
     
     UIAlertAction *report = [UIAlertAction actionWithTitle:@"REPORT!" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
@@ -68,7 +68,7 @@
 
 
 #pragma mark --Selt Opetion
--(void)selfUserPostOptionClass:(NSDictionary *)dictPostDetail
+-(void)selfUserPostOptionClass:(NSDictionary *)dictPostDetail Image:(UIImage *)image;
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
                                                                    message:nil
@@ -78,36 +78,30 @@
     
     UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Share to Facebook"
                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                           
                                                            [self shareInFacebook:dictPostDetail];
                                                        }];
     
-    UIAlertAction *twitter = [UIAlertAction actionWithTitle:@"Twitter" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self twitterShare:dictPostDetail];
+    UIAlertAction *twitter = [UIAlertAction actionWithTitle:@"Tweet" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self twitterShare:dictPostDetail Image:image];
     }];
     
-    UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Tweet" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-    
+    UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Share to Instagram" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self instaGramWallPost:dictPostDetail Image:image];
     }];
     
-//    UIAlertAction *report = [UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action)
-//    {
-//        [self deleteThisPost:dictPostDetail];
-//    }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
     
     [alert addAction:facebook];
     [alert addAction:twitter];
     [alert addAction:instagram];
-//  [alert addAction:report];
     [alert addAction:cancel];
     [view_Process presentViewController:alert animated:YES completion:nil];
 }
 
 
 #pragma mark --Selt Opetion
--(void)UserProfileSharingOption:(NSDictionary *)dictPostDetail
+-(void)UserProfileSharingOption:(NSDictionary *)dictPostDetail Image:(UIImage *)image;
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
                                                                    message:nil
@@ -117,16 +111,15 @@
     
     UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Share to Facebook"
                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                           
                                                            [self shareInFacebook:dictPostDetail];
                                                        }];
     
-    UIAlertAction *twitter = [UIAlertAction actionWithTitle:@"Twitter" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self twitterShare:dictPostDetail];
+    UIAlertAction *twitter = [UIAlertAction actionWithTitle:@"Tweet" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self twitterShare:dictPostDetail Image:image];
     }];
     
-    UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Instagram" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
+    UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Share to Instagram" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self instaGramWallPost:dictPostDetail Image:image];
     }];
     
     UIAlertAction *report = [UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action)
@@ -146,40 +139,6 @@
     [view_Process presentViewController:alert animated:YES completion:nil];
 }
 
--(void)shareInFacebook:(NSDictionary *)dictPostDetail
-{
-    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb://"]])
-    {
-        FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
-        content.contentURL = [NSURL URLWithString:@"https://itunes.apple.com/in/app/fix-duplicate-manage-duplicate/id1095988098?mt=8"];
-        content.contentTitle = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
-        content.contentDescription = @"LoLVibe";
-        content.quote = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
-        content.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"image"]]];
-        FBSDKShareDialog *shareDialog = [FBSDKShareDialog new];
-        [shareDialog setMode:FBSDKShareDialogModeNative];
-        [shareDialog setShareContent:content];
-        [shareDialog setDelegate:self];
-        [shareDialog setFromViewController:view_Process];
-        [shareDialog show];
-    }
-    else
-    {
-        FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
-        content.contentURL = [NSURL URLWithString:@"https://itunes.apple.com/in/app/fix-duplicate-manage-duplicate/id1095988098?mt=8"];
-        content.contentTitle = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
-        content.contentDescription = @"LoLVibe";
-        content.quote = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
-        content.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"image"]]];
-        FBSDKShareDialog *shareDialog = [FBSDKShareDialog new];
-        [shareDialog setMode:FBSDKShareDialogModeFeedWeb];
-        [shareDialog setShareContent:content];
-        [shareDialog setDelegate:self];
-        [shareDialog setFromViewController:view_Process];
-        [shareDialog show];
-    }
-}
-
 -(void)deleteThisPost:(NSDictionary *)dict
 {
     [self.delegate callDeleteMethod:dict];
@@ -192,23 +151,62 @@
 {
     [self.delegate callReportMethod:dict];
 }
-#pragma marm --Twitter Share
 
--(void)twitterShare:(NSDictionary *)dictValue
+#pragma marm --Insta Share
+-(void)instaGramWallPost:(NSDictionary *)dictValue Image:(UIImage *)image
+{
+    [self.delegate callInstagramMethod:dictValue Image:image];
+}
+
+#pragma marm --Twitter Share
+-(void)twitterShare:(NSDictionary *)dictValue Image:(UIImage *)image
 {
     if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
     {
         SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
         
-        [controller setInitialText:[NSString stringWithFormat:@"%@",[dictValue valueForKey:@"location_text"]]];
-        //[controller addImage:imgSahre];
-        [controller addURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",[dictValue valueForKey:@"image"]]]];
+        [controller setInitialText:[NSString stringWithFormat:@"%@",[dictValue valueForKey:@"feed_text"]]];
+        [controller addImage:image];
+        [controller addURL:[NSURL URLWithString:APP_ITUNES_LINK]];
         
         [view_Process presentViewController:controller animated:YES completion:Nil];
     }
 }
 
 #pragma mark - FBSDKSharingDelegate
+-(void)shareInFacebook:(NSDictionary *)dictPostDetail
+{
+    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb://"]])
+    {
+        FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
+        content.contentURL = [NSURL URLWithString:APP_ITUNES_LINK];
+        content.contentTitle = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
+        content.contentDescription = App_Name;
+        content.quote = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
+        content.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"image"]]];
+        FBSDKShareDialog *shareDialog = [FBSDKShareDialog new];
+        [shareDialog setMode:FBSDKShareDialogModeNative];
+        [shareDialog setShareContent:content];
+        [shareDialog setDelegate:self];
+        [shareDialog setFromViewController:view_Process];
+        [shareDialog show];
+    }
+    else
+    {
+        FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
+        content.contentURL = [NSURL URLWithString:APP_ITUNES_LINK];
+        content.contentTitle = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
+        content.contentDescription = App_Name;
+        content.quote = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
+        content.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"image"]]];
+        FBSDKShareDialog *shareDialog = [FBSDKShareDialog new];
+        [shareDialog setMode:FBSDKShareDialogModeFeedWeb];
+        [shareDialog setShareContent:content];
+        [shareDialog setDelegate:self];
+        [shareDialog setFromViewController:view_Process];
+        [shareDialog show];
+    }
+}
 - (void)sharer:(id<FBSDKSharing>)sharer didCompleteWithResults :(NSDictionary *)results
 {
     [view_Process dismissViewControllerAnimated:YES completion:nil];

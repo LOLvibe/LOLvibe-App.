@@ -9,6 +9,7 @@
 #import "CommentController.h"
 #import "ServiceConstant.h"
 #import "UIView+SuperView.h"
+#import "OtherProfileVC.h"
 
 @interface CommentController ()<WebServiceDelegate>
 {
@@ -83,10 +84,14 @@
     UITextView *txtComment      = (UITextView *)[cell viewWithTag:103];
     UILabel *lblTime            = (UILabel *)[cell viewWithTag:108];
     UIButton *btnOption         = (UIButton *)[cell viewWithTag:999];
+    UIButton *btnProfile         = (UIButton *)[cell viewWithTag:9999];
     
     [btnOption addTarget:self action:@selector(btnOptionReply:)
         forControlEvents:UIControlEventTouchUpInside];
-
+    
+    [btnProfile addTarget:self action:@selector(btnProfileReply:)
+        forControlEvents:UIControlEventTouchUpInside];
+    
     NSDictionary *dictComment = [[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row];
     
     imgProfile.layer.cornerRadius = imgProfile.frame.size.height/2;
@@ -116,9 +121,15 @@
     UILabel *lblLikeCounter     = (UILabel *)[cell viewWithTag:107];
     UILabel *lblTime            = (UILabel *)[cell viewWithTag:108];
     UIButton *btnOption         = (UIButton *)[cell viewWithTag:999];
+    UIButton *btnProfileComment = (UIButton *)[cell viewWithTag:9999];
     
     btnOption.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)section];
+    btnProfileComment.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)section];
+    
     [btnOption addTarget:self action:@selector(btnOptionComment:)
+        forControlEvents:UIControlEventTouchUpInside];
+
+    [btnProfileComment addTarget:self action:@selector(btnProfileComment:)
         forControlEvents:UIControlEventTouchUpInside];
 
     NSDictionary *dictComment = [arrComment objectAtIndex:section];
@@ -186,7 +197,10 @@
     }
     return _readMoreCells;
 }
-
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+}
 -(void)btnRReplySend:(UIButton *)sender
 {
     NSLog(@"%ld",[sender.accessibilityLabel integerValue]);
@@ -213,6 +227,33 @@
     [self showOptions:[[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row]];
 }
 
+#pragma --- Profile Redirect
+-(void)btnProfileReply:(UIButton *)sender
+{
+    UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
+    NSIndexPath *indexPath = [tblComment indexPathForCell:cell];
+    if ([[[[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row] valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId]) {
+        return;
+    }
+    
+    OtherProfileVC *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"OtherProfileVC"];
+    obj.dictUser = [[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row];
+    
+    [self.navigationController pushViewController:obj animated:YES];
+}
+-(void)btnProfileComment:(UIButton *)sender
+{
+    NSInteger section = [sender.accessibilityLabel integerValue];
+   
+    if ([[[arrComment objectAtIndex:section] valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId]) {
+        return;
+    }
+
+    OtherProfileVC *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"OtherProfileVC"];
+    obj.dictUser = [arrComment objectAtIndex:section];
+    
+    [self.navigationController pushViewController:obj animated:YES];
+}
 #pragma mark --Comment Like and Unlike --
 
 -(void)likeUnLikeComment:(UIButton *)sender
@@ -257,6 +298,8 @@
 #pragma mark Send Button Action
 - (IBAction)btnSend:(UIButton *)sender
 {
+    [txtAddComment resignFirstResponder];
+    
     if(txtAddComment.text.length > 0)
     {
         if(!isReply)

@@ -11,29 +11,30 @@
 @interface ProfileViewController : UIViewController<UIScrollViewDelegate,UITextFieldDelegate,UIPickerViewDataSource,UIPickerViewDelegate,UIGestureRecognizerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 {
     
-    __weak IBOutlet UIScrollView *scrEditProfile;
-    __weak IBOutlet UITextField *txtName;
-    __weak IBOutlet UITextField *txtVibeName;
-    __weak IBOutlet UITextField *txtZipCode;
-    __weak IBOutlet UISwitch *swZipCode;
-    __weak IBOutlet UITextField *txtWebsite;
-    __weak IBOutlet UISwitch *swWebsite;
-    __weak IBOutlet UITextField *txtBirthDate;
-    __weak IBOutlet UISwitch *swBirthDate;
-    __weak IBOutlet UITextField *txtEmail;
-    __weak IBOutlet UITextField *txtChangePassword;
-    __weak IBOutlet UITextField *txtPhoneNumber;
-    __weak IBOutlet UITextField *txtGender;
-    __weak IBOutlet UIImageView *imgUserProfile;
-    __weak IBOutlet UIButton *btnDiscovery;
-    __weak IBOutlet UIButton *btnPushNotification;
-    __weak IBOutlet UIButton *btnPrivateAccount;
-    __weak IBOutlet UIView *viewDatePicker;
-    __weak IBOutlet UIDatePicker *datePicker;
-    __weak IBOutlet UIToolbar *toolBar;
-    __weak IBOutlet UIView *viewPicker;
-    __weak IBOutlet UIPickerView *pickerView;
-    __weak IBOutlet UIButton *btnLogout;
+    IBOutlet UIButton *btnAboutUS;
+    IBOutlet UIScrollView *scrEditProfile;
+    IBOutlet UITextField *txtName;
+    IBOutlet UITextField *txtVibeName;
+    IBOutlet UITextField *txtZipCode;
+    IBOutlet UISwitch *swZipCode;
+    IBOutlet UITextField *txtWebsite;
+    IBOutlet UISwitch *swWebsite;
+    IBOutlet UITextField *txtBirthDate;
+    IBOutlet UISwitch *swBirthDate;
+    IBOutlet UITextField *txtEmail;
+    IBOutlet UITextField *txtChangePassword;
+    IBOutlet UITextField *txtPhoneNumber;
+    IBOutlet UITextField *txtGender;
+    IBOutlet UIImageView *imgUserProfile;
+    IBOutlet UIButton *btnDiscovery;
+    IBOutlet UIButton *btnPushNotification;
+    IBOutlet UIButton *btnPrivateAccount;
+    IBOutlet UIView *viewDatePicker;
+    IBOutlet UIDatePicker *datePicker;
+    IBOutlet UIToolbar *toolBar;
+    IBOutlet UIView *viewPicker;
+    IBOutlet UIPickerView *pickerView;
+    IBOutlet UIButton *btnLogout;
     IBOutlet UIButton *btnVerify;
 }
 

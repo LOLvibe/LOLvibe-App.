@@ -12,8 +12,8 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *imgProfile;
 @property (weak, nonatomic) IBOutlet UILabel *lblName;
+@property (weak, nonatomic) IBOutlet UILabel *lblTime;
 @property (weak, nonatomic) IBOutlet UIImageView *imgNotiType;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *widthUsername;
 @property (weak, nonatomic) IBOutlet UILabel *lblPostType;
 @property (weak, nonatomic) IBOutlet UIImageView *imgOther;
 @property (weak, nonatomic) IBOutlet UIButton *btnPostDetails;

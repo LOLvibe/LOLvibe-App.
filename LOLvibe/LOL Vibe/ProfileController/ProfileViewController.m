@@ -32,94 +32,7 @@
 {
     [super viewDidLoad];
     appDel = APP_DELEGATE;
-
-    serGetProfile = [[WebService alloc]initWithView:self.view andDelegate:self];
-    serUpdateProfile = [[WebService alloc]initWithView:self.view andDelegate:self];
     [self setDefulatProperties];
-
-    
-    UIButton *btnSave = [UIButton buttonWithType:UIButtonTypeCustom];
-    btnSave.frame = CGRectMake(0, 0, 35,35);
-    [btnSave setTitle:@"Save" forState:UIControlStateNormal];
-    [btnSave setTitleColor:[UIColor colorWithRed:80.0/255.0 green:164.0/255.0 blue:52.0/255.0 alpha:1.0] forState:UIControlStateNormal];
-    btnSave.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
-    [btnSave addTarget:self action:@selector(buttonSave:) forControlEvents:UIControlEventTouchUpInside];
-    [btnSave setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
-    UIBarButtonItem *saveButtonItem = [[UIBarButtonItem alloc] initWithCustomView:btnSave];
-    self.navigationItem.rightBarButtonItem = saveButtonItem;
-    
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refressProfile:) name:kRefressProfile object:nil];
-    
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onBackgroundTap:)];
-    tapGesture.numberOfTapsRequired = 1;
-    tapGesture.cancelsTouchesInView = YES;
-    [self.view addGestureRecognizer:tapGesture];
-    
-    btnLogout.layer.cornerRadius = 5;//half of the width
-    btnDiscovery.layer.cornerRadius = 5;//half of the width
-    btnPushNotification.layer.cornerRadius = 5  ;//half of the width
-
-    imgUserProfile.layer.cornerRadius = 5.0;
-    imgUserProfile.layer.masksToBounds = YES;
-    imgUserProfile.layer.borderWidth = 1;
-    imgUserProfile.layer.borderColor = [UIColor lightGrayColor].CGColor;
-}
--(void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear: animated];
-    
-    self.title =@"Edit Profile";
-}
--(void)viewWillDisappear:(BOOL)animated
-{
-   [super viewDidDisappear:animated];
-    self.title = @"";
-}
-- (void)onBackgroundTap:(id)sender
-{
-    [self.view endEditing:YES];
-}
-
--(void)setDefulatProperties
-{
-    arrGender = @[@"Male",@"Female",@"Not Specified"];
-    isUpdateImage = NO;
-    txtName.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userFullName];
-    txtVibeName.text = [NSString stringWithFormat:@"@%@",[LoggedInUser sharedUser].userVibeName];
-    txtBirthDate.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userDOB];
-    txtEmail.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userEmail];
-    txtWebsite.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userWebsite];
-    txtPhoneNumber.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userPhone];
-    txtChangePassword.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userPassword];
-    txtZipCode.text=[NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userZipcode];
-
-    NSString *strProfile = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userProfilePic];
-    [imgUserProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-        imgUserProfile.image = image;
-    }];
-    
-
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-
-
-    [serGetProfile callWebServiceWithURLDict:GET_PROFILE
-                           andHTTPMethod:@"POST"
-                             andDictData:dict
-                             withLoading:YES
-                        andWebServiceTag:@"getProfile"
-                                setToken:YES];
-    
-    if([[LoggedInUser sharedUser].userGender intValue] == 0)
-    {
-        txtGender.text = @"Male";
-        strGender = @"Male";
-    }
-    else
-    {
-        txtGender.text = @"Female";
-        strGender = @"Female";
-    }
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardDidShow:)
@@ -131,32 +44,64 @@
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
     
-    [scrEditProfile setContentSize:CGSizeMake(scrEditProfile.frame.size.width,btnLogout.frame.origin.y+btnLogout.frame.size.height+10)];
+    serGetProfile = [[WebService alloc]initWithView:self.view andDelegate:self];
+    serUpdateProfile = [[WebService alloc]initWithView:self.view andDelegate:self];
+    arrGender = @[@"Male",@"Female",@"Not Specified"];
     
-    [self hidePicker];
-    [self hideDatePicker];
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onBackgroundTap:)];
+    tapGesture.numberOfTapsRequired = 1;
+    tapGesture.cancelsTouchesInView = YES;
+    [self.view addGestureRecognizer:tapGesture];
     
     UITapGestureRecognizer *tapOnImage = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapOnImageView:)];
     tapOnImage.numberOfTapsRequired = 1.0;
     tapOnImage.delegate = self;
     [imgUserProfile addGestureRecognizer:tapOnImage];
-}
-
--(void)refressProfile:(NSNotification *)notification
-{
+    
+    btnLogout.layer.cornerRadius = 5;//half of the width
+    btnDiscovery.layer.cornerRadius = 5;//half of the width
+    btnPushNotification.layer.cornerRadius = 5  ;//half of the width
+    
+    imgUserProfile.layer.cornerRadius = 5.0;
+    imgUserProfile.layer.masksToBounds = YES;
+    imgUserProfile.layer.borderWidth = 1;
+    imgUserProfile.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    
+    UIButton *btnSave = [UIButton buttonWithType:UIButtonTypeCustom];
+    btnSave.frame = CGRectMake(0, 0, 35,35);
+    [btnSave setTitle:@"Save" forState:UIControlStateNormal];
+    [btnSave setTitleColor:[UIColor colorWithRed:80.0/255.0 green:164.0/255.0 blue:52.0/255.0 alpha:1.0] forState:UIControlStateNormal];
+    btnSave.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
+    [btnSave addTarget:self action:@selector(buttonSave:) forControlEvents:UIControlEventTouchUpInside];
+    [btnSave setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
+    UIBarButtonItem *saveButtonItem = [[UIBarButtonItem alloc] initWithCustomView:btnSave];
+    self.navigationItem.rightBarButtonItem = saveButtonItem;
+    
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    
-    
     [serGetProfile callWebServiceWithURLDict:GET_PROFILE
                                andHTTPMethod:@"POST"
                                  andDictData:dict
                                  withLoading:YES
                             andWebServiceTag:@"getProfile"
                                     setToken:YES];
-
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear: animated];
+    
+    self.title =@"Edit Profile";
+}
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    self.title = @"";
+}
+- (void)onBackgroundTap:(id)sender
+{
+    [self.view endEditing:YES];
 }
 
--(void)setUpdatedProfileView
+-(void)setDefulatProperties
 {
     isUpdateImage = NO;
     txtName.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userFullName];
@@ -166,24 +111,76 @@
     txtWebsite.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userWebsite];
     txtPhoneNumber.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userPhone];
     txtChangePassword.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userPassword];
-    txtZipCode.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userLocation];
+    txtZipCode.text=[NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userZipcode];
     
     NSString *strProfile = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userProfilePic];
     [imgUserProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         imgUserProfile.image = image;
     }];
     
+    if ([[LoggedInUser sharedUser].userStatus intValue] == 1) {
+        [btnVerify setHidden:YES];
+    }
+    else
+    {
+        [btnVerify setHidden:NO];
+    }
+    
     if([[LoggedInUser sharedUser].userGender intValue] == 0)
     {
         txtGender.text = @"Male";
         strGender = @"Male";
     }
-    else
+    else if([[LoggedInUser sharedUser].userGender intValue] == 1)
     {
         txtGender.text = @"Female";
         strGender = @"Female";
     }
+    else if([[LoggedInUser sharedUser].userGender intValue] == 2)
+    {
+        txtGender.text = @"Not Specified";
+        strGender = @"Not Specified";
+    }
+    
+    [scrEditProfile setContentSize:CGSizeMake(scrEditProfile.frame.size.width,btnAboutUS.frame.origin.y+btnAboutUS.frame.size.height+10)];
+    
+    [self hidePicker];
+    [self hideDatePicker];
 }
+
+//-(void)setUpdatedProfileView
+//{
+//    isUpdateImage = NO;
+//    txtName.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userFullName];
+//    txtVibeName.text = [NSString stringWithFormat:@"@%@",[LoggedInUser sharedUser].userVibeName];
+//    txtBirthDate.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userDOB];
+//    txtEmail.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userEmail];
+//    txtWebsite.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userWebsite];
+//    txtPhoneNumber.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userPhone];
+//    txtChangePassword.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userPassword];
+//    txtZipCode.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userLocation];
+//    
+//    NSString *strProfile = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userProfilePic];
+//    [imgUserProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+//        imgUserProfile.image = image;
+//    }];
+//    
+//    if([[LoggedInUser sharedUser].userGender intValue] == 0)
+//    {
+//        txtGender.text = @"Male";
+//        strGender = @"Male";
+//    }
+//    else if([[LoggedInUser sharedUser].userGender intValue] == 1)
+//    {
+//        txtGender.text = @"Female";
+//        strGender = @"Female";
+//    }
+//    else if([[LoggedInUser sharedUser].userGender intValue] == 2)
+//    {
+//        txtGender.text = @"Not Specified";
+//        strGender = @"Not Specified";
+//    }
+//}
 
 #pragma mark -- Open camera or  Gallery for take Photos--
 -(void)tapOnImageView:(UITapGestureRecognizer *)recognizer
@@ -233,7 +230,7 @@
         else if ([buttonTitle isEqualToString:NSLocalizedString(@"View Profile Photo", nil)])
         {
             NSDictionary *dictInfo1 = @{@"name":[LoggedInUser sharedUser].userVibeName
-                                       ,@"profile_pic":[LoggedInUser sharedUser].userProfilePic};
+                                        ,@"profile_pic":[LoggedInUser sharedUser].userProfilePic};
             ProfileImageController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ProfileImageController"];
             
             obj.dictinfo = dictInfo1;
@@ -280,11 +277,11 @@
         
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
         [verify callWebServiceWithURLDict:VERIFY_USER
-                                   andHTTPMethod:@"POST"
-                                     andDictData:dict
-                                     withLoading:YES
-                                andWebServiceTag:@"verify"
-                                        setToken:YES];
+                            andHTTPMethod:@"POST"
+                              andDictData:dict
+                              withLoading:YES
+                         andWebServiceTag:@"verify"
+                                 setToken:YES];
     }
 }
 
@@ -430,7 +427,7 @@
 - (IBAction)btnLogoutAction:(UIButton *)sender
 {
     WebService *serLogout = [[WebService alloc]initWithView:self.view andDelegate:self];
-   
+    
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     
     [serLogout callWebServiceWithURLDict:LOGOUT
@@ -439,7 +436,7 @@
                              withLoading:YES
                         andWebServiceTag:@"logout"
                                 setToken:YES];
-
+    
 }
 
 #pragma mark --Webservice Delegate Method--
@@ -458,7 +455,7 @@
                 dictSettingProfile = [dictResult valueForKey:@"setting"];
                 [self updateLoggedInUser:dictResult];
                 [self setSettingInProfile];
-                [self setUpdatedProfileView];
+                [self setDefulatProperties];
             }
             else
             {
@@ -469,6 +466,10 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
+                LoggedInUser *loggedInUser=[LoggedInUser sharedUser];
+                
+                loggedInUser.userFullName   = txtName.text;
+                
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
                 [self.navigationController popViewControllerAnimated:YES];
             }
@@ -649,23 +650,26 @@
             {
                 gender = @"0";
             }
-            else
+            else if([txtGender.text isEqualToString:@"Male"])
             {
                 gender = @"1";
             }
-            
+            else
+            {
+                gender = @"2";
+            }
             
             NSMutableDictionary *dictPara =[[NSMutableDictionary alloc]init];
             
             [dictPara setValue:txtName.text forKey:@"name"];
             [dictPara setValue:[LoggedInUser sharedUser].userVibeName forKey:@"vibe_name"];
             [dictPara setValue:[LoggedInUser sharedUser].userEmail forKey:@"email"];
-
+            
             [dictPara setValue:txtZipCode.text forKey:@"location"];
             [dictPara setValue:txtWebsite.text forKey:@"website"];
             [dictPara setValue:txtBirthDate.text forKey:@"birth_date"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",btnPrivateAccount.selected] forKey:@"private_account"];
-//            [dictPara setValue:txtPhoneNumber.text forKey:@"phone"];
+            //            [dictPara setValue:txtPhoneNumber.text forKey:@"phone"];
             [dictPara setValue:gender forKey:@"gender"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",swZipCode.on] forKey:@"show_location"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",swWebsite.on] forKey:@"show_website"];
@@ -711,11 +715,15 @@
             {
                 gender = @"0";
             }
-            else
+            else if([txtGender.text isEqualToString:@"Male"])
             {
                 gender = @"1";
             }
-
+            else
+            {
+                gender = @"2";
+            }
+            
             NSMutableDictionary *dictPara =[[NSMutableDictionary alloc]init];
             
             [dictPara setValue:txtName.text forKey:@"name"];
@@ -725,7 +733,7 @@
             [dictPara setValue:txtWebsite.text forKey:@"website"];
             [dictPara setValue:txtBirthDate.text forKey:@"birth_date"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",btnPrivateAccount.selected] forKey:@"private_account"];
-//            [dictPara setValue:txtPhoneNumber.text forKey:@"phone"];
+            //            [dictPara setValue:txtPhoneNumber.text forKey:@"phone"];
             [dictPara setValue:gender forKey:@"gender"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",swZipCode.on] forKey:@"show_location"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",swWebsite.on] forKey:@"show_website"];
@@ -734,11 +742,11 @@
             [dictPara setValue:[LoggedInUser sharedUser].userProfilePic forKey:@"profile_pic"];
             
             [serUpdateProfile callWebServiceWithURLDict:EDIT_PROFILE
-                                   andHTTPMethod:@"POST"
-                                     andDictData:dictPara
-                                     withLoading:YES
-                                andWebServiceTag:@"editProfile"
-                                        setToken:YES];
+                                          andHTTPMethod:@"POST"
+                                            andDictData:dictPara
+                                            withLoading:YES
+                                       andWebServiceTag:@"editProfile"
+                                               setToken:YES];
         }
     }
 }
