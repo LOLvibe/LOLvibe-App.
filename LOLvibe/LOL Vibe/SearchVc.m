@@ -117,7 +117,9 @@
     UILabel *lblName        = (UILabel *)[cell viewWithTag:102];
     UILabel *lblVibeName    = (UILabel *)[cell viewWithTag:103];
     UIButton *btnAddFrnd    = (UIButton *)[cell viewWithTag:104];
+    UILabel *lblDistance    = (UILabel *)[cell viewWithTag:105];
     
+    lblDistance.text = [NSString stringWithFormat:@"%.1f Miles Away",[[[arrPeoples objectAtIndex:indexPath.row] valueForKey:@"distance"] floatValue]];
     [btnAddFrnd addTarget:self action:@selector(btnAddFrnd:) forControlEvents:UIControlEventTouchUpInside];
     
     if ([[[arrPeoples objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 0)

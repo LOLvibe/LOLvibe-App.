@@ -206,6 +206,7 @@
         UIButton *btnAddFrnd    = (UIButton *)[cell viewWithTag:104];
         
         [btnAddFrnd addTarget:self action:@selector(btnAddFrnd:) forControlEvents:UIControlEventTouchUpInside];
+        
         if ([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 0)
         {
             btnAddFrnd.selected = NO;

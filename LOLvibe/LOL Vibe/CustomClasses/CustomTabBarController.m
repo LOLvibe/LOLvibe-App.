@@ -25,16 +25,12 @@
     NSMutableArray *viewControllers = [NSMutableArray array];
     
     UINavigationController *navHome = [self.storyboard instantiateViewControllerWithIdentifier:@"navHome"];
-    
     [viewControllers addObject:navHome];
-    
 
     UINavigationController *navNotification = [self.storyboard instantiateViewControllerWithIdentifier:@"navNotification"];
-    
     [viewControllers addObject:navNotification];
     
     UINavigationController *navCamera = [self.storyboard instantiateViewControllerWithIdentifier:@"navCamera"];
-    
     [viewControllers addObject:navCamera];
     
     UINavigationController *navChats = [self.storyboard instantiateViewControllerWithIdentifier:@"navChat"];
@@ -52,10 +48,10 @@
                                    self.view.frame.size.width,
                                    self.tabBarView.frame.size.height); // make it overlay your actual tab bar
     
-    self.tabBarView.lblNotif.layer.cornerRadius = 5.0;
+    self.tabBarView.lblNotif.layer.cornerRadius = 3.0;
     self.tabBarView.lblNotif.layer.masksToBounds = YES;
     
-    self.tabBarView.lblNotifChat.layer.cornerRadius = 5.0;
+    self.tabBarView.lblNotifChat.layer.cornerRadius = 3.0;
     self.tabBarView.lblNotifChat.layer.masksToBounds = YES;
     
     [self.tabBarView.lblNotif setHidden:YES];

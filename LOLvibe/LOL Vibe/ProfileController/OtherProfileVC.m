@@ -186,7 +186,7 @@
 -(void)getFriendList
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    [dict setValue:[dictUser valueForKey:@"user_id"] forKey:@"ohter_user_id"];
+    [dict setValue:[dictUser valueForKey:@"user_id"] forKey:@"other_user_id"];
     
     [serFriendList callWebServiceWithURLDict:GET_FRIEND_LIST
                                andHTTPMethod:@"POST"

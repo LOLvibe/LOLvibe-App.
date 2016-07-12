@@ -98,7 +98,12 @@
     imgProfile.layer.masksToBounds = YES;
 
     lblName.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"vibe_name"]];
-    txtComment.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"comment_text"]];
+    NSString *comment = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"comment_text"]];
+    
+    const char *jsonString = [comment UTF8String];
+    NSData *jsonData = [NSData dataWithBytes:jsonString length:strlen(jsonString)];
+    NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
+    txtComment.text=goodMsg;
     
     lblTime.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"created_at"]];
     
@@ -163,7 +168,13 @@
     
     
     lblName.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"vibe_name"]];
-    txtComment.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"comment_text"]];
+   
+    NSString *comment = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"comment_text"]];
+    const char *jsonString = [comment UTF8String];
+    NSData *jsonData = [NSData dataWithBytes:jsonString length:strlen(jsonString)];
+    NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
+    txtComment.text=goodMsg;
+    
     lblLikeCounter.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"like"]];
     lblTime.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"created_at"]];
     
@@ -307,7 +318,12 @@
             NSMutableDictionary *dictParametr = [[NSMutableDictionary alloc] init];
             [dictParametr setValue:[dictPost valueForKey:@"feed_id"] forKey:@"parent_id"];
             [dictParametr setValue:@"post" forKey:@"comment_type"];
-            [dictParametr setValue:txtAddComment.text forKey:@"comment_text"];
+            
+            NSString *uniText = [NSString stringWithUTF8String:[txtAddComment.text UTF8String]];
+            NSData *msgData = [uniText dataUsingEncoding:NSNonLossyASCIIStringEncoding];
+            NSString *goodMsg = [[NSString alloc] initWithData:msgData encoding:NSUTF8StringEncoding] ;
+            
+            [dictParametr setValue:goodMsg forKey:@"comment_text"];
             
             WebService *serViewComment = [[WebService alloc] initWithView:self.view andDelegate:self];
             [serViewComment callWebServiceWithURLDict:ADD_COMMENT
@@ -321,7 +337,12 @@
             NSMutableDictionary *dictParametr = [[NSMutableDictionary alloc] init];
             [dictParametr setValue:[dictReply valueForKey:@"comment_id"] forKey:@"parent_id"];
             [dictParametr setValue:@"comment" forKey:@"comment_type"];
-            [dictParametr setValue:txtAddComment.text forKey:@"comment_text"];
+            
+            NSString *uniText = [NSString stringWithUTF8String:[txtAddComment.text UTF8String]];
+            NSData *msgData = [uniText dataUsingEncoding:NSNonLossyASCIIStringEncoding];
+            NSString *goodMsg = [[NSString alloc] initWithData:msgData encoding:NSUTF8StringEncoding] ;
+            
+            [dictParametr setValue:goodMsg forKey:@"comment_text"];
             
             WebService *serViewComment = [[WebService alloc] initWithView:self.view andDelegate:self];
             [serViewComment callWebServiceWithURLDict:ADD_COMMENT

@@ -147,7 +147,7 @@
          
          if ([[responseObject valueForKey:@"status_code"] integerValue]== 7)
          {
-             [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Your sassion is expire. Please login again."];
+             [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Your sassion has expired.\nPlease login again."];
              AppDelegate *appDel = APP_DELEGATE;
              
              [[XmppHelper sharedInstance] disconnect];

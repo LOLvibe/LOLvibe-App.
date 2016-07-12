@@ -339,11 +339,9 @@
 
 - (IBAction)doneDate:(UIBarButtonItem *)sender
 {
-    
     NSDateFormatter *dateFormate = [[NSDateFormatter alloc] init];
     [dateFormate setDateFormat:@"yyyy-MM-dd"];
-    
-    
+
     NSString *birthDate = [dateFormate stringFromDate:datePicker.date];
     NSDate *todayDate = [NSDate date];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -352,15 +350,15 @@
     int allDays = (((time/60)/60)/24);
     int days = allDays%365;
     int years = (allDays-days)/365;
-    
-    if (years >= 18)
+
+    if (years >= 13)
     {
         [self hideDatePicker];
         txtBirthDate.text = [NSString stringWithFormat:@"%@",[dateFormate stringFromDate:datePicker.date]];
     }
     else
     {
-        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"You should be 18 year old."];
+        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"You should be 13 year old."];
     }
 }
 
