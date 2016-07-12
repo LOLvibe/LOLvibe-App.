@@ -34,16 +34,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     user = [LoggedInUser sharedUser];
-    [self visitOtherUserProfile];
+    [self getPostDetails];
 }
 
--(void)visitOtherUserProfile
+-(void)getPostDetails
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setValue:self.strFeedID forKey:@"feed_id"];
     
-    WebService *serVisitProfile = [[WebService alloc] initWithView:self.view andDelegate:self];
-    [serVisitProfile callWebServiceWithURLDict:GET_SINGLE_POST
+    WebService *getPostDetails = [[WebService alloc] initWithView:self.view andDelegate:self];
+    [getPostDetails callWebServiceWithURLDict:GET_SINGLE_POST
                                  andHTTPMethod:@"POST"
                                    andDictData:dict
                                    withLoading:YES
@@ -268,23 +268,47 @@
 }
 -(void)btnOption:(UIButton *)sender
 {
-    NSIndexPath *indexPath;
-    indexPath = [collectionViewPost indexPathForItemAtPoint:[collectionViewPost convertPoint:sender.center fromView:sender.superview]];
- 
+    UICollectionViewCell *cell = (UICollectionViewCell *)[sender findSuperViewWithClass:[UICollectionViewCell class]];
+    UIImageView *img = (UIImageView *)[cell viewWithTag:102];
+    
+    NSIndexPath *indexPath = [collectionViewPost indexPathForCell:cell];
+    
     NSDictionary *dictVal = [self.array objectAtIndex:indexPath.row];
- 
     OptionClass *share = [[OptionClass alloc] initWithView:self andDelegate:self];
     
     if([[dictVal valueForKey:@"user_id"] integerValue] != [[LoggedInUser sharedUser].userId integerValue])
     {
-        [share otherUserPostOptionClass:dictVal];
+        [share otherUserPostOptionClass:dictVal Image:img.image];
     }
     else
     {
-        [share selfUserPostOptionClass:dictVal];
+        [share selfUserPostOptionClass:dictVal Image:img.image];
     }
-    
 }
+
+-(void)callInstagramMethod:(NSDictionary *)dict Image:(UIImage *)image
+{
+    NSURL *instagramURL = [NSURL URLWithString:@"instagram://app"];
+    
+    if([[UIApplication sharedApplication] canOpenURL:instagramURL])
+    {
+        NSString *imagePath = [NSString stringWithFormat:@"%@/image.igo",[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject]];
+        [[NSFileManager defaultManager] removeItemAtPath:imagePath error:nil];
+        
+        [UIImageJPEGRepresentation(image, 1) writeToFile:imagePath atomically:YES];
+        
+        _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:imagePath]];
+        _documentController.delegate = self;
+        _documentController.UTI = @"com.instagram.exclusivegram";
+        
+        [_documentController presentOpenInMenuFromRect:self.view.frame inView:self.view animated:YES];
+    }
+    else
+    {
+        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Instagram not install in your IPhone"];
+    }
+}
+
 -(void)btnComment:(UIButton *)sender
 {
     NSInteger indexPath = [sender.accessibilityLabel intValue];
@@ -294,76 +318,6 @@
     
     [self.navigationController pushViewController:obj animated:YES];
 }
-
--(void)openActionSheet:(NSDictionary *)dictValue imageShare:(UIImage *)imgSahre
-{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
-                                                                   message:nil
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-    UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Facebook"
-                                                       style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                           if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook])
-                                                           {
-                                                               SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
-                                                               
-                                                               [controller setInitialText:[NSString stringWithFormat:@"%@",[dictValue valueForKey:@"location_text"]]];
-                                                               [controller addImage:imgSahre];
-                                                               
-                                                               [self presentViewController:controller animated:YES completion:Nil];
-                                                           }
-                                                       }];
-    
-    UIAlertAction *twitter = [UIAlertAction actionWithTitle:@"Twitter" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
-        {
-            SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-            
-            [controller setInitialText:[NSString stringWithFormat:@"%@",[dictValue valueForKey:@"location_text"]]];
-            [controller addImage:imgSahre];
-            
-            [self presentViewController:controller animated:YES completion:Nil];
-        }
-    }];
-    
-//    UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Instagram" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//        [self instaGramWallPost:imgSahre];
-//    }];
-    
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
-    [alert addAction:facebook];
-    [alert addAction:twitter];
-    [alert addAction:cancel];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-
--(void)instaGramWallPost:(UIImage *)imgShare
-{
-    NSURL *instagramURL = [NSURL URLWithString:@"instagram://app"];
-    
-    if([[UIApplication sharedApplication] canOpenURL:instagramURL]) //check for App is install or not
-    {
-        UIImage *imageToUse = imgShare;
-        NSString *documentDirectory=[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
-        NSString *saveImagePath=[documentDirectory stringByAppendingPathComponent:@"Image.igo"];
-        NSData *imageData=UIImagePNGRepresentation(imageToUse);
-        [imageData writeToFile:saveImagePath atomically:YES];
-        NSURL *imageURL=[NSURL fileURLWithPath:saveImagePath];
-        self.documentController=[[UIDocumentInteractionController alloc]init];
-        self.documentController = [UIDocumentInteractionController interactionControllerWithURL:imageURL];
-        self.documentController.delegate = self;
-        self.documentController.annotation = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Testing"], @"InstagramCaption", nil];
-        self.documentController.UTI = @"com.instagram.exclusivegram";
-        UIViewController *vc = [UIApplication sharedApplication].keyWindow.rootViewController;
-        [self.documentController presentOpenInMenuFromRect:CGRectMake(1, 1, 1, 1) inView:vc.view animated:YES];
-    }
-    else
-    {
-        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Instagram not install in your IPhone"];
-    }
-}
-
 
 -(void)isFriendOrNot:(UIButton *)sender
 {

@@ -15,11 +15,8 @@
     IBOutlet    UIView      *viewMain;
     IBOutlet    UIImageView *imgMain;
     IBOutlet    ResponsiveLabel     *lblCaption;
-
-    IBOutlet    UIButton    *btnOption;
-    IBOutlet    UILabel     *lblLocation;
-    IBOutlet    UILabel     *lblTime;
     
+    IBOutlet    UILabel     *lblLocation;
     IBOutlet    UIImageView *imgProfile;
     IBOutlet    UILabel     *lblUserVibeName;
     IBOutlet    UILabel     *lblUserFullName;
@@ -29,12 +26,11 @@
     IBOutlet    UILabel     *lblCommentCount;
     IBOutlet    UIButton    *btnComment;
     IBOutlet    UIButton    *btnLike;
-    
+    IBOutlet    UILabel     *lblDate;
     
 }
 - (IBAction)btnLocation:(id)sender;
 - (IBAction)btnDirection:(UIButton *)sender;
-- (IBAction)btnOption:(id)sender;
 - (IBAction)btnInfo:(id)sender;
 - (IBAction)btnComment:(id)sender;
 - (IBAction)btnLike:(id)sender;

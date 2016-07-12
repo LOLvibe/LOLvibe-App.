@@ -52,6 +52,17 @@
                         <action selector="tabBtnClicked:" destination="iN0-l3-epB" eventType="touchUpInside" id="agW-Ze-v75"/>
                     </connections>
                 </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rnf-iH-iP0">
+                    <rect key="frame" x="240" y="5" width="6" height="6"/>
+                    <color key="backgroundColor" red="0.32156862749999998" green="0.62459133190000005" blue="0.21960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="6" id="OhN-1c-nKy"/>
+                        <constraint firstAttribute="width" constant="6" id="xYC-J5-FLM"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
                 <button opaque="NO" tag="4" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TzW-NQ-82S">
                     <rect key="frame" x="256" y="0.0" width="64" height="49"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -87,24 +98,39 @@
                         <action selector="tabBtnClicked:" destination="iN0-l3-epB" eventType="touchUpInside" id="g3e-dH-aN2"/>
                     </connections>
                 </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GXB-3Y-v0x">
+                    <rect key="frame" x="112" y="5" width="6" height="6"/>
+                    <color key="backgroundColor" red="0.32156862749999998" green="0.62459133190000005" blue="0.21960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="6" id="nbA-FE-wMM"/>
+                        <constraint firstAttribute="width" constant="6" id="vIj-js-qz7"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="W11-pV-LFs" firstAttribute="leading" secondItem="7cx-tQ-KVv" secondAttribute="trailing" id="1UN-DA-YBm"/>
                 <constraint firstAttribute="bottom" secondItem="W11-pV-LFs" secondAttribute="bottom" id="2dc-Ta-NRD"/>
                 <constraint firstAttribute="bottom" secondItem="dag-ix-7da" secondAttribute="bottom" id="4Kl-RA-31S"/>
+                <constraint firstItem="Rnf-iH-iP0" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="5" id="AgJ-JA-hId"/>
                 <constraint firstItem="X8X-xx-cdT" firstAttribute="width" secondItem="TzW-NQ-82S" secondAttribute="width" id="Cmn-fW-MbT"/>
                 <constraint firstItem="TzW-NQ-82S" firstAttribute="leading" secondItem="dag-ix-7da" secondAttribute="trailing" id="MQs-y0-2ju"/>
                 <constraint firstItem="X8X-xx-cdT" firstAttribute="width" secondItem="dag-ix-7da" secondAttribute="width" id="OrZ-rx-sAm"/>
                 <constraint firstItem="NoD-G0-J9n" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="QCn-ni-m9p"/>
                 <constraint firstItem="dag-ix-7da" firstAttribute="leading" secondItem="X8X-xx-cdT" secondAttribute="trailing" id="QJa-DU-3z3"/>
                 <constraint firstAttribute="bottom" secondItem="X8X-xx-cdT" secondAttribute="bottom" id="SPO-5Q-FmN"/>
+                <constraint firstItem="X8X-xx-cdT" firstAttribute="leading" secondItem="GXB-3Y-v0x" secondAttribute="trailing" constant="10" id="SYW-2m-K6W"/>
                 <constraint firstItem="X8X-xx-cdT" firstAttribute="width" secondItem="7cx-tQ-KVv" secondAttribute="width" id="UtM-0S-TJI"/>
                 <constraint firstAttribute="bottom" secondItem="TzW-NQ-82S" secondAttribute="bottom" id="WT0-fy-sz0"/>
                 <constraint firstAttribute="bottom" secondItem="7cx-tQ-KVv" secondAttribute="bottom" id="Zeh-4R-Qn7"/>
                 <constraint firstItem="X8X-xx-cdT" firstAttribute="width" secondItem="W11-pV-LFs" secondAttribute="width" id="cve-Y2-MjS"/>
+                <constraint firstItem="TzW-NQ-82S" firstAttribute="leading" secondItem="Rnf-iH-iP0" secondAttribute="trailing" constant="10" id="fFP-QP-gMK"/>
                 <constraint firstItem="NoD-G0-J9n" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="kJL-zK-dIN"/>
                 <constraint firstItem="7cx-tQ-KVv" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="kZx-RB-VaT"/>
+                <constraint firstItem="GXB-3Y-v0x" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="5" id="qhb-6V-4KA"/>
                 <constraint firstAttribute="bottom" secondItem="W11-pV-LFs" secondAttribute="bottom" id="seg-RC-agE"/>
                 <constraint firstAttribute="bottom" secondItem="dag-ix-7da" secondAttribute="bottom" id="tKb-WS-bXb"/>
                 <constraint firstItem="X8X-xx-cdT" firstAttribute="leading" secondItem="W11-pV-LFs" secondAttribute="trailing" id="tOQ-Fx-qAq"/>
@@ -120,8 +146,10 @@
                 <outlet property="btn3" destination="X8X-xx-cdT" id="lnE-fJ-Yq4"/>
                 <outlet property="btn4" destination="dag-ix-7da" id="Sko-uR-GRL"/>
                 <outlet property="btn5" destination="TzW-NQ-82S" id="twC-9Y-zOU"/>
+                <outlet property="lblNotif" destination="GXB-3Y-v0x" id="zis-eJ-50a"/>
+                <outlet property="lblNotifChat" destination="Rnf-iH-iP0" id="3WV-dd-umd"/>
             </connections>
-            <point key="canvasLocation" x="8" y="1027.5"/>
+            <point key="canvasLocation" x="39" y="562.5"/>
         </view>
     </objects>
     <resources>

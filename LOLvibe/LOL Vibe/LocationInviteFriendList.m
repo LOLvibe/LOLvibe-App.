@@ -30,14 +30,21 @@
     [super viewDidLoad];
     arrFriend  =[[NSMutableArray alloc]init];
     arrFriendCopyArray=[[NSMutableArray alloc]init];
-    
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     [self getFriendList];
-    
-    self.title = @"Friends";
 }
-
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear: animated];
+    
+    self.title = @"Send Invite To...";
+}
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    //self.title = @"Friends";
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }

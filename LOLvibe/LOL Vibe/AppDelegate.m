@@ -99,7 +99,15 @@
     if ([launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]!=nil)
     {
         self.pushNotifInfo =[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-        [_tabbarController showNotification];
+        
+        if ([[self.pushNotifInfo valueForKeyPath:@"aps.message_type"] integerValue] == 11 || [[self.pushNotifInfo valueForKeyPath:@"aps.message_type"] integerValue] == 12)
+        {
+            [_tabbarController showChatScreen];
+        }
+        else
+        {
+            [_tabbarController showNotification];
+        }
     }
     
     return YES;
@@ -244,9 +252,30 @@
 {
     self.pushNotifInfo = userInfo;
     
-    [_tabbarController showNotification];
-    
-   // UIApplicationState state = [application applicationState];
+    UIApplicationState state = [application applicationState];
+
+    if (state == UIApplicationStateActive)
+    {
+        if ([[userInfo valueForKeyPath:@"aps.message_type"] integerValue] == 11 || [[userInfo valueForKeyPath:@"aps.message_type"] integerValue] == 12)
+        {
+            [_tabbarController showNotifIconCHAT];
+        }
+        else
+        {
+            [_tabbarController showNotifIcon];
+        }
+    }
+    else
+    {
+        if ([[userInfo valueForKeyPath:@"aps.message_type"] integerValue] == 11 || [[userInfo valueForKeyPath:@"aps.message_type"] integerValue] == 12)
+        {
+            [_tabbarController showChatScreen];
+        }
+        else
+        {
+            [_tabbarController showNotification];
+        }
+    }
 }
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

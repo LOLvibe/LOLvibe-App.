@@ -11,7 +11,6 @@
 
 @interface HomeVC : UIViewController<UIDocumentInteractionControllerDelegate>
 {
-    
     IBOutlet UICollectionView *coolectionFeed;
 }
 

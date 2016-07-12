@@ -580,6 +580,11 @@
                 [self.navigationController popToRootViewControllerAnimated:YES];
                   [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }
+            else if ([[dictResult valueForKey:@"status_code"] integerValue]== 14)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }
             else
             {
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];

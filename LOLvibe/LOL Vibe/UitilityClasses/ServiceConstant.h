@@ -28,14 +28,15 @@
 
 
 
-#define App_Name         @"LOLvibe"
+#define App_Name                        @"LOLvibe"
+#define APP_ITUNES_LINK                 @"https://itunes.apple.com/in/app/fix-duplicate-manage-duplicate/id1095988098?mt=8"
+#define YOUR_APP_STORE_ID               545174222
 
-#define GOOGLE_API_KEY @"AIzaSyCsWgozT4rX6EF8dWnF0nsY1USbTap_5kU"
+#define Post_Limit                      @"20"
 
-#define APP_DELEGATE     [[UIApplication sharedApplication] delegate]
-
-#define LOL_Vibe_Green_Color [UIColor colorWithRed:82.0/255.0 green:164.0/255.0 blue:56.0/255.0 alpha:1.0]
-
+#define GOOGLE_API_KEY                  @"AIzaSyCsWgozT4rX6EF8dWnF0nsY1USbTap_5kU"
+#define APP_DELEGATE                    [[UIApplication sharedApplication] delegate]
+#define LOL_Vibe_Green_Color            [UIColor colorWithRed:82.0/255.0 green:164.0/255.0 blue:56.0/255.0 alpha:1.0]
 #define ServiceDomain                   @"http://lolvibe.com/index.php/lol_vibe/"
 
 #define SIGN_UP                         (ServiceDomain @"signup")
@@ -80,6 +81,8 @@
 #define REPORT_POST_COMMENT             (ServiceDomain @"report")
 #define CHAT_NOTIFICATION               (ServiceDomain @"chat_notification")
 #define GROUP_NOTIFICATION              (ServiceDomain @"group_chat_notification")
+#define DELETE_COMMENT                  (ServiceDomain @"delete_comment")
+#define VERIFY_USER                     (ServiceDomain @"verify_user")
 
 
 #define kPref                           [NSUserDefaults standardUserDefaults]

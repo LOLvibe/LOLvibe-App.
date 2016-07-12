@@ -252,7 +252,7 @@
                 loggedInUser.userZipcode           = [NSString stringWithFormat:@"%@",[dictResult valueForKeyPath:@"data.location"]];
                 loggedInUser.userAge               = [NSString stringWithFormat:@"%@",[dictResult valueForKeyPath:@"data.age"]];
                 loggedInUser.isUserLoggedIn        = YES;
-                
+                loggedInUser.userStatus            = [NSString stringWithFormat:@"%@",[dictResult valueForKeyPath:@"data.status"]];
                 [loggedInUser save];
                 
                 [[XmppHelper sharedInstance] disconnect];
@@ -266,7 +266,7 @@
             }
             else if ([[dictResult valueForKey:@"status"] integerValue]== 0)
             {
-                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Please Enter your registered Email or Vibe Username"];
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }
         }
         else if ([tagStr isEqualToString:@"fbLogin"])

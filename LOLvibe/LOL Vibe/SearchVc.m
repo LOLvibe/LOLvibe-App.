@@ -117,7 +117,9 @@
     UILabel *lblName        = (UILabel *)[cell viewWithTag:102];
     UILabel *lblVibeName    = (UILabel *)[cell viewWithTag:103];
     UIButton *btnAddFrnd    = (UIButton *)[cell viewWithTag:104];
+    UILabel *lblDistance    = (UILabel *)[cell viewWithTag:105];
     
+    lblDistance.text = [NSString stringWithFormat:@"%.1f Miles Away",[[[arrPeoples objectAtIndex:indexPath.row] valueForKey:@"distance"] floatValue]];
     [btnAddFrnd addTarget:self action:@selector(btnAddFrnd:) forControlEvents:UIControlEventTouchUpInside];
     
     if ([[[arrPeoples objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 0)
@@ -180,7 +182,7 @@
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    CGFloat sizeflot = collectionViewGrid.frame.size.width - 32;
+    CGFloat sizeflot = collectionViewGrid.frame.size.width - 5;
     sizeflot = sizeflot/3;
     CGSize size = CGSizeMake(sizeflot, sizeflot);
     return size;

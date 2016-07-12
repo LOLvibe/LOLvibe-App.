@@ -34,6 +34,8 @@
     IBOutlet UITableView *tblFriendList;
     IBOutlet UIView *lockView;
     IBOutlet UIButton *btnAddFriend;
+    IBOutlet UILabel *lblFriendCount;
+
 }
 
 @property (strong,atomic) NSDictionary *dictUser;

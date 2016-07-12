@@ -15,7 +15,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ha8-fk-dHU">
-                        <rect key="frame" x="58" y="19" width="33" height="21"/>
+                        <rect key="frame" x="58" y="10" width="33" height="21"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="33" id="dwC-wJ-DTm"/>
                             <constraint firstAttribute="height" constant="21" id="qqv-e5-OtT"/>
@@ -39,14 +39,14 @@
                         </constraints>
                     </imageView>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="like-notification" highlightedImage="chate-public" translatesAutoresizingMaskIntoConstraints="NO" id="Uur-Qh-Kgh">
-                        <rect key="frame" x="99" y="19" width="20" height="20"/>
+                        <rect key="frame" x="99" y="10" width="20" height="20"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="20" id="Dtg-nM-W9h"/>
                             <constraint firstAttribute="height" constant="20" id="Td6-WO-Os5"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="your post." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uJR-ym-Sg6">
-                        <rect key="frame" x="124" y="19" width="75" height="21"/>
+                        <rect key="frame" x="124" y="10" width="75" height="21"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="21" id="LqR-pG-tzp"/>
                             <constraint firstAttribute="width" constant="75" id="tBz-5B-BMQ"/>
@@ -61,21 +61,33 @@
                             <constraint firstAttribute="width" constant="46" id="AUf-ac-nxn"/>
                         </constraints>
                     </button>
+                    <label opaque="NO" userInteractionEnabled="NO" tag="111" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="your post." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XyU-af-xeC">
+                        <rect key="frame" x="58" y="31" width="208" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="eP7-gH-UP3"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="XyU-af-xeC" firstAttribute="leading" secondItem="R8R-vy-KfN" secondAttribute="trailing" constant="8" id="1uY-xa-988"/>
                     <constraint firstItem="Tla-ZY-zsP" firstAttribute="top" secondItem="DCJ-HU-1l0" secondAttribute="top" constant="15" id="3n8-Du-122"/>
                     <constraint firstItem="Uur-Qh-Kgh" firstAttribute="leading" secondItem="Ha8-fk-dHU" secondAttribute="trailing" constant="8" id="3vZ-XQ-hmA"/>
-                    <constraint firstItem="Uur-Qh-Kgh" firstAttribute="top" secondItem="DCJ-HU-1l0" secondAttribute="top" constant="19" id="4Px-eC-Jnf"/>
-                    <constraint firstItem="Ha8-fk-dHU" firstAttribute="top" secondItem="DCJ-HU-1l0" secondAttribute="top" constant="19" id="CLe-ie-nIV"/>
+                    <constraint firstItem="Uur-Qh-Kgh" firstAttribute="top" secondItem="DCJ-HU-1l0" secondAttribute="top" constant="10" id="4Px-eC-Jnf"/>
+                    <constraint firstItem="Ha8-fk-dHU" firstAttribute="top" secondItem="DCJ-HU-1l0" secondAttribute="top" constant="10" id="CLe-ie-nIV"/>
                     <constraint firstAttribute="trailing" secondItem="Tla-ZY-zsP" secondAttribute="trailing" constant="8" id="Col-68-zbZ"/>
                     <constraint firstItem="zrF-vQ-0G7" firstAttribute="top" secondItem="DCJ-HU-1l0" secondAttribute="top" id="Pdn-qq-q1I"/>
                     <constraint firstItem="R8R-vy-KfN" firstAttribute="top" secondItem="DCJ-HU-1l0" secondAttribute="top" constant="10" id="Rjk-hL-wH9"/>
-                    <constraint firstItem="uJR-ym-Sg6" firstAttribute="top" secondItem="DCJ-HU-1l0" secondAttribute="top" constant="19" id="XYu-P2-ltY"/>
+                    <constraint firstItem="uJR-ym-Sg6" firstAttribute="top" secondItem="DCJ-HU-1l0" secondAttribute="top" constant="10" id="XYu-P2-ltY"/>
                     <constraint firstItem="uJR-ym-Sg6" firstAttribute="leading" secondItem="Uur-Qh-Kgh" secondAttribute="trailing" constant="5" id="dvS-Tm-UIY"/>
                     <constraint firstItem="Ha8-fk-dHU" firstAttribute="leading" secondItem="R8R-vy-KfN" secondAttribute="trailing" constant="8" id="i7H-t9-lja"/>
                     <constraint firstItem="R8R-vy-KfN" firstAttribute="leading" secondItem="DCJ-HU-1l0" secondAttribute="leading" constant="10" id="ktU-pR-jbv"/>
                     <constraint firstAttribute="trailing" secondItem="zrF-vQ-0G7" secondAttribute="trailing" id="tyu-1H-KiR"/>
                     <constraint firstAttribute="bottom" secondItem="zrF-vQ-0G7" secondAttribute="bottom" id="uwE-08-TBB"/>
+                    <constraint firstItem="zrF-vQ-0G7" firstAttribute="leading" secondItem="XyU-af-xeC" secondAttribute="trailing" constant="8" id="xVC-KY-RjT"/>
+                    <constraint firstItem="XyU-af-xeC" firstAttribute="top" secondItem="uJR-ym-Sg6" secondAttribute="bottom" id="y1T-VN-h16"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
@@ -85,8 +97,9 @@
                 <outlet property="imgProfile" destination="R8R-vy-KfN" id="On6-Xj-9tn"/>
                 <outlet property="lblName" destination="Ha8-fk-dHU" id="Xf4-yN-NvT"/>
                 <outlet property="lblPostType" destination="uJR-ym-Sg6" id="hHZ-yW-4ZR"/>
+                <outlet property="lblTime" destination="XyU-af-xeC" id="OXQ-JD-DMb"/>
             </connections>
-            <point key="canvasLocation" x="191" y="163"/>
+            <point key="canvasLocation" x="204" y="251"/>
         </tableViewCell>
     </objects>
     <resources>

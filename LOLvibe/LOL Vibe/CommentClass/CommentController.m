@@ -9,6 +9,7 @@
 #import "CommentController.h"
 #import "ServiceConstant.h"
 #import "UIView+SuperView.h"
+#import "OtherProfileVC.h"
 
 @interface CommentController ()<WebServiceDelegate>
 {
@@ -83,17 +84,26 @@
     UITextView *txtComment      = (UITextView *)[cell viewWithTag:103];
     UILabel *lblTime            = (UILabel *)[cell viewWithTag:108];
     UIButton *btnOption         = (UIButton *)[cell viewWithTag:999];
+    UIButton *btnProfile         = (UIButton *)[cell viewWithTag:9999];
     
     [btnOption addTarget:self action:@selector(btnOptionReply:)
         forControlEvents:UIControlEventTouchUpInside];
-
+    
+    [btnProfile addTarget:self action:@selector(btnProfileReply:)
+        forControlEvents:UIControlEventTouchUpInside];
+    
     NSDictionary *dictComment = [[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row];
     
     imgProfile.layer.cornerRadius = imgProfile.frame.size.height/2;
     imgProfile.layer.masksToBounds = YES;
 
     lblName.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"vibe_name"]];
-    txtComment.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"comment_text"]];
+    NSString *comment = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"comment_text"]];
+    
+    const char *jsonString = [comment UTF8String];
+    NSData *jsonData = [NSData dataWithBytes:jsonString length:strlen(jsonString)];
+    NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
+    txtComment.text=goodMsg;
     
     lblTime.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"created_at"]];
     
@@ -116,9 +126,15 @@
     UILabel *lblLikeCounter     = (UILabel *)[cell viewWithTag:107];
     UILabel *lblTime            = (UILabel *)[cell viewWithTag:108];
     UIButton *btnOption         = (UIButton *)[cell viewWithTag:999];
+    UIButton *btnProfileComment = (UIButton *)[cell viewWithTag:9999];
     
     btnOption.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)section];
+    btnProfileComment.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)section];
+    
     [btnOption addTarget:self action:@selector(btnOptionComment:)
+        forControlEvents:UIControlEventTouchUpInside];
+
+    [btnProfileComment addTarget:self action:@selector(btnProfileComment:)
         forControlEvents:UIControlEventTouchUpInside];
 
     NSDictionary *dictComment = [arrComment objectAtIndex:section];
@@ -152,7 +168,13 @@
     
     
     lblName.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"vibe_name"]];
-    txtComment.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"comment_text"]];
+   
+    NSString *comment = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"comment_text"]];
+    const char *jsonString = [comment UTF8String];
+    NSData *jsonData = [NSData dataWithBytes:jsonString length:strlen(jsonString)];
+    NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
+    txtComment.text=goodMsg;
+    
     lblLikeCounter.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"like"]];
     lblTime.text = [NSString stringWithFormat:@"%@",[dictComment valueForKey:@"created_at"]];
     
@@ -186,7 +208,10 @@
     }
     return _readMoreCells;
 }
-
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+}
 -(void)btnRReplySend:(UIButton *)sender
 {
     NSLog(@"%ld",[sender.accessibilityLabel integerValue]);
@@ -213,24 +238,33 @@
     [self showOptions:[[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row]];
 }
 
--(void)callReportMethod:(NSDictionary *)dict
+#pragma --- Profile Redirect
+-(void)btnProfileReply:(UIButton *)sender
 {
-    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
-    [dictPara setValue:[dict valueForKey:@"feed_id"] forKey:@"report_for_id"];
-    [dictPara setValue:[dict valueForKey:@"user_id"] forKey:@"to_user_id"];
-    [dictPara setValue:@"comment" forKey:@"report_for"];
+    UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
+    NSIndexPath *indexPath = [tblComment indexPathForCell:cell];
+    if ([[[[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row] valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId]) {
+        return;
+    }
     
-    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    OtherProfileVC *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"OtherProfileVC"];
+    obj.dictUser = [[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row];
     
-    [report callWebServiceWithURLDict:REPORT_POST_COMMENT
-                        andHTTPMethod:@"POST"
-                          andDictData:dictPara
-                          withLoading:YES
-                     andWebServiceTag:@"report"
-                             setToken:YES];
+    [self.navigationController pushViewController:obj animated:YES];
 }
+-(void)btnProfileComment:(UIButton *)sender
+{
+    NSInteger section = [sender.accessibilityLabel integerValue];
+   
+    if ([[[arrComment objectAtIndex:section] valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId]) {
+        return;
+    }
 
-
+    OtherProfileVC *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"OtherProfileVC"];
+    obj.dictUser = [arrComment objectAtIndex:section];
+    
+    [self.navigationController pushViewController:obj animated:YES];
+}
 #pragma mark --Comment Like and Unlike --
 
 -(void)likeUnLikeComment:(UIButton *)sender
@@ -239,11 +273,9 @@
     UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
     NSIndexPath *indexPath = [tblComment indexPathForCell:cell];
     
-    
     NSMutableDictionary *dictLike= [[NSMutableDictionary alloc] init];
     [dictLike setValue:[[arrComment objectAtIndex:indexPath.section] valueForKey:@"comment_id"] forKey:@"parent_id"];
     [dictLike setValue:@"comment" forKey:@"like_type"];
-    
     
     WebService *serLikeUnLike = [[WebService alloc]initWithView:self.view andDelegate:self];
     
@@ -277,6 +309,8 @@
 #pragma mark Send Button Action
 - (IBAction)btnSend:(UIButton *)sender
 {
+    [txtAddComment resignFirstResponder];
+    
     if(txtAddComment.text.length > 0)
     {
         if(!isReply)
@@ -284,7 +318,12 @@
             NSMutableDictionary *dictParametr = [[NSMutableDictionary alloc] init];
             [dictParametr setValue:[dictPost valueForKey:@"feed_id"] forKey:@"parent_id"];
             [dictParametr setValue:@"post" forKey:@"comment_type"];
-            [dictParametr setValue:txtAddComment.text forKey:@"comment_text"];
+            
+            NSString *uniText = [NSString stringWithUTF8String:[txtAddComment.text UTF8String]];
+            NSData *msgData = [uniText dataUsingEncoding:NSNonLossyASCIIStringEncoding];
+            NSString *goodMsg = [[NSString alloc] initWithData:msgData encoding:NSUTF8StringEncoding] ;
+            
+            [dictParametr setValue:goodMsg forKey:@"comment_text"];
             
             WebService *serViewComment = [[WebService alloc] initWithView:self.view andDelegate:self];
             [serViewComment callWebServiceWithURLDict:ADD_COMMENT
@@ -298,7 +337,12 @@
             NSMutableDictionary *dictParametr = [[NSMutableDictionary alloc] init];
             [dictParametr setValue:[dictReply valueForKey:@"comment_id"] forKey:@"parent_id"];
             [dictParametr setValue:@"comment" forKey:@"comment_type"];
-            [dictParametr setValue:txtAddComment.text forKey:@"comment_text"];
+            
+            NSString *uniText = [NSString stringWithUTF8String:[txtAddComment.text UTF8String]];
+            NSData *msgData = [uniText dataUsingEncoding:NSNonLossyASCIIStringEncoding];
+            NSString *goodMsg = [[NSString alloc] initWithData:msgData encoding:NSUTF8StringEncoding] ;
+            
+            [dictParametr setValue:goodMsg forKey:@"comment_text"];
             
             WebService *serViewComment = [[WebService alloc] initWithView:self.view andDelegate:self];
             [serViewComment callWebServiceWithURLDict:ADD_COMMENT
@@ -320,15 +364,14 @@
 
     UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Delete"
                                                        style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
-                                                           
+                                                           [self deleteComment:dictPostDetail];
                                                        }];
     
     UIAlertAction *report = [UIAlertAction actionWithTitle:@"REPORT!" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [self callReportMethod:dictPostDetail];
     }];
     
-    
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
-    
     
     if([[dictPostDetail valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId])
     {
@@ -342,6 +385,37 @@
     [alert addAction:cancel];
 
     [self presentViewController:alert animated:YES completion:nil];
+}
+-(void)callReportMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"user_id"] forKey:@"to_user_id"];
+    [dictPara setValue:@"comment" forKey:@"report_for"];
+    [dictPara setValue:[dict valueForKey:@"comment_id"] forKey:@"report_for_id"];
+    
+    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [report callWebServiceWithURLDict:REPORT_POST_COMMENT
+                        andHTTPMethod:@"POST"
+                          andDictData:dictPara
+                          withLoading:YES
+                     andWebServiceTag:@"report"
+                             setToken:YES];
+}
+
+-(void)deleteComment:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"comment_id"] forKey:@"comment_id"];
+    
+    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [report callWebServiceWithURLDict:DELETE_COMMENT
+                        andHTTPMethod:@"POST"
+                          andDictData:dictPara
+                          withLoading:YES
+                     andWebServiceTag:@"delete_comment"
+                             setToken:YES];
 }
 
 
@@ -400,10 +474,32 @@
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }
         }
+        else if ([tagStr isEqualToString:@"report"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This comment is reported. Admin will review the comment and take the action."];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if ([tagStr isEqualToString:@"delete_comment"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [self getComment:NO page:@"1"];
+
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
     }
 }
-
-
 
 #pragma mark Textfield Delegate
 -(BOOL)textFieldShouldReturn:(UITextField *)textField

@@ -39,6 +39,9 @@
     CLLocationManager   *locationManager;
     float   sourceLat,sourceLong;
     float   destiLat,destiLong;
+    int                 pageCountPost,pageCountLoc;
+    BOOL                isEndPost,isEndLoc;
+    
     
 }
 @end
@@ -50,6 +53,7 @@
 {
     [super viewDidLoad];
     self.automaticallyAdjustsScrollViewInsets = NO;
+    pageCountPost = pageCountLoc = 1;
     
     serLogout           = [[WebService alloc]initWithView:self.view andDelegate:self];
     getFeed             = [[WebService alloc]initWithView:self.view andDelegate:self];
@@ -182,15 +186,14 @@
 -(void)getFriendList
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    [dict setValue:[LoggedInUser sharedUser].userAuthToken forKey:@"login_token"];
-    [dict setValue:[dictUser valueForKey:@"user_id"] forKey:@"user_id"];
+    [dict setValue:[dictUser valueForKey:@"user_id"] forKey:@"other_user_id"];
     
     [serFriendList callWebServiceWithURLDict:GET_FRIEND_LIST
                                andHTTPMethod:@"POST"
                                  andDictData:dict
                                  withLoading:YES
                             andWebServiceTag:@"getFriendList"
-                                    setToken:NO];
+                                    setToken:YES];
 }
 
 #pragma mark --Tableview Delegate Method--
@@ -203,23 +206,48 @@
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friend" forIndexPath:indexPath];
     
-    UIImageView *imgProfile = (UIImageView *)[cell viewWithTag:101];
+    UIImageView *imgProfile = (UIImageView *)[cell viewWithTag:100];
     UILabel *lblName        = (UILabel *)[cell viewWithTag:102];
+    UILabel *lblVibeName1    = (UILabel *)[cell viewWithTag:103];
+    UIButton *btnAddFrnd    = (UIButton *)[cell viewWithTag:104];
     
-    [imgProfile sd_setImageWithURL:[NSURL URLWithString:[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"post_bg.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+    [btnAddFrnd addTarget:self action:@selector(btnAddFrnd:) forControlEvents:UIControlEventTouchUpInside];
+    
+    if ([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 0)
+    {
+        btnAddFrnd.selected = NO;
+    }
+    else if([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 1)
+    {
+        btnAddFrnd.selected = YES;
+    }
+    
+    if ([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId]) {
+        [btnAddFrnd setHidden:YES];
+    }
+    
+    [imgProfile sd_setImageWithURL:[NSURL URLWithString:[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         imgProfile.image = image;
     }];
     
-     lblName.text = [NSString stringWithFormat:@"%@\n@%@",[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"name"],[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"vibe_name"]];
+    lblName.text = [NSString stringWithFormat:@"%@",[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"name"]];
     
+    lblVibeName1.text= [NSString stringWithFormat:@"@%@",[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"vibe_name"]];
+
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *dictInfo = @{@"name":[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"vibe_name"],@"profile_pic":[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"profile_pic"]};
-    [self performSegueWithIdentifier:@"profile" sender:dictInfo];
+    if ([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId]) {
+        return;
+    }
+    
+    OtherProfileVC *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"OtherProfileVC"];
+    obj.dictUser = [arrFriend objectAtIndex:indexPath.row];
+    
+    [self.navigationController pushViewController:obj animated:YES];
 }
 
 #pragma mark --Collectionview Delegate Method--
@@ -623,7 +651,7 @@
     }
     else if (collectionView == collectionViewGrid)
     {
-        CGFloat sizeflot = collectionViewGrid.frame.size.width - 32;
+        CGFloat sizeflot = collectionViewGrid.frame.size.width - 5;
         sizeflot = sizeflot/3;
         CGSize size = CGSizeMake(sizeflot, sizeflot);
         return size;
@@ -632,33 +660,43 @@
     {
         return locationCollection.frame.size;
     }
-    
     return CGSizeZero;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    if (btnPostGrid.selected)
+    if (btnPostPhoto.selected)
     {
         if (scrollView.contentOffset.x == roundf(scrollView.contentSize.width-scrollView.frame.size.width))
         {
-            NSLog(@"we are at the endddd");
+            if (isEndPost)
+            {
+                return;
+            }
+            pageCountPost = pageCountPost+1;
+            [self getPhotoFeed];
         }
     }
-    else if (btnPostPhoto.selected)
+    else if (btnLocationPost.selected)
     {
-        if (scrollView.contentOffset.y == roundf(scrollView.contentSize.height-scrollView.frame.size.height))
+        if (scrollView.contentOffset.x == roundf(scrollView.contentSize.width-scrollView.frame.size.width))
         {
-            NSLog(@"we are at the endddd");
+            if (isEndLoc)
+            {
+                return;
+            }
+            pageCountLoc = pageCountLoc+1;
+            [self getLocationFeed];
         }
     }
 }
+
 -(void)getPhotoFeed
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setValue:@"photo" forKey:@"feed_type"];
-    [dict setValue:@"1"     forKey:@"page"];
-    [dict setValue:@"50"    forKey:@"limit"];
+    [dict setValue:[NSString stringWithFormat:@"%d",pageCountPost]     forKey:@"page"];
+    [dict setValue:Post_Limit    forKey:@"limit"];
     [dict setValue:@"2"     forKey:@"is_home_feed"];
     [dict setValue:[dictUser valueForKey:@"user_id"] forKey:@"other_user_id"];
     
@@ -674,8 +712,8 @@
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setValue:@"location"  forKey:@"feed_type"];
-    [dict setValue:@"1"         forKey:@"page"];
-    [dict setValue:@"50"        forKey:@"limit"];
+    [dict setValue:[NSString stringWithFormat:@"%d",pageCountPost]     forKey:@"page"];
+    [dict setValue:Post_Limit    forKey:@"limit"];
     [dict setValue:@"2"         forKey:@"is_home_feed"];
     [dict setValue:[dictUser valueForKey:@"user_id"] forKey:@"other_user_id"];
     
@@ -752,20 +790,49 @@
     
     if([sender.accessibilityLabel isEqualToString:@"photo"])
     {
-        NSIndexPath *indexPath;
-        indexPath = [collectionViewPost indexPathForItemAtPoint:[collectionViewPost convertPoint:sender.center fromView:sender.superview]];
-
+        UICollectionViewCell *cell = (UICollectionViewCell *)[sender findSuperViewWithClass:[UICollectionViewCell class]];
+        UIImageView *img = (UIImageView *)[cell viewWithTag:102];
+        
+        NSIndexPath *indexPath = [collectionViewPost indexPathForCell:cell];
+        
+        
         NSDictionary *dictVal = [arrPhotoPosts objectAtIndex:indexPath.row];
-        [share otherUserPostOptionClass:dictVal];
+        [share UserProfileSharingOption:dictVal Image:img.image];
+        
     }
     else if ([sender.accessibilityLabel isEqualToString:@"location"])
     {
-        NSIndexPath *indexPath;
-        indexPath = [locationCollection indexPathForItemAtPoint:[locationCollection convertPoint:sender.center fromView:sender.superview]];
+        UICollectionViewCell *cell = (UICollectionViewCell *)[sender findSuperViewWithClass:[UICollectionViewCell class]];
+        UIImageView *img = (UIImageView *)[cell viewWithTag:102];
+        NSIndexPath *indexPath = [locationCollection indexPathForCell:cell];
+        
         NSDictionary *dictVal = [arrLocationPosts objectAtIndex:indexPath.row];
-        [share otherUserPostOptionClass:dictVal];
+        [share UserProfileSharingOption:dictVal Image:img.image];
     }
 }
+-(void)callInstagramMethod:(NSDictionary *)dict Image:(UIImage *)image
+{
+    NSURL *instagramURL = [NSURL URLWithString:@"instagram://app"];
+    
+    if([[UIApplication sharedApplication] canOpenURL:instagramURL])
+    {
+        NSString *imagePath = [NSString stringWithFormat:@"%@/image.igo",[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)lastObject]];
+        [[NSFileManager defaultManager] removeItemAtPath:imagePath error:nil];
+        
+        [UIImageJPEGRepresentation(image, 1) writeToFile:imagePath atomically:YES];
+        
+        _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:imagePath]];
+        _documentController.delegate = self;
+        _documentController.UTI = @"com.instagram.exclusivegram";
+        
+        [_documentController presentOpenInMenuFromRect:self.view.frame inView:self.view animated:YES];
+    }
+    else
+    {
+        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Instagram not install in your IPhone"];
+    }
+}
+
 -(void)btnCommentPhoto:(UIButton *)sender
 {
     NSInteger indexPath = [sender.accessibilityLabel intValue];
@@ -873,7 +940,27 @@
                      andWebServiceTag:@"report"
                              setToken:YES];
 }
-
+-(void)btnAddFrnd:(UIButton *)sender
+{
+    if(!sender.selected)
+    {
+        UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
+        
+        NSIndexPath *indexPath = [tblFriendList indexPathForCell:cell];
+        
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        [dict setValue:[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"user_id"] forKey:@"other_user_id"];
+        
+        WebService *addfriend = [[WebService alloc] initWithView:self.view andDelegate:self];
+        
+        [addfriend callWebServiceWithURLDict:SEND_REQUEST
+                               andHTTPMethod:@"POST"
+                                 andDictData:dict
+                                 withLoading:YES
+                            andWebServiceTag:@"addfriend"
+                                    setToken:YES];
+    }
+}
 #pragma mark --Button Action--
 - (IBAction)btnAddFriend:(id)sender
 {
@@ -903,6 +990,11 @@
     [self hideView:viewLocation];
     [self hideView:viewFriendList];
     [self showView:viewPhoto];
+    
+    pageCountPost = 1;
+    [arrPhotoPosts removeAllObjects];
+    
+    [self getPhotoFeed];
 }
 - (IBAction)btnPostGrid:(id)sender
 {
@@ -936,6 +1028,10 @@
     [self hideView:viewGrid];
     [self hideView:viewFriendList];
     [self showView:viewLocation];
+    
+    pageCountLoc = 1;
+    [arrLocationPosts removeAllObjects];
+
     [self getLocationFeed];
 }
 
@@ -969,9 +1065,17 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [arrLocationPosts removeAllObjects];
                 [arrLocationPosts addObjectsFromArray:[dictResult valueForKey:@"feed_info"]];
                 [locationCollection reloadData];
+                
+                if ([[dictResult valueForKey:@"feed_info"] count] < [Post_Limit intValue])
+                {
+                    isEndLoc = YES;
+                }
+                else
+                {
+                    isEndLoc = NO;
+                }
             }
             else
             {
@@ -982,16 +1086,22 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [arrPhotoPosts removeAllObjects];
                 [arrPhotoPosts addObjectsFromArray:[dictResult valueForKey:@"feed_info"]];
-                
                 [collectionViewPost reloadData];
                 [collectionViewGrid reloadData];
+                
+                if ([[dictResult valueForKey:@"feed_info"] count] < [Post_Limit intValue])
+                {
+                    isEndPost = YES;
+                }
+                else
+                {
+                    isEndPost = NO;
+                }
             }
             else if ([[dictResult valueForKey:@"status_code"] intValue] == 13)
             {
                 [self.view bringSubviewToFront:lockView];
-                
             }
             else
             {
@@ -1004,6 +1114,8 @@
             {
                 arrFriend = [dictResult valueForKey:@"data"];
                 [tblFriendList reloadData];
+                lblFriendCount.text = [NSString stringWithFormat:@"(%d)",(int)[arrFriend count]];
+
             }
             else
             {
@@ -1045,6 +1157,18 @@
             }
         }
         else if ([tagStr isEqualToString:@"vibePostWS"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        
+        else if([tagStr isEqualToString:@"addfriend"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {

@@ -13,6 +13,7 @@
 {
     IBOutlet UICollectionView *coolectionFeed;
 }
+@property (strong ,atomic) UIDocumentInteractionController *documentController;
 
 @property (nonatomic, retain) NSString *strHashTag;
 @end

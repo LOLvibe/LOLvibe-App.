@@ -67,7 +67,7 @@
                                                object:nil];
     
     [self btnPublic:nil];
-
+    
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
     
@@ -141,14 +141,14 @@
 //-(void)getGoogleAdrressFromLatLong : (NSString *)lat lon:(NSString *)lon
 //{
 //    NSString *str = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%@,%@&sensor=true",lat,lon];
-//    
+//
 //    NSCharacterSet *set = [NSCharacterSet URLQueryAllowedCharacterSet];
 //    NSString *result = [str stringByAddingPercentEncodingWithAllowedCharacters:set];
 //    WebService *getAddress = [[WebService alloc]initWithView:self.view andDelegate:self];
-//    
-//    
+//
+//
 //    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-//    
+//
 //    [getAddress callSimpleWebServiceWithURLDict:result
 //                                  andHTTPMethod:@"POST"
 //                                    andDictData:dict
@@ -236,11 +236,14 @@
     
     [self btnCancelNearByPlaes:nil];
     
-//    [self getGoogleAdrressFromLatLong:[dictSelected valueForKeyPath:@"geometry.location.lat"] lon:[dictSelected valueForKeyPath:@"geometry.location.lng"]];
+    //    [self getGoogleAdrressFromLatLong:[dictSelected valueForKeyPath:@"geometry.location.lat"] lon:[dictSelected valueForKeyPath:@"geometry.location.lng"]];
     
     NSString *strName = [NSString stringWithFormat:@"%@\n%@",[dictSelected valueForKey:@"name"],[dictSelected valueForKey:@"vicinity"]];
     
     textCaption.text = strName;
+    
+    [btnVibePost setSelected:YES];
+    
 }
 
 #pragma mark- Location Permision Method
@@ -291,7 +294,7 @@
 - (IBAction)btnVibePost:(id)sender
 {
     [textCaption resignFirstResponder];
-
+    
     if ([textCaption.text length] == 0)
     {
         [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Please enter caption."];
@@ -356,13 +359,13 @@
             [dictPara setValue:strAddress forKey:@"location_text"];
             
             [dictPara setValue:strPublicOrFrnd forKey:@"post_share"];
-
+            
             NSString *uniText = [NSString stringWithUTF8String:[textCaption.text UTF8String]];
             NSData *msgData = [uniText dataUsingEncoding:NSNonLossyASCIIStringEncoding];
             NSString *goodMsg = [[NSString alloc] initWithData:msgData encoding:NSUTF8StringEncoding] ;
-
+            
             [dictPara setValue:goodMsg forKey:@"feed_text"];
-                        
+            
             [vibePostWS callWebServiceWithURL:CREATE_POST
                                 andHTTPMethod:@"POST"
                                   andDictData:dictPara
@@ -462,16 +465,14 @@ CGFloat _currentKeyboardHeight = 0.0f;
         
         int remaining =177-total;
         
-        
         if (remaining <= 0 )
         {
             lblCaptionCount.text = @"0";
         }
-        else{
+        else
+        {
             lblCaptionCount.text = [NSString stringWithFormat:@"%d",remaining];
         }
-
-       
         return textView.text.length + (text.length - range.length) <= 176;
     }
 }
@@ -481,6 +482,7 @@ CGFloat _currentKeyboardHeight = 0.0f;
 {
     dummyImage.image = info[UIImagePickerControllerEditedImage];
     [self dismissViewControllerAnimated:YES completion:nil];
+    [btnVibePost setSelected:YES];
 }
 
 #pragma mark --Webservice Delegate Method--
@@ -491,27 +493,22 @@ CGFloat _currentKeyboardHeight = 0.0f;
         NSDictionary *dictResult = (NSDictionary *)responseObj;
         NSLog(@"tempDict = %@",dictResult);
         
-//        if ([tagStr isEqualToString:@"getAddress"])
-//        {
-//            NSArray *results = [dictResult valueForKey:@"results"];
-//            if ([results count]> 0)
-//            {
-//                strAddress = [[results objectAtIndex:0] valueForKey:@"formatted_address"];
-//                NSLog(@"%@",strAddress);
-//            }
-//        }
         if ([tagStr isEqualToString:@"getNearByPlaces"])
         {
             [arrNearbyPlaces removeAllObjects];
             [arrNearbyPlaces addObjectsFromArray:[dictResult valueForKey:@"results"]];
             [tableNearbyPlaces reloadData];
         }
-        
-        if ([tagStr isEqualToString:@"vibePostWS"])
+        else if ([tagStr isEqualToString:@"vibePostWS"])
         {
             if ([[dictResult valueForKey:@"status_code"] integerValue]== 1)
             {
                 [[NSNotificationCenter defaultCenter] postNotificationName:kRefressHomeFeed object:nil];
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }
+            else if ([[dictResult valueForKey:@"status_code"] integerValue]== 14)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
                 [self dismissViewControllerAnimated:YES completion:nil];
             }
         }
