@@ -733,9 +733,21 @@
     [dict setValue:[[arrPhotoPosts objectAtIndex:indexPath] valueForKey:@"feed_id"] forKey:@"parent_id"];
     [dict setValue:@"post" forKey:@"like_type"];
     
+    UICollectionViewCell *cell = (UICollectionViewCell *) [self superviewWithClassName:@"UICollectionViewCell" fromView:sender];
+    UILabel *lblLikeCount;
+    int count = 0;
+    if (cell)
+    {
+        lblLikeCount       = (UILabel *)[cell viewWithTag:112];
+        NSIndexPath *indexPathSelected = [collectionViewPost indexPathForCell:cell];
+        
+        count = [[[arrPhotoPosts objectAtIndex:indexPathSelected.row] valueForKey:@"like"] intValue];
+    }
+        
     WebService *serLikePost = [[WebService alloc] initWithView:self.view andDelegate:self];
     if(sender.selected)
     {
+        count = count + 1;
         [serLikePost callWebServiceWithURLDict:LIKE_POST
                                  andHTTPMethod:@"POST"
                                    andDictData:dict
@@ -745,6 +757,7 @@
     }
     else
     {
+        count = count - 1;
         [serLikePost callWebServiceWithURLDict:UNLIKE_POST
                                  andHTTPMethod:@"POST"
                                    andDictData:dict
@@ -752,6 +765,7 @@
                               andWebServiceTag:@"likepost"
                                       setToken:YES];
     }
+    lblLikeCount.text = [NSString stringWithFormat:@"%d",count];
 }
 
 -(void)btnLikeLocation:(UIButton *)sender
@@ -763,9 +777,21 @@
     [dict setValue:[[arrLocationPosts objectAtIndex:indexPath] valueForKey:@"feed_id"] forKey:@"parent_id"];
     [dict setValue:@"post" forKey:@"like_type"];
     
+    UICollectionViewCell *cell = (UICollectionViewCell *) [self superviewWithClassName:@"UICollectionViewCell" fromView:sender];
+    UILabel *lblLikeCount;
+    int count = 0;
+    if (cell)
+    {
+        UILabel *lblLikeCount       =(UILabel *)[cell viewWithTag:116];
+        NSIndexPath *indexPathSelected = [collectionViewPost indexPathForCell:cell];
+        
+        count = [[[arrLocationPosts objectAtIndex:indexPathSelected.row] valueForKey:@"like"] intValue];
+    }
+    
     WebService *serLikePost = [[WebService alloc] initWithView:self.view andDelegate:self];
     if(sender.selected)
     {
+        count = count + 1;
         [serLikePost callWebServiceWithURLDict:LIKE_POST
                                  andHTTPMethod:@"POST"
                                    andDictData:dict
@@ -775,6 +801,7 @@
     }
     else
     {
+        count = count - 1;
         [serLikePost callWebServiceWithURLDict:UNLIKE_POST
                                  andHTTPMethod:@"POST"
                                    andDictData:dict
@@ -782,6 +809,7 @@
                               andWebServiceTag:@"likepost"
                                       setToken:YES];
     }
+    lblLikeCount.text = [NSString stringWithFormat:@"%d",count];
 }
 
 -(void)btnOption:(UIButton *)sender
@@ -961,6 +989,20 @@
                                     setToken:YES];
     }
 }
+
+- (UIView *)superviewWithClassName:(NSString *)className fromView:(UIView *)view
+{
+    while (view)
+    {
+        if ([NSStringFromClass([view class]) isEqualToString:className])
+        {
+            return view;
+        }
+        view = view.superview;
+    }
+    return nil;
+}
+
 #pragma mark --Button Action--
 - (IBAction)btnAddFriend:(id)sender
 {
