@@ -337,7 +337,7 @@ static BOOL disableCustomEasing = NO;
         [self setButtonStyle:buttonStyle forButton:button];
     }
     else {
-        NSLog(@"ERROR: Index out of bounds");
+//        NSLog(@"ERROR: Index out of bounds");
         return;
     }
 }

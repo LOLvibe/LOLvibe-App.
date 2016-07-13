@@ -29,8 +29,8 @@
 
 
 #define App_Name                        @"LOLvibe"
-#define APP_ITUNES_LINK                 @"https://itunes.apple.com/in/app/fix-duplicate-manage-duplicate/id1095988098?mt=8"
-#define YOUR_APP_STORE_ID               545174222
+#define APP_ITUNES_LINK                 @"https://itunes.apple.com/us/app/lolvibe-discover.-chat.-invite/id1132231241?ls=1&mt=8"
+#define YOUR_APP_STORE_ID               1132231241
 
 #define Post_Limit                      @"20"
 

@@ -10,7 +10,6 @@
 #import "ServiceConstant.h"
 #import "CommentController.h"
 #import "UIView+SuperView.h"
-#import "ShareViewController.h"
 #import "LocationInvitePlaces.h"
 #import "OptionClass.h"
 #import "HashTagVC.h"
@@ -68,10 +67,6 @@
         {
             [locationManager  requestWhenInUseAuthorization];
         }
-        else
-        {
-            NSLog(@"Info.plist does not contain NSLocationAlwaysUsageDescription or NSLocationWhenInUseUsageDescription");
-        }
     }
     [locationManager startUpdatingLocation];
 }
@@ -83,7 +78,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    NSLog(@"didUpdateToLocation: %@", newLocation);
+    //NSLog(@"didUpdateToLocation: %@", newLocation);
     CLLocation *currentLocation = newLocation;
     
     if (currentLocation != nil)
@@ -606,7 +601,7 @@
 
 -(void)isFriendOrNot:(UIButton *)sender
 {
-    NSLog(@"%d",sender.selected);
+//    NSLog(@"%d",sender.selected);
     if(!sender.selected)
     {
         NSMutableDictionary *dictval = [[NSMutableDictionary alloc] init];
@@ -830,7 +825,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"%@",dictResult);
+//        NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"getFeed"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)

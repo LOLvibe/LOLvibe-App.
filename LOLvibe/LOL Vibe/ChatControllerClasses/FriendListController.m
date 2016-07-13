@@ -91,7 +91,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"%@",dictResult);
+        //NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"friendList"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)

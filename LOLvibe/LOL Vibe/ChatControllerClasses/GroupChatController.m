@@ -86,6 +86,14 @@
     CGPoint offset = CGPointMake(0, CGFLOAT_MAX);
     [chatTableView setContentOffset:offset animated:YES];
 
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onBackgroundTap:)];
+    tapGesture.numberOfTapsRequired = 1;
+    tapGesture.cancelsTouchesInView = YES;
+    [self.view addGestureRecognizer:tapGesture];
+}
+- (void)onBackgroundTap:(id)sender
+{
+    [self.view endEditing:YES];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -472,8 +480,8 @@
     id <NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:sections.count-1];
     
     NSInteger rows = [chatTableView numberOfRowsInSection:sections.count-1];
-    NSLog(@"%lu",(unsigned long)sectionInfo.numberOfObjects);
-    NSLog(@"%ld",(long)rows);
+//    NSLog(@"%lu",(unsigned long)sectionInfo.numberOfObjects);
+//    NSLog(@"%ld",(long)rows);
     
     NSInteger sectionCount = [chatTableView numberOfSections];
     if(sections.count == sectionCount)
@@ -534,7 +542,7 @@
         NSError *error = nil;
         if (![fetchedResultsController performFetch:&error])
         {
-            NSLog(@"Error performing fetch: %@", error);
+            //NSLog(@"Error performing fetch: %@", error);
         }
         
     }
@@ -571,15 +579,13 @@
 #pragma mark Send Button
 - (IBAction)sendBnClick:(UIButton *)sender
 {
+    //NSLog(@"%@",chatTextView.text);
 
-    
-    NSLog(@"%@",chatTextView.text);
-
-    
-    if([[chatTextView.text lowercaseString] isEqualToString:[NSLocalizedString(@"Type Message", nil) lowercaseString]])
+    if([[chatTextView.text lowercaseString] isEqualToString:[NSLocalizedString(@"Type Message", nil) lowercaseString]] || [chatTextView.text length] == 0)
     {
         return;
     }
+
     
     
     if([chatTextView.text length]==0)
@@ -599,7 +605,7 @@
     NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
     [body setStringValue:msgVal];
     
-    NSTimeInterval  today = [[NSDate date] timeIntervalSince1970]*1000;
+    //NSTimeInterval  today = [[NSDate date] timeIntervalSince1970]*1000;
     //NSString *intervalString = [NSString stringWithFormat:@"%f", today];
     
     NSXMLElement *chatDetail = [NSXMLElement elementWithName:@"chatDetail" xmlns:@"jabber:x:oob"];
@@ -615,7 +621,7 @@
     NSString *messageID=[[XmppHelper sharedInstance] generateUniqueID];
     NSString *JIDStr = [[XmppHelper sharedInstance] getActualGroupIDForRoom:[dictUser valueForKey:@"group_id"]];
     XMPPJID *roomJID = [XMPPJID jidWithString:JIDStr];
-    NSLog(@"%@",self.dictUser);
+    //NSLog(@"%@",self.dictUser);
     
     
     NSXMLElement *message = [NSXMLElement elementWithName:@"message"];
@@ -630,9 +636,10 @@
     [[[XmppHelper sharedInstance] xmppStream] sendElement:message];
     
     chatTextViewHeightConstraint.constant = 35.0;
-    [chatTextView resignFirstResponder];
-    
-    chatTextView.text = [NSLocalizedString(@"Type Message", nil) uppercaseString];
+//    [chatTextView resignFirstResponder];
+    chatTextView.text = @"";
+
+    //chatTextView.text = [NSLocalizedString(@"Type Message", nil) uppercaseString];
     chatTextView.textColor = [UIColor colorWithRed:93.0/255.0 green:93.0/255.00 blue:93.0/255.00 alpha:1.0];
     [self sendNotification:msgVal];
     [self createRecentChatArray:msgVal];
@@ -643,7 +650,7 @@
 -(void)sendNotification:(NSString *)strMessage
 {
     NSMutableDictionary *dictNoti = [[NSMutableDictionary alloc] init];
-    [dictNoti setValue:[NSString stringWithFormat:@"%@ : %@",[LoggedInUser sharedUser].userVibeName,strMessage] forKey:@"msg"];
+    [dictNoti setValue:[NSString stringWithFormat:@": %@",strMessage] forKey:@"msg"];
     [dictNoti setValue:[LoggedInUser sharedUser].userId forKey:@"user_id"];
     [dictNoti setValue:[dictUser valueForKey:@"group_id"] forKey:@"group_id"];
     
@@ -986,7 +993,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"%@",dictResult);
+        //NSLog(@"%@",dictResult);
     }
 }
 

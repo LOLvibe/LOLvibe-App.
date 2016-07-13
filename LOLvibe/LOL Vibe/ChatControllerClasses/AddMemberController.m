@@ -151,7 +151,6 @@
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
     
     [arrSelectedMember addObject:[arrFrined objectAtIndex:indexPath.row]];
-    //NSLog(@"%@",arrSelectedMember);
 }
 
 -(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -160,7 +159,6 @@
     cell.accessoryType = UITableViewCellAccessoryNone;
     
     [arrSelectedMember removeObject:[arrFrined objectAtIndex:indexPath.row]];
-    //NSLog(@"%@",arrSelectedMember);
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -176,7 +174,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"%@",dictResult);
+//        NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"friendList"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)

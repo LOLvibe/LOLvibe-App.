@@ -205,7 +205,7 @@
     if (success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"tempDict = %@",dictResult);
+        //NSLog(@"tempDict = %@",dictResult);
         
         if([tagStr isEqualToString:@"signupWS"])
         {

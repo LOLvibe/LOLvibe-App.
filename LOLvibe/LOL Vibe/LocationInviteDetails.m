@@ -50,10 +50,6 @@
         {
             [locationManager  requestWhenInUseAuthorization];
         }
-        else
-        {
-            NSLog(@"Info.plist does not contain NSLocationAlwaysUsageDescription or NSLocationWhenInUseUsageDescription");
-        }
     }
     [locationManager startUpdatingLocation];
     
@@ -153,7 +149,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    NSLog(@"didUpdateToLocation: %@", newLocation);
+    //NSLog(@"didUpdateToLocation: %@", newLocation);
     CLLocation *currentLocation = newLocation;
     
     if (currentLocation != nil)
@@ -283,7 +279,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"%@",dictResult);
+        //NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"getLocatoinDetails"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)

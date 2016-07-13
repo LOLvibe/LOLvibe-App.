@@ -300,7 +300,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"%@",dictResult);
+        //NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"getSearchResult"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)

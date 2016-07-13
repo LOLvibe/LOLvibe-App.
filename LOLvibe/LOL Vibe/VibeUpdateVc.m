@@ -83,10 +83,6 @@
         {
             [locationManager  requestWhenInUseAuthorization];
         }
-        else
-        {
-            NSLog(@"Info.plist does not contain NSLocationAlwaysUsageDescription or NSLocationWhenInUseUsageDescription");
-        }
     }
     
     [locationManager startUpdatingLocation];
@@ -108,7 +104,6 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    NSLog(@"didUpdateToLocation: %@", newLocation);
     CLLocation *currentLocation = newLocation;
     
     if (currentLocation != nil)
@@ -127,7 +122,6 @@
                        completionHandler:^(NSArray *placemarks, NSError *error)
          {
              if (error){
-                 NSLog(@"Geocode failed with error: %@", error);
                  return;
              }
              
@@ -219,10 +213,9 @@
     return cell;
 }
 
-
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [self.navigationController setNavigationBarHidden:NO];
     dictSelected =[arrNearbyPlaces objectAtIndex:indexPath.row];
     
     NSString *strURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?center=%@,%@&markers=icon:|%@,%@&zoom=12&size=1024x780",
@@ -382,6 +375,7 @@
 
 - (IBAction)btnLocation:(id)sender
 {
+    [self.navigationController setNavigationBarHidden:YES];
     isLocationFeed = YES;
     [self.view bringSubviewToFront:viewNearByPlaces];
     [viewNearByPlaces setHidden:NO];
@@ -409,8 +403,9 @@
     [self presentViewController:controller animated:YES completion:NULL];
 }
 
-- (IBAction)btnCancelNearByPlaes:(id)sender {
-    
+- (IBAction)btnCancelNearByPlaes:(id)sender
+{
+    [self.navigationController setNavigationBarHidden:NO];
     [self.view sendSubviewToBack:viewNearByPlaces];
     [viewNearByPlaces setHidden:YES];
 }
@@ -491,7 +486,7 @@ CGFloat _currentKeyboardHeight = 0.0f;
     if (success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"tempDict = %@",dictResult);
+//        NSLog(@"tempDict = %@",dictResult);
         
         if ([tagStr isEqualToString:@"getNearByPlaces"])
         {

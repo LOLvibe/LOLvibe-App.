@@ -156,7 +156,7 @@
     [login logInWithReadPermissions:@[@"public_profile",@"email"] fromViewController:self handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
         if (error)
         {
-            NSLog(@"%@",error);
+//            NSLog(@"%@",error);
         }
         else if (result.isCancelled)
         {
@@ -174,7 +174,7 @@
                      {
                          if (!error)
                          {
-                             NSLog(@"fetched user:%@", result);
+//                             NSLog(@"fetched user:%@", result);
                              
                              NSDictionary *result = (NSDictionary *)result1;
                              
@@ -229,7 +229,7 @@
     if (success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"tempDict = %@",dictResult);
+//        NSLog(@"tempDict = %@",dictResult);
         
         if ([tagStr isEqualToString:@"login"])
         {
@@ -262,9 +262,8 @@
                 [[XmppHelper sharedInstance] connect];
                 
                 [appDel createTabbar];
-                
             }
-            else if ([[dictResult valueForKey:@"status"] integerValue]== 0)
+            else
             {
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }
@@ -303,7 +302,7 @@
                 [appDel createTabbar];
                 
             }
-            else if ([[dictResult valueForKey:@"status"] integerValue]== 0)
+            else
             {
                  [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }

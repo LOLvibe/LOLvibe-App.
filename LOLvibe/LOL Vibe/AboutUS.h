@@ -14,6 +14,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *btnRateUS;
 - (IBAction)AboutUS:(id)sender;
 - (IBAction)btnFeedback:(id)sender;
+- (IBAction)btnICON:(id)sender;
 
 @property (strong, nonatomic) IBOutlet UIButton *btnFeedback;
 @end

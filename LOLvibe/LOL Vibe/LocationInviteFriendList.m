@@ -215,7 +215,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"%@",dictResult);
+        //NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"getFriendList"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)

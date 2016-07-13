@@ -8,8 +8,7 @@
 
 #import "PostDetails.h"
 #import "ServiceConstant.h"
-#import "CommentController.h"
-#import "ShareViewController.h"
+#import "CommentController.h"b
 #import "OptionClass.h"
 #import "UIView+SuperView.h"
 #import "LocationInvitePlaces.h"
@@ -321,7 +320,7 @@
 
 -(void)isFriendOrNot:(UIButton *)sender
 {
-    NSLog(@"%d",sender.selected);
+    //NSLog(@"%d",sender.selected);
     if(!sender.selected)
     {
         NSMutableDictionary *dictval = [[NSMutableDictionary alloc] init];
@@ -430,7 +429,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"%@",dictResult);
+        //NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"likepost"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)

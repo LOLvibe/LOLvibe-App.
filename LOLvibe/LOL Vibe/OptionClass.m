@@ -211,20 +211,20 @@
 {
     [view_Process dismissViewControllerAnimated:YES completion:nil];
     [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Your post successfully post on your wall."];
-    NSLog(@"FB: SHARE RESULTS=%@\n",[results debugDescription]);
+    //NSLog(@"FB: SHARE RESULTS=%@\n",[results debugDescription]);
 }
 
 - (void)sharer:(id<FBSDKSharing>)sharer didFailWithError:(NSError *)error
 {
     [view_Process dismissViewControllerAnimated:YES completion:nil];
     [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Something wrong."];
-    NSLog(@"FB: ERROR=%@\n",[error debugDescription]);
+    //NSLog(@"FB: ERROR=%@\n",[error debugDescription]);
 }
 
 - (void)sharerDidCancel:(id<FBSDKSharing>)sharer
 {
     [view_Process dismissViewControllerAnimated:YES completion:nil];
     
-    NSLog(@"FB: CANCELED SHARER=%@\n",[sharer debugDescription]);
+//    NSLog(@"FB: CANCELED SHARER=%@\n",[sharer debugDescription]);
 }
 @end

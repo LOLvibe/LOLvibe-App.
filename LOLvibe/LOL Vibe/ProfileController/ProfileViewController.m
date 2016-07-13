@@ -358,7 +358,7 @@
     }
     else
     {
-        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"You should be 13 year old."];
+        [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Sorry, you must be 13 years or older to use LOLvibe."];
     }
 }
 
@@ -442,9 +442,7 @@
     
     if (success)
     {
-        NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"tempDict = %@",dictResult);
-        
+        NSDictionary *dictResult = (NSDictionary *)responseObj;        
         
         if([tagStr isEqualToString:@"getProfile"])
         {

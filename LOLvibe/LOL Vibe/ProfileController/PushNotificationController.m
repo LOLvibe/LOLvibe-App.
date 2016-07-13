@@ -37,7 +37,7 @@
     self.title = @"Push Notification";
 
     [self setDefualtSetting];
-    NSLog(@"%@",dictPushSetting);
+    //NSLog(@"%@",dictPushSetting);
 }
 
 -(void)setDefualtSetting
@@ -94,7 +94,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"tempDict = %@",dictResult);
+        //NSLog(@"tempDict = %@",dictResult);
         if([tagStr isEqualToString:@"notification"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)

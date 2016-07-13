@@ -77,7 +77,7 @@
     if (success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"tempDict = %@",dictResult);
+        //NSLog(@"tempDict = %@",dictResult);
         if([tagStr isEqualToString:@"forgotPassWS"])
         {
             if ([[dictResult valueForKey:@"status_code"] integerValue]== 1)

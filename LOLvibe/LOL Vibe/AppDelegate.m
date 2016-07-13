@@ -86,10 +86,6 @@
         {
             [locationManager  requestWhenInUseAuthorization];
         }
-        else
-        {
-            NSLog(@"Info.plist does not contain NSLocationAlwaysUsageDescription or NSLocationWhenInUseUsageDescription");
-        }
     }
     
     [locationManager startUpdatingLocation];
@@ -168,7 +164,7 @@
 }
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    NSLog(@"didUpdateToLocation: %@", newLocation);
+    //NSLog(@"didUpdateToLocation: %@", newLocation);
     CLLocation *currentLocation = newLocation;
     
     if (currentLocation != nil)
@@ -205,7 +201,7 @@
 #pragma mark -- Pushnotification Methods
 -(void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-    NSLog(@"TokenNumber:-%@",[[[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]] stringByReplacingOccurrencesOfString:@" " withString:@""]);
+    //NSLog(@"TokenNumber:-%@",[[[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]] stringByReplacingOccurrencesOfString:@" " withString:@""]);
     
     NSString *StrdeviceToken=[[[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]] stringByReplacingOccurrencesOfString:@" " withString:@""];
     
@@ -245,7 +241,7 @@
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
 {
-    NSLog(@"%@",error);
+    //NSLog(@"%@",error);
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
@@ -325,25 +321,25 @@
 #pragma mark Logoot Time Out
 -(void)setLastLogoutTimeForUser
 {
-    NSLog(@"JAYDIP GODHANI");
+    //NSLog(@"JAYDIP GODHANI");
     
     if([[NSUserDefaults standardUserDefaults] objectForKey:@"lastLogoutTimeDict"])
     {
-        NSLog(@"dfdsfsdfasf GODHANI1");
+        //NSLog(@"dfdsfsdfasf GODHANI1");
         NSMutableDictionary *lastLogoutTimeDict = [NSMutableDictionary dictionaryWithDictionary:[[NSUserDefaults standardUserDefaults] objectForKey:@"lastLogoutTimeDict"]];
         
         [lastLogoutTimeDict setObject:@([[NSDate date] timeIntervalSince1970]) forKey:[XmppHelper sharedInstance].username];
-        NSLog(@"Time Stamp : %@",lastLogoutTimeDict);
+        //NSLog(@"Time Stamp : %@",lastLogoutTimeDict);
         [[NSUserDefaults standardUserDefaults] setObject:lastLogoutTimeDict forKey:@"lastLogoutTimeDict"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     else
     {
-        NSLog(@"dfdsfsdfasf GODHANI2");
+        //NSLog(@"dfdsfsdfasf GODHANI2");
         NSMutableDictionary *lastLogoutTimeDict = [NSMutableDictionary dictionary];
         
         [lastLogoutTimeDict setObject:@([[NSDate date] timeIntervalSince1970]) forKey:[XmppHelper sharedInstance].username];
-        NSLog(@"Time Stamp : %@",lastLogoutTimeDict);
+        //NSLog(@"Time Stamp : %@",lastLogoutTimeDict);
         [[NSUserDefaults standardUserDefaults] setObject:lastLogoutTimeDict forKey:@"lastLogoutTimeDict"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
@@ -389,9 +385,7 @@
         dict[NSLocalizedFailureReasonErrorKey] = failureReason;
         dict[NSUnderlyingErrorKey] = error;
         error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:9999 userInfo:dict];
-        // Replace this with code to handle the error appropriately.
-        // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+      
         abort();
     }
     
@@ -421,10 +415,7 @@
     if (managedObjectContext != nil) {
         NSError *error = nil;
         if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-            // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
+           abort();
         }
     }
 }

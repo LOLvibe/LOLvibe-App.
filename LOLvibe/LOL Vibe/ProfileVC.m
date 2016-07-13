@@ -11,7 +11,6 @@
 #import "PostDetails.h"
 #import "CommentController.h"
 #import "OtherProfileVC.h"
-#import "ShareViewController.h"
 #import "UIView+SuperView.h"
 #import "OptionClass.h"
 #import "HashTagVC.h"
@@ -91,10 +90,6 @@
         {
             [locationManager  requestWhenInUseAuthorization];
         }
-        else
-        {
-            NSLog(@"Info.plist does not contain NSLocationAlwaysUsageDescription or NSLocationWhenInUseUsageDescription");
-        }
     }
     [locationManager startUpdatingLocation];
 }
@@ -106,7 +101,6 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    NSLog(@"didUpdateToLocation: %@", newLocation);
     CLLocation *currentLocation = newLocation;
     
     if (currentLocation != nil)
@@ -745,26 +739,49 @@
     
     UICollectionViewCell *cell = (UICollectionViewCell *) [self superviewWithClassName:@"UICollectionViewCell" fromView:sender];
     UILabel *lblLikeCount;
+    NSMutableDictionary *dictReplace;
     int count = 0;
+    NSIndexPath *indexPathSelected;
     if (cell)
     {
         lblLikeCount       = (UILabel *)[cell viewWithTag:112];
-        NSIndexPath *indexPathSelected = [collectionViewPost indexPathForCell:cell];
+        indexPathSelected = [collectionViewPost indexPathForCell:cell];
         
         count = [[[arrPhotoPosts objectAtIndex:indexPathSelected.row] valueForKey:@"like"] intValue];
+       
     }
     
     WebService *serLikePost = [[WebService alloc] initWithView:self.view andDelegate:self];
     if(sender.selected)
     {
         count = count + 1;
-        [serLikePost callWebServiceWithURLDict:LIKE_POST andHTTPMethod:@"POST" andDictData:dict withLoading:NO andWebServiceTag:@"likepost" setToken:YES];
+         dictReplace = [[NSMutableDictionary alloc]initWithDictionary:[arrPhotoPosts objectAtIndex:indexPathSelected.row]];
+        [dictReplace setValue:[NSString stringWithFormat:@"%d",count] forKey:@"like"];
+        
+        [arrPhotoPosts replaceObjectAtIndex:indexPathSelected.row withObject:dictReplace];
+        
+        [serLikePost callWebServiceWithURLDict:LIKE_POST
+                                 andHTTPMethod:@"POST"
+                                   andDictData:dict
+                                   withLoading:NO
+                              andWebServiceTag:@"likepost"
+                                      setToken:YES];
         
     }
     else
     {
         count = count - 1;
-        [serLikePost callWebServiceWithURLDict:UNLIKE_POST andHTTPMethod:@"POST" andDictData:dict withLoading:NO andWebServiceTag:@"likepost" setToken:YES];
+        dictReplace = [[NSMutableDictionary alloc]initWithDictionary:[arrPhotoPosts objectAtIndex:indexPathSelected.row]];
+        [dictReplace setValue:[NSString stringWithFormat:@"%d",count] forKey:@"like"];
+        
+        [arrPhotoPosts replaceObjectAtIndex:indexPathSelected.row withObject:dictReplace];
+        
+        [serLikePost callWebServiceWithURLDict:UNLIKE_POST
+                                 andHTTPMethod:@"POST"
+                                   andDictData:dict
+                                   withLoading:NO
+                              andWebServiceTag:@"likepost"
+                                      setToken:YES];
     }
     lblLikeCount.text = [NSString stringWithFormat:@"%d",count];
 }
@@ -780,6 +797,11 @@
     
     UICollectionViewCell *cell = (UICollectionViewCell *) [self superviewWithClassName:@"UICollectionViewCell" fromView:sender];
     UILabel *lblLikeCount;
+    NSMutableDictionary *dictReplace;
+    
+    NSIndexPath *indexPathSelected;
+    
+    
     int count = 0;
     if (cell)
     {
@@ -793,11 +815,19 @@
     if(sender.selected)
     {
         count = count + 1;
+        dictReplace = [[NSMutableDictionary alloc]initWithDictionary:[arrLocationPosts objectAtIndex:indexPathSelected.row]];
+        [dictReplace setValue:[NSString stringWithFormat:@"%d",count] forKey:@"like"];
+        [arrLocationPosts replaceObjectAtIndex:indexPathSelected.row withObject:dictReplace];
+
         [serLikePost callWebServiceWithURLDict:LIKE_POST andHTTPMethod:@"POST" andDictData:dict withLoading:NO andWebServiceTag:@"likepost" setToken:YES];
     }
     else
     {
         count = count - 1;
+        dictReplace = [[NSMutableDictionary alloc]initWithDictionary:[arrLocationPosts objectAtIndex:indexPathSelected.row]];
+        [dictReplace setValue:[NSString stringWithFormat:@"%d",count] forKey:@"like"];
+        [arrLocationPosts replaceObjectAtIndex:indexPathSelected.row withObject:dictReplace];
+
         [serLikePost callWebServiceWithURLDict:UNLIKE_POST andHTTPMethod:@"POST" andDictData:dict withLoading:NO andWebServiceTag:@"likepost" setToken:YES];
     }
     lblLikeCount.text = [NSString stringWithFormat:@"%d",count];
@@ -1093,7 +1123,6 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"getLocationFeed"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)

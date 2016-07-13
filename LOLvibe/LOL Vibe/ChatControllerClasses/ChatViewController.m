@@ -47,9 +47,16 @@
     
     CGPoint offset = CGPointMake(0, CGFLOAT_MAX);
     [chatTableView setContentOffset:offset animated:YES];
+    
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onBackgroundTap:)];
+    tapGesture.numberOfTapsRequired = 1;
+    tapGesture.cancelsTouchesInView = YES;
+    [self.view addGestureRecognizer:tapGesture];
 }
-
-
+- (void)onBackgroundTap:(id)sender
+{
+    [self.view endEditing:YES];
+}
 
 -(void)setDefualtProperties
 {
@@ -297,7 +304,7 @@
 
 - (IBAction)sendBtnClicked:(UIButton *)sender
 {
-    if([[chatTextView.text lowercaseString] isEqualToString:[NSLocalizedString(@"Type Message", nil) lowercaseString]])
+    if([[chatTextView.text lowercaseString] isEqualToString:[NSLocalizedString(@"Type Message", nil) lowercaseString]] || [chatTextView.text length] == 0)
     {
         return;
     }
@@ -333,9 +340,10 @@
     [[[XmppHelper sharedInstance] xmppStream] sendElement:message];
     //[self sendNotification:msgVal];
     chatTextViewHeightConstraint.constant = 35.0;
-    [chatTextView resignFirstResponder];
-    
-    chatTextView.text = [NSLocalizedString(@"Type Message", nil) uppercaseString];
+//    [chatTextView resignFirstResponder];
+
+    chatTextView.text = @"";
+    //chatTextView.text = [NSLocalizedString(@"Type Message", nil) uppercaseString];
     chatTextView.textColor = [UIColor colorWithRed:93.0/255.0 green:93.0/255.00 blue:93.0/255.00 alpha:1.0];
     [self sendNotification:msgVal];
     [self createRecentChatArray:msgVal];
@@ -346,7 +354,7 @@
 -(void)sendNotification:(NSString *)strMessage
 {
     NSMutableDictionary *dictNoti = [[NSMutableDictionary alloc] init];
-    [dictNoti setValue:[NSString stringWithFormat:@"%@ : %@",[LoggedInUser sharedUser].userVibeName,strMessage] forKey:@"msg"];
+    [dictNoti setValue:[NSString stringWithFormat:@": %@",strMessage] forKey:@"msg"];
     [dictNoti setValue:[LoggedInUser sharedUser].userId forKey:@"user_id"];
     [dictNoti setValue:[dictUser valueForKey:@"user_id"] forKey:@"other_user_id"];
     
@@ -551,7 +559,7 @@
             CGSize sizeThatFitsTextView = [cell.chatMessageTxt sizeThatFits:CGSizeMake(maxChatTextWidth, MAXFLOAT)];
             cell.msgTxtWidthConstraint.constant = sizeThatFitsTextView.width;
             cell.msgTxtHeightConstraint.constant = sizeThatFitsTextView.height;
-            NSLog(@"%f",cell.msgTxtWidthConstraint.constant);
+            //NSLog(@"%f",cell.msgTxtWidthConstraint.constant);
             
             [cell setNeedsLayout];
             [cell layoutIfNeeded];
@@ -700,8 +708,8 @@
 {
     if(success)
     {
-        NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"%@",dictResult);
+        //NSDictionary *dictResult = (NSDictionary *)responseObj;
+        //NSLog(@"%@",dictResult);
     }
 }
 

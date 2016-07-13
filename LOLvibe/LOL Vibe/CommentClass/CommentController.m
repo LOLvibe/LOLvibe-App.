@@ -234,7 +234,6 @@
 {
     UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
     NSIndexPath *indexPath = [tblComment indexPathForCell:cell];
-    
     [self showOptions:[[[arrComment objectAtIndex:indexPath.section] valueForKey:@"reply"] objectAtIndex:indexPath.row]];
 }
 
@@ -281,11 +280,21 @@
     
     if(sender.selected)
     {
-        [serLikeUnLike callWebServiceWithURLDict:LIKE_POST andHTTPMethod:@"POST" andDictData:dictLike withLoading:NO andWebServiceTag:@"likeUnLike" setToken:YES];
+        [serLikeUnLike callWebServiceWithURLDict:LIKE_POST
+                                   andHTTPMethod:@"POST"
+                                     andDictData:dictLike
+                                     withLoading:NO
+                                andWebServiceTag:@"likeUnLike"
+                                        setToken:YES];
     }
     else
     {
-        [serLikeUnLike callWebServiceWithURLDict:UNLIKE_POST andHTTPMethod:@"POST" andDictData:dictLike withLoading:NO andWebServiceTag:@"likeUnLike" setToken:YES];
+        [serLikeUnLike callWebServiceWithURLDict:UNLIKE_POST
+                                   andHTTPMethod:@"POST"
+                                     andDictData:dictLike
+                                     withLoading:NO
+                                andWebServiceTag:@"likeUnLike"
+                                        setToken:YES];
     }
 }
 

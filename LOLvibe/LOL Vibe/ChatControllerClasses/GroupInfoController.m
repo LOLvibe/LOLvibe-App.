@@ -33,12 +33,12 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     [self getGroupInfo:YES];
 }
 
 -(void)SetDefualtValue
 {
-    
     txtGroupName.text = [NSString stringWithFormat:@"%@",[dictGroup valueForKey:@"name"]];
     
     profilePic.layer.cornerRadius = profilePic.frame.size.height/2;
@@ -82,6 +82,16 @@
     
     UIImageView *imgProfile = (UIImageView *)[cell viewWithTag:101];
     UILabel *lblName        = (UILabel *)[cell viewWithTag:102];
+    UILabel *lblAdmin        = (UILabel *)[cell viewWithTag:999];
+    
+    if([[[arrMember objectAtIndex:indexPath.row] valueForKey:@"user_id"] isEqualToString:strAdmin] )
+    {
+        lblAdmin.text = @"Group Admin";
+    }
+    else
+    {
+        lblAdmin.text = @"";
+    }
     
     imgProfile.layer.cornerRadius = imgProfile.frame.size.height /2;
     imgProfile.layer.masksToBounds = YES;
@@ -97,10 +107,18 @@
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if([strAdmin intValue] == [[LoggedInUser sharedUser].userId intValue])
+    if([[[arrMember objectAtIndex:indexPath.row] valueForKey:@"user_id"] isEqualToString:strAdmin] )
     {
-        return YES;
+        return NO;
     }
+    else
+    {
+        if([strAdmin intValue] == [[LoggedInUser sharedUser].userId intValue])
+        {
+            return YES;
+        }
+    }
+    
     return NO;
 }
 
@@ -170,9 +188,6 @@
     [self performSegueWithIdentifier:@"member" sender:self];
 }
 
-
-
-
 #pragma mark --PrepareForSegue Method
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -188,28 +203,23 @@
         obj.strGroupId = [dictGroup valueForKey:@"group_id"];
     }
 }
-
-
 #pragma mark --WebService Delegate Method
 -(void)webserviceCallFinishedWithSuccess:(BOOL)success andResponseObject:(id)responseObj andError:(NSError *)error forWebServiceTag:(NSString *)tagStr
 {
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"%@",dictResult);
+        //NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"groupInfo"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
                 arrMember = [[[dictResult valueForKey:@"data"] objectAtIndex:0] valueForKey:@"member"];
                 strAdmin = [[[dictResult valueForKey:@"data"] objectAtIndex:0] valueForKey:@"admin"];
-                
-                
                 if([strAdmin intValue] == [[LoggedInUser sharedUser].userId intValue])
                 {
                     btnAdddMemberOut.hidden = false;
                 }
-                
                 [tblGroupMember reloadData];
             }
             else

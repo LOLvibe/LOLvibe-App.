@@ -139,25 +139,23 @@
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     [manager POST:url parameters:dictParameters progress:nil success:^(NSURLSessionTask *task, id responseObject)
      {
-         
          if (loading)
          {
              [self hideLoader];
          }
-         
          if ([[responseObject valueForKey:@"status_code"] integerValue]== 7)
          {
              [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Your sassion has expired.\nPlease login again."];
+
              AppDelegate *appDel = APP_DELEGATE;
-             
              [[XmppHelper sharedInstance] disconnect];
              [kPref removeObjectForKey:kRecentChatArray];
              [kPref setObject:nil forKey:kRecentChatArray];
              
-             [ appDel setLoginView];
-             return ;
+             [appDel setLoginView];
+             
+             return;
          }
-         
          [self.delegate webserviceCallFinishedWithSuccess:YES
                                         andResponseObject:responseObject
                                                  andError:nil

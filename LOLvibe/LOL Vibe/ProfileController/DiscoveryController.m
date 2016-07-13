@@ -35,7 +35,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"%@",dictDiscovery);
+    //NSLog(@"%@",dictDiscovery);
     
     arrGender = @[@"Only Men",@"Only Women",@"Not Specified"];
     strDistance = @"0";
@@ -52,8 +52,6 @@
                 [locationManager requestAlwaysAuthorization];
             } else if([[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationWhenInUseUsageDescription"]) {
                 [locationManager  requestWhenInUseAuthorization];
-            } else {
-                NSLog(@"Info.plist does not contain NSLocationAlwaysUsageDescription or NSLocationWhenInUseUsageDescription");
             }
         }
     
@@ -143,7 +141,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    NSLog(@"didUpdateToLocation: %@", newLocation);
+    //NSLog(@"didUpdateToLocation: %@", newLocation);
     CLLocation *currentLocation = newLocation;
     
     if (currentLocation != nil)
@@ -161,8 +159,9 @@
         [geocoder reverseGeocodeLocation:newLocation
                        completionHandler:^(NSArray *placemarks, NSError *error)
          {
-             if (error){
-                 NSLog(@"Geocode failed with error: %@", error);
+             if (error)
+             {
+                 //NSLog(@"Geocode failed with error: %@", error);
                  return;
              }
             
@@ -290,7 +289,7 @@
     if (success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        NSLog(@"tempDict = %@",dictResult);
+//        NSLog(@"tempDict = %@",dictResult);
         
         if ([tagStr isEqualToString:@"getAddress"])
         {
@@ -298,7 +297,7 @@
             if ([results count]> 0)
             {
                 SOSCurrentAddress = [[results objectAtIndex:0] valueForKey:@"formatted_address"];
-                NSLog(@"%@",SOSCurrentAddress);
+//                NSLog(@"%@",SOSCurrentAddress);
             }
         }
         else if ([tagStr isEqualToString:@"discovery"])
