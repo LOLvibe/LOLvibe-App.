@@ -61,9 +61,7 @@
     
     self.title = @"";
     
-    pageCountPost = pageCountLoc = 1;
-    
-    [self btnPostPhoto:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(btnPostPhoto:) name:kRefressProfile object:nil];
 }
 -(void)viewWillAppear:(BOOL)animated
 {
@@ -92,6 +90,10 @@
         }
     }
     [locationManager startUpdatingLocation];
+    
+    pageCountPost = pageCountLoc = 1;
+    
+    [self btnPostPhoto:nil];
 }
 
 #pragma mark - CLLocationManagerDelegate
@@ -230,15 +232,26 @@
         UILabel *lblVibeName1   = (UILabel *)[cell viewWithTag:103];
         UIButton *btnAddFrnd    = (UIButton *)[cell viewWithTag:104];
         UILabel *lblTime        = (UILabel *)[cell viewWithTag:111];
-
+        
         [btnAddFrnd addTarget:self action:@selector(btnAddFrnd:) forControlEvents:UIControlEventTouchUpInside];
         
         if ([[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 0)
         {
+            [btnAddFrnd setHidden:NO];
             btnAddFrnd.selected = NO;
         }
         else if([[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 1)
         {
+            [btnAddFrnd setHidden:YES];
+            btnAddFrnd.selected = YES;
+        }
+        else if([[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 2)
+        {
+            [btnAddFrnd setHidden:YES];
+        }
+        else if([[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 3)
+        {
+            [btnAddFrnd setHidden:NO];
             btnAddFrnd.selected = YES;
         }
         
@@ -246,7 +259,7 @@
             imgProfile.image = image;
         }];
         lblTime.text = [[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"created_at"];
-
+        
         lblName.text = [NSString stringWithFormat:@"%@",[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"name"]];
         
         lblVibeName1.text= [NSString stringWithFormat:@"@%@",[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"vibe_name"]];
@@ -320,7 +333,7 @@
         tapGestureWebsite.numberOfTapsRequired = 1;
         tapGestureWebsite.cancelsTouchesInView = YES;
         [lblWebsite addGestureRecognizer:tapGestureWebsite];
-
+        
         btnLike.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)indexPath.row];
         btnComment.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)indexPath.row];
         btnOption.accessibilityLabel = @"photo";
@@ -413,7 +426,8 @@
         {
             lblUserFullName.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"name"]];
         }
-        NSString *strProfile = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userProfilePic];
+        NSString *strProfile = [dictObj valueForKey:@"profile_pic"];
+        
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgProfile.image = image;
         }];
@@ -539,7 +553,7 @@
         {
             lblUserVibeName.text = @"";
         }
-
+        
         
         if ([[dictObj valueForKey:@"formatted_address"] length] > 0)
         {
@@ -570,7 +584,8 @@
             lblUserFullName.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"name"]];
         }
         
-        NSString *strProfile = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userProfilePic];
+        NSString *strProfile = [dictObj valueForKey:@"profile_pic"];
+        
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgProfile.image = image;
         }];
@@ -748,14 +763,14 @@
         indexPathSelected = [collectionViewPost indexPathForCell:cell];
         
         count = [[[arrPhotoPosts objectAtIndex:indexPathSelected.row] valueForKey:@"like"] intValue];
-       
+        
     }
     
     WebService *serLikePost = [[WebService alloc] initWithView:self.view andDelegate:self];
     if(sender.selected)
     {
         count = count + 1;
-         dictReplace = [[NSMutableDictionary alloc]initWithDictionary:[arrPhotoPosts objectAtIndex:indexPathSelected.row]];
+        dictReplace = [[NSMutableDictionary alloc]initWithDictionary:[arrPhotoPosts objectAtIndex:indexPathSelected.row]];
         [dictReplace setValue:[NSString stringWithFormat:@"%d",count] forKey:@"like"];
         
         [arrPhotoPosts replaceObjectAtIndex:indexPathSelected.row withObject:dictReplace];
@@ -818,7 +833,7 @@
         dictReplace = [[NSMutableDictionary alloc]initWithDictionary:[arrLocationPosts objectAtIndex:indexPathSelected.row]];
         [dictReplace setValue:[NSString stringWithFormat:@"%d",count] forKey:@"like"];
         [arrLocationPosts replaceObjectAtIndex:indexPathSelected.row withObject:dictReplace];
-
+        
         [serLikePost callWebServiceWithURLDict:LIKE_POST andHTTPMethod:@"POST" andDictData:dict withLoading:NO andWebServiceTag:@"likepost" setToken:YES];
     }
     else
@@ -827,7 +842,7 @@
         dictReplace = [[NSMutableDictionary alloc]initWithDictionary:[arrLocationPosts objectAtIndex:indexPathSelected.row]];
         [dictReplace setValue:[NSString stringWithFormat:@"%d",count] forKey:@"like"];
         [arrLocationPosts replaceObjectAtIndex:indexPathSelected.row withObject:dictReplace];
-
+        
         [serLikePost callWebServiceWithURLDict:UNLIKE_POST andHTTPMethod:@"POST" andDictData:dict withLoading:NO andWebServiceTag:@"likepost" setToken:YES];
     }
     lblLikeCount.text = [NSString stringWithFormat:@"%d",count];
@@ -844,7 +859,6 @@
         
         NSIndexPath *indexPath = [collectionViewPost indexPathForCell:cell];
         
-
         NSDictionary *dictVal = [arrPhotoPosts objectAtIndex:indexPath.row];
         [share UserProfileSharingOption:dictVal Image:img.image];
         
@@ -888,7 +902,7 @@
     
     CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
     obj.dictPost = [arrPhotoPosts objectAtIndex:indexPath];
-    
+    obj.isInvite = NO;
     [self.navigationController pushViewController:obj animated:YES];
 }
 
@@ -898,7 +912,7 @@
     
     CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
     obj.dictPost = [arrLocationPosts objectAtIndex:indexPath];
-    
+    obj.isInvite = NO;
     [self.navigationController pushViewController:obj animated:YES];
 }
 
@@ -1067,7 +1081,7 @@
     [self hideView:viewLocation];
     [self hideView:viewProfileVisit];
     
-     [self getFriendList];
+    [self getFriendList];
 }
 - (IBAction)btnProfileSeen:(id)sender
 {
@@ -1175,7 +1189,6 @@
                 [arrFriend addObjectsFromArray:[dictResult valueForKey:@"data"]];
                 [tblFriendList reloadData];
                 lblFriendCount.text = [NSString stringWithFormat:@"(%d)",(int)[arrFriend count]];
-                
             }
             else
             {
@@ -1187,8 +1200,17 @@
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
                 [arrVisitFriend removeAllObjects];
-                [arrVisitFriend addObjectsFromArray:[dictResult valueForKey:@"data"]];
+                
+                for (NSDictionary *dict in [dictResult valueForKey:@"data"])
+                {
+                    if([[dict valueForKey:@"user_id"] integerValue] != [[LoggedInUser sharedUser].userId integerValue])
+                    {
+                        [arrVisitFriend addObject:dict];
+                    }
+                }
+                
                 [tblProfileVisit reloadData];
+                
                 lblVisitCount.text = [NSString stringWithFormat:@"(%d)",(int)[arrVisitFriend count]];
             }
             else
@@ -1211,15 +1233,15 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                 [[NSNotificationCenter defaultCenter] postNotificationName:kRefressHomeFeed object:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kRefressHomeFeed object:nil];
                 
                 if (btnLocationPost.selected)
                 {
-                    [self getLocationFeed];
+                    [self btnLocationPost:nil];
                 }
                 else
                 {
-                    [self getPhotoFeed];
+                    [self btnPostPhoto:nil];
                 }
             }
             else

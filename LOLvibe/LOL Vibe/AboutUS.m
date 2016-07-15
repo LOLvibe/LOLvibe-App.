@@ -9,6 +9,7 @@
 #import "AboutUS.h"
 #import <MessageUI/MessageUI.h>
 #import "ServiceConstant.h"
+#import "TermsAndCondition.h"
 
 @interface AboutUS ()<MFMailComposeViewControllerDelegate>
 
@@ -62,5 +63,12 @@
 - (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
+}
+- (IBAction)btnTerms:(id)sender {
+    WebBrowserVc *web = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"WebBrowserVc"];
+    
+    web.strURL = @"www.lolvibe.com/index.php/en/terms";
+    
+    [self.navigationController pushViewController:web animated:YES];
 }
 @end

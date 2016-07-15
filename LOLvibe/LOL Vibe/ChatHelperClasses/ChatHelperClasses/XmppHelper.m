@@ -7,10 +7,8 @@
 //
 
 #import "XmppHelper.h"
-
 #import "DDLog.h"
 #import "DDTTYLogger.h"
-
 #import "ChatConversation.h"
 #import "UserInfo.h"
 
@@ -240,7 +238,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 -(void)playBuzzSound
 {
-    AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
+    //AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
     
     if (buzzSoundId == nil)
     {
@@ -1207,7 +1205,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
             NSMutableArray *arrRecent = [[NSMutableArray alloc]init];
             [arrRecent addObjectsFromArray:arrRec];
             
-            if([strUid intValue] != [[LoggedInUser sharedUser].userId intValue])
+            if([strUid intValue] == [[LoggedInUser sharedUser].userId intValue])
             {
                 BOOL isAlready = false;
                 for(int i = 0;i<arrRecent.count;i++)
@@ -1244,7 +1242,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
                     [dictRecent setValue:name forKey:@"name"];
                     [dictRecent setValue:strMsg forKey:@"message"];
                     [dictRecent setValue:strTime forKey:@"time"];
-                    [dictRecent setValue:CHAT_TYPE_SINGLE forKey:@"type"];
+                    [dictRecent setValue:CHAT_TYPE_GROUP forKey:@"type"];
                     [dictRecent setValue:[NSNumber numberWithInt:count] forKey:@"count"];
                     [arrRecent addObject:dictRecent];
                     [kPref setObject:arrRecent forKey:kRecentChatArray];

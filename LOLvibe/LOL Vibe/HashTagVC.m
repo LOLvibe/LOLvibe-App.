@@ -713,7 +713,7 @@
     
     CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
     obj.dictPost = [arrFeed objectAtIndex:indexPath];
-    
+    obj.isInvite = NO;
     [self.navigationController pushViewController:obj animated:YES];
 }
 

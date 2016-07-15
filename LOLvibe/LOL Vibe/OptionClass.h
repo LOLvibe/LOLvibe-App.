@@ -12,12 +12,12 @@
 #import <Social/Social.h>
 
 @protocol OptionClassDelegate <NSObject>
+
 @optional
 -(void)callDeleteMethod:(NSDictionary *)dict;
 -(void)callRepostMethod:(NSDictionary *)dict;
 -(void)callReportMethod:(NSDictionary *)dict;
 -(void)callInstagramMethod:(NSDictionary *)dict Image:(UIImage *)image;
-
 @end
 
 @interface OptionClass : NSObject <FBSDKSharingDelegate>

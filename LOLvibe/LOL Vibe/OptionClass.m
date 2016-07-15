@@ -161,11 +161,15 @@
 #pragma marm --Twitter Share
 -(void)twitterShare:(NSDictionary *)dictValue Image:(UIImage *)image
 {
+    const char *jsonString = [[dictValue valueForKey:@"feed_text"] UTF8String];
+    NSData *jsonData = [NSData dataWithBytes:jsonString length:strlen(jsonString)];
+    NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
+    
     if([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter])
     {
         SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
         
-        [controller setInitialText:[NSString stringWithFormat:@"%@",[dictValue valueForKey:@"feed_text"]]];
+        [controller setInitialText:[NSString stringWithFormat:@"%@",goodMsg]];
         [controller addImage:image];
         [controller addURL:[NSURL URLWithString:APP_ITUNES_LINK]];
         
@@ -176,13 +180,18 @@
 #pragma mark - FBSDKSharingDelegate
 -(void)shareInFacebook:(NSDictionary *)dictPostDetail
 {
+    const char *jsonString = [[dictPostDetail valueForKey:@"feed_text"] UTF8String];
+    NSData *jsonData = [NSData dataWithBytes:jsonString length:strlen(jsonString)];
+    NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
+    
+    
     if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb://"]])
     {
         FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
         content.contentURL = [NSURL URLWithString:APP_ITUNES_LINK];
-        content.contentTitle = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
+        content.contentTitle = [NSString stringWithFormat:@"%@",goodMsg];
         content.contentDescription = App_Name;
-        content.quote = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
+        content.quote = [NSString stringWithFormat:@"%@",goodMsg];
         content.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"image"]]];
         FBSDKShareDialog *shareDialog = [FBSDKShareDialog new];
         [shareDialog setMode:FBSDKShareDialogModeNative];
@@ -195,9 +204,9 @@
     {
         FBSDKShareLinkContent *content = [FBSDKShareLinkContent new];
         content.contentURL = [NSURL URLWithString:APP_ITUNES_LINK];
-        content.contentTitle = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
+        content.contentTitle = [NSString stringWithFormat:@"%@",goodMsg];
         content.contentDescription = App_Name;
-        content.quote = [NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"feed_text"]];
+        content.quote = [NSString stringWithFormat:@"%@",goodMsg];
         content.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@",[dictPostDetail valueForKey:@"image"]]];
         FBSDKShareDialog *shareDialog = [FBSDKShareDialog new];
         [shareDialog setMode:FBSDKShareDialogModeFeedWeb];

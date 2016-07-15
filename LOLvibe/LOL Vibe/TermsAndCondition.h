@@ -9,5 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface TermsAndCondition : UIViewController
-
+{
+    IBOutlet UIWebView *webVw;
+}
 @end

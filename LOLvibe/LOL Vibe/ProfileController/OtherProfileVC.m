@@ -209,15 +209,22 @@
     
     if ([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 0)
     {
+        [btnAddFrnd setHidden:NO];
         btnAddFrnd.selected = NO;
     }
     else if([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 1)
     {
+        [btnAddFrnd setHidden:YES];
         btnAddFrnd.selected = YES;
     }
-    
-    if ([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId]) {
+    else if([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 2)
+    {
         [btnAddFrnd setHidden:YES];
+    }
+    else if([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 3)
+    {
+        [btnAddFrnd setHidden:NO];
+        btnAddFrnd.selected = YES;
     }
     
     [imgProfile sd_setImageWithURL:[NSURL URLWithString:[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
@@ -227,7 +234,7 @@
     lblName.text = [NSString stringWithFormat:@"%@",[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"name"]];
     
     lblVibeName1.text= [NSString stringWithFormat:@"@%@",[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"vibe_name"]];
-
+    
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
@@ -288,7 +295,7 @@
         tapGestureWebsite.numberOfTapsRequired = 1;
         tapGestureWebsite.cancelsTouchesInView = YES;
         [lblWebsite addGestureRecognizer:tapGestureWebsite];
-       
+        
         btnLike.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)indexPath.row];
         btnComment.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)indexPath.row];
         btnOption.accessibilityLabel = @"photo";
@@ -427,7 +434,7 @@
         tapGestureWebsite.cancelsTouchesInView = YES;
         [lblWebsite addGestureRecognizer:tapGestureWebsite];
         
-  
+        
         [btnDirection addTarget:self action:@selector(btnDirection:) forControlEvents:UIControlEventTouchUpInside];
         
         NSDictionary *dictObj = [arrLocationPosts objectAtIndex:indexPath.row];
@@ -460,7 +467,7 @@
         [btnLike addTarget:self action:@selector(btnLikeLocation:) forControlEvents:UIControlEventTouchUpInside];
         [btnLocationInvite addTarget:self action:@selector(btnLocationInvite:) forControlEvents:UIControlEventTouchUpInside];
         [btnDirection addTarget:self action:@selector(btnDirection:) forControlEvents:UIControlEventTouchUpInside];
-     
+        
         PatternTapResponder hashTagTapAction = ^(NSString *tappedString)
         {
             HashTagVC *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"HashTagVC"];
@@ -473,7 +480,7 @@
                                                            RLHighlightedBackgroundColorAttributeName:[UIColor clearColor],NSBackgroundColorAttributeName:[UIColor clearColor],RLHighlightedBackgroundCornerRadius:@5,
                                                            RLTapResponderAttributeName:hashTagTapAction}];
         
-
+        
         
         NSString *strURL = [dictObj valueForKey:@"image"];
         
@@ -502,7 +509,7 @@
         lblCaption.text=goodMsg;
         
         lblLocation.text =[NSString stringWithFormat:@"%@",[dictObj valueForKey:@"created_at"]];
-
+        
         
         lblCityName.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:0];
         lblLocatopmCity.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:1];
@@ -880,7 +887,7 @@
     
     CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
     obj.dictPost = [arrPhotoPosts objectAtIndex:indexPath];
-    
+    obj.isInvite = NO;
     [self.navigationController pushViewController:obj animated:YES];
 }
 
@@ -890,7 +897,7 @@
     
     CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
     obj.dictPost = [arrLocationPosts objectAtIndex:indexPath];
-    
+    obj.isInvite = NO;
     [self.navigationController pushViewController:obj animated:YES];
 }
 
@@ -1086,7 +1093,7 @@
     
     pageCountLoc = 1;
     [arrLocationPosts removeAllObjects];
-
+    
     [self getLocationFeed];
 }
 
@@ -1115,7 +1122,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-//        NSLog(@"%@",dictResult);
+        NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"getLocationFeed"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
@@ -1170,7 +1177,7 @@
                 arrFriend = [dictResult valueForKey:@"data"];
                 [tblFriendList reloadData];
                 lblFriendCount.text = [NSString stringWithFormat:@"(%d)",(int)[arrFriend count]];
-
+                
             }
             else
             {
@@ -1215,7 +1222,7 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Repost successful!"];
             }
             else
             {

@@ -306,7 +306,7 @@
             {
                 [self pushBackButton:nil];
             }
-            else if ([[dictResult valueForKey:@"status"] integerValue]== 0)
+            else
             {
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }

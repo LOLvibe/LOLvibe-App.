@@ -225,12 +225,17 @@
         {
             NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
             [dict setValue:self.strUsers forKey:@"other_user_ids"];
-            [dict setValue:txtCaption.text forKey:@"invite_text"];
             
+            NSString *uniText = [NSString stringWithUTF8String:[txtCaption.text UTF8String]];
+            NSData *msgData = [uniText dataUsingEncoding:NSNonLossyASCIIStringEncoding];
+            NSString *goodMsg = [[NSString alloc] initWithData:msgData encoding:NSUTF8StringEncoding] ;
+            [dict setValue:goodMsg forKey:@"invite_text"];
             
             [dict setValue:strAddress forKey:@"location_address"];
             [dict setValue:strCurrentImageURL forKey:@"location_photo"];
             [dict setValue:[[strAddress componentsSeparatedByString:@","] objectAtIndex:0] forKey:@"location_name"];
+            [dict setValue:strLat forKey:@"latitude"];
+            [dict setValue:strLon forKey:@"longitude"];
             
             WebService *sendInvite = [[WebService alloc]initWithView:self.view andDelegate:self];
             
@@ -256,10 +261,13 @@
         {
             NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
             [dict setValue:self.strUsers forKey:@"other_user_ids"];
-            [dict setValue:txtCaption.text forKey:@"invite_text"];
+
             
-            
-           
+            NSString *uniText = [NSString stringWithUTF8String:[txtCaption.text UTF8String]];
+            NSData *msgData = [uniText dataUsingEncoding:NSNonLossyASCIIStringEncoding];
+            NSString *goodMsg = [[NSString alloc] initWithData:msgData encoding:NSUTF8StringEncoding] ;
+            [dict setValue:goodMsg forKey:@"invite_text"];
+
             if (isSearching)
             {
                 NSString *strAddress1 = [dictSelected valueForKey:@"description"];
@@ -289,6 +297,9 @@
             
                 [dict setValue:[dictSelected valueForKey:@"image_url"] forKey:@"location_photo"];
             }
+            
+            [dict setValue:[dictSelected valueForKey:@"lat"] forKey:@"latitude"];
+            [dict setValue:[dictSelected valueForKey:@"lng"] forKey:@"longitude"];
             
             WebService *sendInvite = [[WebService alloc]initWithView:self.view andDelegate:self];
             
@@ -476,7 +487,7 @@
         NSString *strURL = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=%@&key=%@",[[arrPhotos objectAtIndex:0] valueForKey:@"photo_reference"],GOOGLE_API_KEY];
         
         strURL = [strURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        [imgPlace sd_setImageWithURL:[NSURL URLWithString:strURL]];
+        [imgPlace sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"place_default"]];
         
         
         NSString *strLocation     = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"vicinity"]];
@@ -568,7 +579,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        //NSLog(@"%@",dictResult);
+        NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"sendInvite"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
@@ -658,6 +669,16 @@
                 strURL = [strURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 
                 [dictSelected setValue:strURL forKey:@"image_url"];
+                
+//                geometry =         {
+//                    location =             {
+//                        lat = "21.2270737";
+//                        lng = "72.8426858";
+//                    };
+//                };
+    
+                [dictSelected setValue:[dictResult valueForKeyPath:@"result.geometry.location.lat"] forKey:@"lat"];
+                [dictSelected setValue:[dictResult valueForKeyPath:@"result.geometry.location.lng"] forKey:@"lng"];
             }
         }
     }

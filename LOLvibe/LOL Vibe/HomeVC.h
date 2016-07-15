@@ -12,6 +12,7 @@
 @interface HomeVC : UIViewController<UIDocumentInteractionControllerDelegate>
 {
     IBOutlet UICollectionView *coolectionFeed;
+    IBOutlet UIImageView *imageGuide;
 }
 
 @property (strong ,atomic) UIDocumentInteractionController *documentController;

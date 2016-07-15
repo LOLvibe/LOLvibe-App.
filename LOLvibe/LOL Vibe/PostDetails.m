@@ -8,11 +8,12 @@
 
 #import "PostDetails.h"
 #import "ServiceConstant.h"
-#import "CommentController.h"b
+#import "CommentController.h"
 #import "OptionClass.h"
 #import "UIView+SuperView.h"
 #import "LocationInvitePlaces.h"
 #import "HashTagVC.h"
+#import "OtherProfileVC.h"
 
 @interface PostDetails ()<WebServiceDelegate,OptionClassDelegate>
 {
@@ -33,9 +34,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     user = [LoggedInUser sharedUser];
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     [self getPostDetails];
 }
-
 -(void)getPostDetails
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
@@ -45,7 +49,7 @@
     [getPostDetails callWebServiceWithURLDict:GET_SINGLE_POST
                                  andHTTPMethod:@"POST"
                                    andDictData:dict
-                                   withLoading:YES
+                                   withLoading:NO
                               andWebServiceTag:@"getPostDetails"
                                       setToken:YES];
 }
@@ -68,12 +72,6 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
-    cell.alpha = 0;
-    cell.layer.transform = CATransform3DMakeScale(0.5, 0.5, 0.5);
-    [UIView animateWithDuration:0.7 animations:^{
-        cell.alpha = 1;
-        cell.layer.transform = CATransform3DScale(CATransform3DIdentity, 1, 1, 1);
-    }];
     
     UIView *viewMain            =(UIView *)[cell viewWithTag:101];
     UIImageView *imgMain        =(UIImageView *)[cell viewWithTag:102];
@@ -98,6 +96,12 @@
     tapGestureWebsite.numberOfTapsRequired = 1;
     tapGestureWebsite.cancelsTouchesInView = YES;
     [lblWebsite addGestureRecognizer:tapGestureWebsite];
+    
+    
+    UITapGestureRecognizer *tapGestureProfile = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureProfile:)];
+    tapGestureProfile.numberOfTapsRequired = 1;
+    tapGestureProfile.cancelsTouchesInView = YES;
+    [imgProfile addGestureRecognizer:tapGestureProfile];
     
     btnLike.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)indexPath.row];
     btnComment.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)indexPath.row];
@@ -238,7 +242,32 @@
     
     [self.navigationController pushViewController:web animated:YES];
 }
+-(void)tapGestureProfile:(UITapGestureRecognizer *)sender
+{
+    CGPoint location = [sender locationInView:collectionViewPost];
+    NSIndexPath *indexPath = [collectionViewPost indexPathForItemAtPoint:location];
+    
+    if([[[_array objectAtIndex:indexPath.row] valueForKey:@"user_id"] integerValue] != [[LoggedInUser sharedUser].userId integerValue])
+    {
+        [self performSegueWithIdentifier:@"profile" sender:[_array objectAtIndex:indexPath.row]];
+    }
+}
 
+
+#pragma mark PrepareForSegue Method
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([[segue identifier] isEqualToString:@"show_places"])
+    {
+        LocationInvitePlaces *vc = [segue destinationViewController];
+        vc.strUsers = sender;
+    }
+    else  if([[segue identifier] isEqualToString:@"profile"])
+    {
+        OtherProfileVC *obj = [segue destinationViewController];
+        obj.dictUser = (NSDictionary *)sender;
+    }
+}
 
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -314,13 +343,12 @@
     
     CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
     obj.dictPost = [self.array objectAtIndex:indexPath];
-    
+    obj.isInvite = NO;
     [self.navigationController pushViewController:obj animated:YES];
 }
 
 -(void)isFriendOrNot:(UIButton *)sender
 {
-    //NSLog(@"%d",sender.selected);
     if(!sender.selected)
     {
         NSMutableDictionary *dictval = [[NSMutableDictionary alloc] init];
@@ -335,15 +363,13 @@
                                   andHTTPMethod:@"POST"
                                     andDictData:dictAddFriend
                                     withLoading:NO
-                               andWebServiceTag:@"addFriend"
+                               andWebServiceTag:@"addfriend"
                                        setToken:YES];
         
         
         [dictval setValue:@"1" forKey:@"is_friend"];
         
         [self.array replaceObjectAtIndex:[sender.accessibilityLabel intValue] withObject:dictval];
-        
-        //sender.selected = !sender.selected;
     }
 }
 -(void)btnLocationInvite:(UIButton *)sender
@@ -414,15 +440,7 @@
                      andWebServiceTag:@"report"
                              setToken:YES];
 }
-#pragma mark PrepareForSegue Method
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([[segue identifier] isEqualToString:@"show_places"])
-    {
-        LocationInvitePlaces *vc = [segue destinationViewController];
-        vc.strUsers = sender;
-    }
-}
+
 #pragma mark Werbservice Delegate Method
 -(void)webserviceCallFinishedWithSuccess:(BOOL)success andResponseObject:(id)responseObj andError:(NSError *)error forWebServiceTag:(NSString *)tagStr
 {
@@ -434,7 +452,7 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-               
+                [self getPostDetails];
             }
             else
             {
@@ -467,6 +485,17 @@
             }
         }
         else if ([tagStr isEqualToString:@"vibePostWS"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Repost successful!"];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if([tagStr isEqualToString:@"addfriend"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {

@@ -325,6 +325,7 @@
 		947F805B1D3617480076812E /* PSTGridLayoutItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 947F804C1D3617480076812E /* PSTGridLayoutItem.m */; };
 		947F805C1D3617480076812E /* PSTGridLayoutRow.m in Sources */ = {isa = PBXBuildFile; fileRef = 947F804E1D3617480076812E /* PSTGridLayoutRow.m */; };
 		947F805D1D3617480076812E /* PSTGridLayoutSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 947F80501D3617480076812E /* PSTGridLayoutSection.m */; };
+		948611511D38DA4C0058F5A3 /* black_transperent.png in Resources */ = {isa = PBXBuildFile; fileRef = 948611501D38DA4C0058F5A3 /* black_transperent.png */; };
 		9488F5521D1958DA00FC2A97 /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9488F53F1D1958DA00FC2A97 /* MWCaptionView.m */; };
 		9488F5531D1958DA00FC2A97 /* MWGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9488F5421D1958DA00FC2A97 /* MWGridCell.m */; };
 		9488F5541D1958DA00FC2A97 /* MWGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9488F5441D1958DA00FC2A97 /* MWGridViewController.m */; };
@@ -983,6 +984,7 @@
 		947F804E1D3617480076812E /* PSTGridLayoutRow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSTGridLayoutRow.m; sourceTree = "<group>"; };
 		947F804F1D3617480076812E /* PSTGridLayoutSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSTGridLayoutSection.h; sourceTree = "<group>"; };
 		947F80501D3617480076812E /* PSTGridLayoutSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSTGridLayoutSection.m; sourceTree = "<group>"; };
+		948611501D38DA4C0058F5A3 /* black_transperent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = black_transperent.png; sourceTree = "<group>"; };
 		9488F53E1D1958DA00FC2A97 /* MWCaptionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWCaptionView.h; sourceTree = "<group>"; };
 		9488F53F1D1958DA00FC2A97 /* MWCaptionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWCaptionView.m; sourceTree = "<group>"; };
 		9488F5401D1958DA00FC2A97 /* MWCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWCommon.h; sourceTree = "<group>"; };
@@ -2347,6 +2349,7 @@
 				620AE5411CF1BD5300A1449A /* LoLVibe.pch */,
 				946E08731CCFADCB0046153A /* AppDelegate.h */,
 				946E08741CCFADCB0046153A /* AppDelegate.m */,
+				948611501D38DA4C0058F5A3 /* black_transperent.png */,
 				946E08791CCFADCB0046153A /* Main.storyboard */,
 				946E087F1CCFADCB0046153A /* Assets.xcassets */,
 				946E08841CCFADCB0046153A /* Info.plist */,
@@ -2842,6 +2845,7 @@
 				946E087B1CCFADCB0046153A /* Main.storyboard in Resources */,
 				94AE1C931CF2E687007916D8 /* ic_photo.png in Resources */,
 				620E2B2A1CE76F2500CE78FB /* slider-default7-track.png in Resources */,
+				948611511D38DA4C0058F5A3 /* black_transperent.png in Resources */,
 				942DA7751CD66CDE008BC562 /* home_selected.png in Resources */,
 				942DA6B71CD0F591008BC562 /* back.png in Resources */,
 				6273D8931D0B3C5600B6506D /* chat_bk.jpg in Resources */,

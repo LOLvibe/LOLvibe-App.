@@ -17,4 +17,7 @@
 - (IBAction)btnICON:(id)sender;
 
 @property (strong, nonatomic) IBOutlet UIButton *btnFeedback;
+
+- (IBAction)btnTerms:(id)sender;
+
 @end

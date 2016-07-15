@@ -16,7 +16,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+
+    [webVw loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.lolvibe.com/index.php/en/terms"]]];
+    
 }
 
 - (void)didReceiveMemoryWarning {

@@ -20,11 +20,12 @@
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-@property (retain, nonatomic) NSDictionary *pushNotifInfo;
-@property (strong, nonatomic) CustomTabBarController *tabbarController;
-@property (strong, nonatomic) ViewController *vc;
-
-@property (retain, nonatomic) UIStoryboard *storyboard;
+@property (retain, nonatomic)NSDictionary *pushNotifInfo;
+@property (strong, nonatomic)CustomTabBarController *tabbarController;
+@property (strong, nonatomic)ViewController *vc;
+@property (strong, nonatomic)NSString   *strLon;
+@property (strong, nonatomic)NSString   *strLat;
+@property (retain, nonatomic)UIStoryboard *storyboard;
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;

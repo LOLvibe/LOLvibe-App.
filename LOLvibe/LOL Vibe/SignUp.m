@@ -149,6 +149,9 @@
             [dict setObject:txtPassword.text forKey:@"password"];
             [dict setObject:txtVibeUsername.text forKey:@"vibe_name"];
             [dict setObject:txtZipcode.text forKey:@"location"];
+            [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];
+            [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLon] forKey:@"longitude"];
+            
             
             [signupWS callWebServiceWithURLDict:SIGN_UP
                                   andHTTPMethod:@"POST"

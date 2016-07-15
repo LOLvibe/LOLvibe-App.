@@ -235,6 +235,10 @@
                 
                 [tableInvite reloadData];
             }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
         }
     }
 }

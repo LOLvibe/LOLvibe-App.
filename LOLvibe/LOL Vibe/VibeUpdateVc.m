@@ -87,9 +87,10 @@
     
     [locationManager startUpdatingLocation];
     
-    if (self.isFromCameraTab) {
+    if (self.isFromCameraTab)
+    {
         dummyImage.image = _cameraImage;
-        
+        [btnVibePost setSelected:YES];
     }
 }
 
@@ -487,7 +488,7 @@ CGFloat _currentKeyboardHeight = 0.0f;
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
 //        NSLog(@"tempDict = %@",dictResult);
-        
+
         if ([tagStr isEqualToString:@"getNearByPlaces"])
         {
             [arrNearbyPlaces removeAllObjects];
@@ -499,6 +500,7 @@ CGFloat _currentKeyboardHeight = 0.0f;
             if ([[dictResult valueForKey:@"status_code"] integerValue]== 1)
             {
                 [[NSNotificationCenter defaultCenter] postNotificationName:kRefressHomeFeed object:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kRefressProfile object:nil];
                 [self dismissViewControllerAnimated:YES completion:nil];
             }
             else if ([[dictResult valueForKey:@"status_code"] integerValue]== 14)

@@ -18,8 +18,6 @@
     CLLocationManager   *locationManager;
     CLGeocoder          *geocoder;
     CLPlacemark         *placemark;
-    NSString            *strLon;
-    NSString            *strLat;
     float               Longi;
     float               Latti;
 }
@@ -169,8 +167,8 @@
     
     if (currentLocation != nil)
     {
-        strLon = [NSString stringWithFormat:@"%.8f", currentLocation.coordinate.longitude];
-        strLat = [NSString stringWithFormat:@"%.8f", currentLocation.coordinate.latitude];
+        _strLon = [NSString stringWithFormat:@"%.8f", currentLocation.coordinate.longitude];
+        _strLat = [NSString stringWithFormat:@"%.8f", currentLocation.coordinate.latitude];
         
         Latti =currentLocation.coordinate.latitude;
         Longi =currentLocation.coordinate.longitude;

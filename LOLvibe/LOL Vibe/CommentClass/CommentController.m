@@ -50,7 +50,17 @@
 {
     NSMutableDictionary *dictParametr = [[NSMutableDictionary alloc] init];
     [dictParametr setValue:[dictPost valueForKey:@"feed_id"] forKey:@"parent_id"];
-    [dictParametr setValue:@"post" forKey:@"comment_type"];
+    
+    if (self.isInvite)
+    {
+        [dictParametr setValue:@"invite" forKey:@"comment_type"];
+    }
+    else
+    {
+        [dictParametr setValue:@"post" forKey:@"comment_type"];
+    }
+    
+    
     [dictParametr setValue:pageNo forKey:@"page"];
     
     WebService *serViewComment = [[WebService alloc] initWithView:self.view andDelegate:self];
@@ -183,6 +193,7 @@
     }];
     
     btnReply.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)section];
+    btnLike.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)section];
     
     [btnReply addTarget: self action:@selector(btnRReplySend:) forControlEvents:UIControlEventTouchUpInside];
     [btnLike addTarget: self action:@selector(likeUnLikeComment:) forControlEvents:UIControlEventTouchUpInside];
@@ -269,11 +280,11 @@
 -(void)likeUnLikeComment:(UIButton *)sender
 {
     sender.selected = !sender.selected;
-    UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
-    NSIndexPath *indexPath = [tblComment indexPathForCell:cell];
+    
+    NSInteger intSection = [sender.accessibilityLabel integerValue];
     
     NSMutableDictionary *dictLike= [[NSMutableDictionary alloc] init];
-    [dictLike setValue:[[arrComment objectAtIndex:indexPath.section] valueForKey:@"comment_id"] forKey:@"parent_id"];
+    [dictLike setValue:[[arrComment objectAtIndex:intSection] valueForKey:@"comment_id"] forKey:@"parent_id"];
     [dictLike setValue:@"comment" forKey:@"like_type"];
     
     WebService *serLikeUnLike = [[WebService alloc]initWithView:self.view andDelegate:self];
@@ -326,7 +337,15 @@
         {
             NSMutableDictionary *dictParametr = [[NSMutableDictionary alloc] init];
             [dictParametr setValue:[dictPost valueForKey:@"feed_id"] forKey:@"parent_id"];
-            [dictParametr setValue:@"post" forKey:@"comment_type"];
+            
+            if (self.isInvite)
+            {
+                [dictParametr setValue:@"invite" forKey:@"comment_type"];
+            }
+            else
+            {
+                [dictParametr setValue:@"post" forKey:@"comment_type"];
+            }
             
             NSString *uniText = [NSString stringWithUTF8String:[txtAddComment.text UTF8String]];
             NSData *msgData = [uniText dataUsingEncoding:NSNonLossyASCIIStringEncoding];
@@ -359,6 +378,8 @@
                                           andDictData:dictParametr
                                           withLoading:YES
                                      andWebServiceTag:@"addComment" setToken:YES];
+            
+            isReply = NO;
         }
     }
 }
@@ -576,7 +597,7 @@
 
 -(void) keyboardWillHide:(NSNotification *)note
 {
-    isReply = NO;
+    //isReply = NO;
     NSNumber *duration = [note.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSNumber *curve = [note.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey];
     

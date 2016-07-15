@@ -12,19 +12,21 @@
 #import "InvitedFriendList.h"
 #import "HashTagVC.h"
 #import "OtherProfileVC.h"
+#import <CoreLocation/CoreLocation.h>
 
 @interface LocationInviteDetails ()<WebServiceDelegate,CLLocationManagerDelegate,UIActionSheetDelegate>
 {
     WebService *getLocatoinDetails;
     
     AppDelegate *appDel;
-    
     NSDictionary *dictObj;
     
     CLLocationManager   *locationManager;
     float   sourceLat,sourceLong;
     float   destiLat,destiLong;
-
+    
+    CLGeocoder          *geocoder;
+    CLPlacemark         *placemark;
 }
 
 @end
@@ -64,7 +66,7 @@
     [attributedText setAttributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:15.0]} range:[fullString rangeOfString:boldString]];
     
     lblInviteText.attributedText = attributedText;
-
+    
     
     [self getInvite];
     
@@ -156,11 +158,9 @@
     {
         sourceLat =currentLocation.coordinate.latitude;
         sourceLong =currentLocation.coordinate.longitude;
-        
-        [locationManager stopUpdatingLocation];
     }
+    [locationManager stopUpdatingLocation];
 }
-
 
 #pragma mark- Location Permision Method
 - (void)requestAlwaysAuthorization
@@ -184,10 +184,6 @@
 
 - (IBAction)btnLocation:(id)sender
 {
-}
-
-- (IBAction)btnOption:(id)sender
-{
     
 }
 
@@ -195,6 +191,7 @@
 {
     CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
     obj.dictPost = @{@"feed_id":self.strInviteID};
+    obj.isInvite = YES;
     
     [self.navigationController pushViewController:obj animated:YES];
 }
@@ -206,21 +203,33 @@
     btnlike.selected = !btnlike.selected;
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setValue:self.strInviteID forKey:@"parent_id"];
-    [dict setValue:@"post" forKey:@"like_type"];
+    [dict setValue:@"invite" forKey:@"like_type"];
     
     WebService *serLikePost = [[WebService alloc] initWithView:self.view andDelegate:self];
     int count = 0;
     count = [lblLikeCount.text intValue];
+   
     if(btnlike.selected)
     {
         count = count + 1;
-        [serLikePost callWebServiceWithURLDict:LIKE_POST andHTTPMethod:@"POST" andDictData:dict withLoading:NO andWebServiceTag:@"likepost" setToken:YES];
+        [serLikePost callWebServiceWithURLDict:LIKE_POST
+                                 andHTTPMethod:@"POST"
+                                   andDictData:dict
+                                   withLoading:NO
+                              andWebServiceTag:@"likepost"
+                                      setToken:YES];
     }
     else
     {
         count = count - 1;
-        [serLikePost callWebServiceWithURLDict:UNLIKE_POST andHTTPMethod:@"POST" andDictData:dict withLoading:NO andWebServiceTag:@"likepost" setToken:YES];
+        [serLikePost callWebServiceWithURLDict:UNLIKE_POST
+                                 andHTTPMethod:@"POST"
+                                   andDictData:dict
+                                   withLoading:NO
+                              andWebServiceTag:@"likepost"
+                                      setToken:YES];
     }
+    
     lblLikeCount.text = [NSString stringWithFormat:@"%d",count];
 }
 
@@ -279,16 +288,25 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        //NSLog(@"%@",dictResult);
+        NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"getLocatoinDetails"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
                 dictObj = [dictResult valueForKey:@"data"];
                 
-                destiLat = [[dictObj valueForKey:@"latitude"] floatValue];
-                destiLong = [[dictObj valueForKey:@"longitude"] floatValue];
-
+                destiLat = [[dictObj valueForKey:@"invite_latitude"] floatValue];
+                destiLong = [[dictObj valueForKey:@"invite_longitude"] floatValue];
+                
+                if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+                {
+                    btnLike.selected= YES;
+                }
+                else
+                {
+                    btnLike.selected = NO;
+                }
+                
                 lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
                 lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
                 
@@ -297,15 +315,7 @@
                 NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
                 lblCaption.text=goodMsg;
                 
-                
                 lblLocation.text =[dictObj valueForKey:@"address"];
-                
-//                NSString * returnVal;
-//                NSDateFormatter * dateFromatter = [[NSDateFormatter alloc] init];
-//                [dateFromatter setDateFormat:@"dd MMMM, yyyy"];
-//                returnVal = [dateFromatter stringFromDate:[GlobalMethods getDateFromString:[dictObj valueForKey:@"create_at"]]];
-
-
                 lblDate.text = [[[dictObj valueForKey:@"create_at"] componentsSeparatedByString:@" "] objectAtIndex:0];
                 
                 NSString *strURL = [dictObj valueForKey:@"photo"];

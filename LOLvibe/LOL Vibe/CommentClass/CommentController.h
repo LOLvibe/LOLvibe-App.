@@ -19,6 +19,8 @@
 
 @property (strong, atomic) NSDictionary *dictPost;
 
+@property (atomic) BOOL isInvite;
+
 - (IBAction)btnSend:(UIButton *)sender;
 
 @end

@@ -164,7 +164,7 @@
         [btnAccept setHidden:NO];
         [btnDecline setHidden:NO];
         
-         NSString *strURL = [[dictvalue valueForKey:@"image"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString *strURL = [[dictvalue valueForKey:@"image"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         [imgLoation sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgLoation.image = image;
         }];
@@ -222,10 +222,18 @@
 {
     if(segment.selectedSegmentIndex == 0)
     {
+        if ([[[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId])
+        {
+            return;
+        }
         [self performSegueWithIdentifier:@"profile" sender:[arrRecentNotification objectAtIndex:indexPath.row]];
     }
     else
     {
+        if ([[[arrRequest objectAtIndex:indexPath.row] valueForKey:@"user_id"] isEqualToString:[LoggedInUser sharedUser].userId])
+        {
+            return;
+        }
         [self performSegueWithIdentifier:@"profile" sender:[arrRequest objectAtIndex:indexPath.row]];
     }
 }
@@ -283,7 +291,6 @@
     
     WebService *serRequest = [[WebService alloc] initWithView:self.view andDelegate:self];
     
-    
     if([[dictVale valueForKey:@"notification_type"] intValue] == 7)
     {
         NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
@@ -333,12 +340,12 @@
 {
     UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
     NSIndexPath *indexPath = [tblRecent indexPathForCell:cell];
-
+    
     if([[[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"notification_type"] intValue] == 4)
     {
         CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
         obj.dictPost = [arrRecentNotification objectAtIndex:indexPath.row];
-        
+        obj.isInvite = NO;
         [self.navigationController pushViewController:obj animated:YES];
     }
     else
@@ -375,7 +382,7 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-//        NSLog(@"%@",dictResult);
+        //        NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"notificationList"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)

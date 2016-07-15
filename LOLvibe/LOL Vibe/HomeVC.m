@@ -39,18 +39,35 @@
     serGetFeed = [[WebService alloc] initWithView:self.view andDelegate:self];
     arrFeed = [[NSMutableArray alloc]init];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(RefreshScreen:) name:kRefressHomeFeed object:nil];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(RefreshScreen:) name:kRefressHomeFeed object:nil];
     isLike = NO;
-    pageCount = 1;
-    
     self.navigationItem.title = @"";
-    [self getFeed:YES];
+    
+    if (![[NSUserDefaults standardUserDefaults]boolForKey:@"isDone"])
+    {
+        [imageGuide setHidden:NO];
+        UITapGestureRecognizer *tapGestureProfile = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapOnUserGuide:)];
+        tapGestureProfile.numberOfTapsRequired = 1;
+        tapGestureProfile.cancelsTouchesInView = YES;
+        [imageGuide addGestureRecognizer:tapGestureProfile];
+    }
+    else
+    {
+        [imageGuide setHidden:YES];
+    }
 }
-
+-(void)tapOnUserGuide:(UITapGestureRecognizer *)sender
+{
+    [imageGuide setHidden:YES];
+    [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"isDone"];
+    [[NSUserDefaults standardUserDefaults]synchronize];
+}
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    [self RefreshScreen:nil];
     
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
@@ -240,7 +257,6 @@
         NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
         lblCaption.text=goodMsg;
         
-        
         lblLocation.text =[dictObj valueForKey:@"location_text"];
         lblTime.text = [dictObj valueForKey:@"created_at"];
         
@@ -282,7 +298,27 @@
         
         if ([[dictObj valueForKey:@"age"] length] > 0)
         {
-            lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[dictObj valueForKey:@"name"],[dictObj valueForKey:@"age"]];
+            CGSize result = [[UIScreen mainScreen] bounds].size;
+
+            if(result.height == 480 || result.height == 568)
+            {
+                NSString *strName  = [NSString stringWithFormat:@"%@, %@",[dictObj valueForKey:@"name"],[dictObj valueForKey:@"age"]];
+                
+                if ([strName length] > 14)
+                {
+                    NSArray *arr = [[dictObj valueForKey:@"name"] componentsSeparatedByString:@" "];
+                    
+                    lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[arr objectAtIndex:0],[dictObj valueForKey:@"age"]];
+                }
+                else
+                {
+                    lblUserFullName.text  = [NSString stringWithFormat:@"%@, %@",[dictObj valueForKey:@"name"],[dictObj valueForKey:@"age"]];
+                }
+            }
+            else
+            {
+                lblUserFullName.text  = [NSString stringWithFormat:@"%@, %@",[dictObj valueForKey:@"name"],[dictObj valueForKey:@"age"]];
+            }
         }
         else
         {
@@ -547,6 +583,7 @@
     UILabel *lblLikeCount;
     int count = 0;
     UICollectionViewCell *cell = (UICollectionViewCell *) [self superviewWithClassName:@"UICollectionViewCell" fromView:sender];
+   
     if (cell)
     {
         indexPathSelected = [coolectionFeed indexPathForCell:cell];
@@ -784,7 +821,7 @@
     
     CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
     obj.dictPost = [arrFeed objectAtIndex:indexPath];
-    
+    obj.isInvite = NO;
     [self.navigationController pushViewController:obj animated:YES];
 }
 
@@ -830,6 +867,11 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
+//                if ([[dictResult valueForKey:@"feed_info"] count] ==0)
+//                {
+//                    [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Tap on the LOLvibe camera below to share those good #vibes around you :)"];
+//                }
+                
                 [arrFeed addObjectsFromArray:[dictResult valueForKey:@"feed_info"]];
                 [coolectionFeed reloadData];
                 
@@ -855,7 +897,14 @@
                 [arrFeed addObjectsFromArray:[dictResult valueForKey:@"feed_info"]];
                 [coolectionFeed reloadData];
                 
-                [coolectionFeed scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
+                if ([[dictResult valueForKey:@"feed_info"] count] !=0)
+                {
+                    [coolectionFeed scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
+                }
+//                else if ([[dictResult valueForKey:@"feed_info"] count] ==0)
+//                {
+//                    [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Tap on the LOLvibe camera below to share those good #vibes around you :)"];
+//                }
             }
             else
             {
@@ -902,7 +951,7 @@
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
                 [self getFeed:YES];
-                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Repost successful!"];
             }
             else
             {

@@ -145,15 +145,13 @@
          }
          if ([[responseObject valueForKey:@"status_code"] integerValue]== 7)
          {
-             [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Your sassion has expired.\nPlease login again."];
+             [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Your session has expired.\nPlease login again."];
 
              AppDelegate *appDel = APP_DELEGATE;
              [[XmppHelper sharedInstance] disconnect];
              [kPref removeObjectForKey:kRecentChatArray];
              [kPref setObject:nil forKey:kRecentChatArray];
-             
              [appDel setLoginView];
-             
              return;
          }
          [self.delegate webserviceCallFinishedWithSuccess:YES
