@@ -17,6 +17,7 @@
 -(void)callDeleteMethod:(NSDictionary *)dict;
 -(void)callRepostMethod:(NSDictionary *)dict;
 -(void)callReportMethod:(NSDictionary *)dict;
+-(void)callBlockUserMethod:(NSDictionary *)dict;
 -(void)callInstagramMethod:(NSDictionary *)dict Image:(UIImage *)image;
 @end
 

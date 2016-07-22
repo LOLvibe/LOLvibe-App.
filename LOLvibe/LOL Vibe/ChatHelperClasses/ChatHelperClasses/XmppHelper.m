@@ -1008,12 +1008,12 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 - (void)xmppStream:(XMPPStream *)sender socketDidConnect:(GCDAsyncSocket *)socket
 {
-    DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
+   // DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
 }
 
 - (void)xmppStream:(XMPPStream *)sender willSecureWithSettings:(NSMutableDictionary *)settings
 {
-    DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
+   // DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
     
     /*if (allowSelfSignedCertificates)
      {
@@ -1048,7 +1048,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 - (void)xmppStreamDidSecure:(XMPPStream *)sender
 {
-    DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
+   // DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
 }
 
 - (void)xmppStreamDidConnect:(XMPPStream *)sender
@@ -1057,7 +1057,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     //progessLoading = [MBProgressHUD showHUDAddedTo:window animated:YES];
     progessLoading.labelText = @"Please Wait";
     
-    DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
+    // DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
     
     isXmppConnected = YES;
     
@@ -1065,14 +1065,14 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     
     if (![[self xmppStream] authenticateWithPassword:self.password error:&error])
     {
-        DDLogError(@"Error authenticating: %@", error);
+       // DDLogError(@"Error authenticating: %@", error);
     }
     //[MBProgressHUD hideHUDForView:window animated:YES];
 }
 
 - (void)xmppStreamDidAuthenticate:(XMPPStream *)sender
 {
-    DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
+    //DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
     
     /*NSDictionary *loggedInUserDict = [NKeyChain objectForKey:@"wUserInfo"];
      
@@ -1102,7 +1102,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 - (void)xmppStream:(XMPPStream *)sender didNotAuthenticate:(NSXMLElement *)error
 {
-    DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
+   // DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XMPP_UNAUTHENTICATED_NOTIFICATION object:nil];
 }
@@ -2244,12 +2244,12 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 - (void)xmppStream:(XMPPStream *)sender didReceiveError:(id)error
 {
-    DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
+   // DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
 }
 
 - (void)xmppStreamDidDisconnect:(XMPPStream *)sender withError:(NSError *)error
 {
-    DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
+  //  DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
     
     [self.presenceArray removeAllObjects];
     
@@ -2260,7 +2260,6 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
         [xmppRoom deactivate];
     }
     [self.rooms removeAllObjects];
-    
     
     [[NSNotificationCenter defaultCenter] postNotificationName:XMPP_DSCONNECTED_NOTIFICATION object:nil];
     

@@ -14,7 +14,6 @@
 #import "OptionClass.h"
 #import "OtherProfileVC.h"
 
-
 @interface HashTagVC () <WebServiceDelegate,CLLocationManagerDelegate,UIActionSheetDelegate,OptionClassDelegate>
 {
     WebService *serGetFeed;
@@ -206,10 +205,19 @@
         lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
         lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
         
-        if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+        if ([[dictObj valueForKey:@"like"] intValue] == 0)
         {
-            btnLike.selected= YES;
+            btnLike.selected= NO;
         }
+        else
+        {
+            if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+            {
+                btnLike.selected= YES;
+            }
+        }
+
+        
         
         if ([[dictObj valueForKey:@"is_friend"] intValue] == 0)
         {
@@ -372,10 +380,20 @@
         
         NSString *strURL = [dictObj valueForKey:@"image"];
         
-        if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+       
+        if ([[dictObj valueForKey:@"like"] intValue] == 0)
         {
-            btnLike.selected= YES;
+            btnLike.selected= NO;
         }
+        else
+        {
+            if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+            {
+                btnLike.selected= YES;
+            }
+        }
+
+        
         
         if ([[dictObj valueForKey:@"is_friend"] intValue] == 0)
         {
@@ -653,6 +671,22 @@
     
     [self performSegueWithIdentifier:@"show_places" sender:strSelectedFriend];
 }
+-(void)callBlockUserMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"feed_id"] forKey:@"report_for_id"];
+    [dictPara setValue:[dict valueForKey:@"user_id"] forKey:@"to_user_id"];
+    [dictPara setValue:@"post" forKey:@"report_for"];
+    
+    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [report callWebServiceWithURLDict:REPORT_POST_COMMENT
+                        andHTTPMethod:@"POST"
+                          andDictData:dictPara
+                          withLoading:YES
+                     andWebServiceTag:@"block"
+                             setToken:YES];
+}
 
 #pragma mark PrepareForSegue Method
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -775,6 +809,18 @@
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }
         }
+        else if ([tagStr isEqualToString:@"block"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This user is blocked. As of now you will not see any post of this user."];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+
     }
 }
 

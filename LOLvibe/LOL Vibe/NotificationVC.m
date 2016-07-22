@@ -343,10 +343,14 @@
     
     if([[[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"notification_type"] intValue] == 4)
     {
-        CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
-        obj.dictPost = [arrRecentNotification objectAtIndex:indexPath.row];
-        obj.isInvite = NO;
-        [self.navigationController pushViewController:obj animated:YES];
+//        CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
+//        obj.dictPost = [arrRecentNotification objectAtIndex:indexPath.row];
+//        obj.isInvite = NO;
+//        [self.navigationController pushViewController:obj animated:YES];
+        
+        
+        NSString *dictObj = [[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"feed_id"];
+        [self performSegueWithIdentifier:@"push_to_detail" sender:dictObj];
     }
     else
     {

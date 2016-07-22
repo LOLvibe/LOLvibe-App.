@@ -72,7 +72,6 @@
     lblFullName.text = user.userFullName;
     lblVibeName.text = [NSString stringWithFormat:@"@%@",user.userVibeName];
     
-    
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
     
@@ -90,6 +89,14 @@
         }
     }
     [locationManager startUpdatingLocation];
+    
+    if ([[NSUserDefaults standardUserDefaults]boolForKey:@"refresh_profile"])
+    {
+        [[NSUserDefaults standardUserDefaults]setBool:NO forKey:@"refresh_profile"];
+        [[NSUserDefaults standardUserDefaults]synchronize];
+        
+        return;
+    }
     
     pageCountPost = pageCountLoc = 1;
     
@@ -243,7 +250,6 @@
         else if([[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 1)
         {
             [btnAddFrnd setHidden:YES];
-            btnAddFrnd.selected = YES;
         }
         else if([[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 2)
         {
@@ -252,7 +258,7 @@
         else if([[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"is_friend"] intValue] == 3)
         {
             [btnAddFrnd setHidden:NO];
-            btnAddFrnd.selected = YES;
+            btnAddFrnd.selected = NO;
         }
         
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:[[arrVisitFriend objectAtIndex:indexPath.row] valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
@@ -338,12 +344,7 @@
         btnComment.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)indexPath.row];
         btnOption.accessibilityLabel = @"photo";
         
-        NSDictionary *dictObj = [arrPhotoPosts objectAtIndex:indexPath.row];
-        
-        if([[dictObj valueForKey:@"is_like"] intValue] == 1)
-        {
-            btnLike.selected= YES;
-        }
+       
         
         [btnOption addTarget:self action:@selector(btnOption:) forControlEvents:UIControlEventTouchUpInside];
         [btnComment addTarget:self action:@selector(btnCommentPhoto:) forControlEvents:UIControlEventTouchUpInside];
@@ -359,6 +360,19 @@
         imgProfile.layer.borderWidth = 1;
         imgProfile.layer.borderColor = [UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1.0].CGColor;
         
+        NSDictionary *dictObj = [arrPhotoPosts objectAtIndex:indexPath.row];
+
+        if ([[dictObj valueForKey:@"like"] intValue] == 0)
+        {
+            btnLike.selected= NO;
+        }
+        else
+        {
+            if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+            {
+                btnLike.selected= YES;
+            }
+        }
         
         PatternTapResponder hashTagTapAction = ^(NSString *tappedString)
         {
@@ -476,11 +490,19 @@
         btnComment.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)indexPath.row];
         btnOption.accessibilityLabel = @"location";
         
-        if([[dictObj valueForKey:@"is_like"] intValue] == 1)
-        {
-            btnLike.selected= YES;
-        }
         
+        if ([[dictObj valueForKey:@"like"] intValue] == 0)
+        {
+            btnLike.selected= NO;
+        }
+        else
+        {
+            if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+            {
+                btnLike.selected= YES;
+            }
+        }
+
         [btnOption addTarget:self action:@selector(btnOption:) forControlEvents:UIControlEventTouchUpInside];
         [btnComment addTarget:self action:@selector(btnCommentLocation:) forControlEvents:UIControlEventTouchUpInside];
         [btnLike addTarget:self action:@selector(btnLikeLocation:) forControlEvents:UIControlEventTouchUpInside];
@@ -680,6 +702,7 @@
     {
         OtherProfileVC *obj = [segue destinationViewController];
         obj.dictUser = (NSDictionary *)sender;
+        obj.isProfile = YES;
     }
 }
 
@@ -941,14 +964,49 @@
     
     indexPathUnfriend = [tblFriendList indexPathForCell:cell];
     
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Are you sure?"
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleActionSheet];
     
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Are you sure?"
-                                                       delegate:self
-                                              cancelButtonTitle:@"Cancel"
-                                         destructiveButtonTitle:@"Unfriend"
-                                              otherButtonTitles:nil];
-    sheet.tag = 222;
-    [sheet showInView:self.view];
+    
+    UIAlertAction *unfriend = [UIAlertAction actionWithTitle:@"Unfriend" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        [dict setValue:[[arrFriend objectAtIndex:indexPathUnfriend.row] valueForKey:@"friend_id"] forKey:@"friend_id"];
+        
+        WebService *unfriend = [[WebService alloc] initWithView:self.view andDelegate:self];
+        
+        [unfriend callWebServiceWithURLDict:UNFRIEND
+                              andHTTPMethod:@"POST"
+                                andDictData:dict
+                                withLoading:YES
+                           andWebServiceTag:@"unfriend"
+                                   setToken:YES];
+    }];
+    
+    UIAlertAction *blockuser = [UIAlertAction actionWithTitle:@"BLOCK" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action)
+    {
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        [dict setValue:[[arrFriend objectAtIndex:indexPathUnfriend.row] valueForKey:@"friend_id"] forKey:@"friend_id"];
+        
+        WebService *unfriend = [[WebService alloc] initWithView:self.view andDelegate:self];
+        
+        [unfriend callWebServiceWithURLDict:UNFRIEND
+                              andHTTPMethod:@"POST"
+                                andDictData:dict
+                                withLoading:YES
+                           andWebServiceTag:@"block"
+                                   setToken:YES];
+    }];
+    
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    
+    [alert addAction:unfriend];
+    [alert addAction:blockuser];
+
+    [alert addAction:cancel];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 -(void)callDeleteMethod:(NSDictionary *)dict
 {
@@ -1018,23 +1076,6 @@
                 NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps-x-callback://?saddr=%f,%f&daddr=%f,%f&x-success=GoKids://?resume=true&x-source=GoKids", destiLat, destiLong,  sourceLat, sourceLong]];
                 
                 [[UIApplication sharedApplication] openURL:url];
-            }
-            break;
-            
-        case 222:
-            if (buttonIndex == 0)
-            {
-                NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-                [dict setValue:[[arrFriend objectAtIndex:indexPathUnfriend.row] valueForKey:@"friend_id"] forKey:@"friend_id"];
-                
-                WebService *unfriend = [[WebService alloc] initWithView:self.view andDelegate:self];
-                
-                [unfriend callWebServiceWithURLDict:UNFRIEND
-                                      andHTTPMethod:@"POST"
-                                        andDictData:dict
-                                        withLoading:YES
-                                   andWebServiceTag:@"unfriend"
-                                           setToken:YES];
             }
             break;
     }
@@ -1229,6 +1270,20 @@
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
             }
         }
+        else if ([tagStr isEqualToString:@"block"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This user is blocked."];
+
+                [self getFriendList];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+
         else if ([tagStr isEqualToString:@"deletefeed"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)

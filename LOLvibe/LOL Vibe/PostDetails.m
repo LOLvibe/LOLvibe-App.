@@ -38,9 +38,10 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self getPostDetails];
+    [self getPostDetails:YES];
 }
--(void)getPostDetails
+
+-(void)getPostDetails:(BOOL)loading
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setValue:self.strFeedID forKey:@"feed_id"];
@@ -49,7 +50,7 @@
     [getPostDetails callWebServiceWithURLDict:GET_SINGLE_POST
                                  andHTTPMethod:@"POST"
                                    andDictData:dict
-                                   withLoading:NO
+                                   withLoading:loading
                               andWebServiceTag:@"getPostDetails"
                                       setToken:YES];
 }
@@ -140,10 +141,19 @@
     lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
     lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
     
-    if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+  
+    if ([[dictObj valueForKey:@"like"] intValue] == 0)
     {
-        btnLike.selected= YES;
+        btnLike.selected= NO;
     }
+    else
+    {
+        if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+        {
+            btnLike.selected= YES;
+        }
+    }
+
     
     if ([[dictObj valueForKey:@"is_friend"] intValue] == 0)
     {
@@ -440,7 +450,22 @@
                      andWebServiceTag:@"report"
                              setToken:YES];
 }
-
+-(void)callBlockUserMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"feed_id"] forKey:@"report_for_id"];
+    [dictPara setValue:[dict valueForKey:@"user_id"] forKey:@"to_user_id"];
+    [dictPara setValue:@"post" forKey:@"report_for"];
+    
+    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [report callWebServiceWithURLDict:REPORT_POST_COMMENT
+                        andHTTPMethod:@"POST"
+                          andDictData:dictPara
+                          withLoading:YES
+                     andWebServiceTag:@"block"
+                             setToken:YES];
+}
 #pragma mark Werbservice Delegate Method
 -(void)webserviceCallFinishedWithSuccess:(BOOL)success andResponseObject:(id)responseObj andError:(NSError *)error forWebServiceTag:(NSString *)tagStr
 {
@@ -452,7 +477,7 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [self getPostDetails];
+                [self getPostDetails:NO];
             }
             else
             {
@@ -477,6 +502,8 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
+                [self.navigationController popToRootViewControllerAnimated:YES];
+                
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This post is reported. Admin will review the post and take the action."];
             }
             else
@@ -500,6 +527,19 @@
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        
+        else if ([tagStr isEqualToString:@"block"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [self.navigationController popToRootViewControllerAnimated:YES];
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This user is blocked. As of now you will not see any post of this user."];
             }
             else
             {

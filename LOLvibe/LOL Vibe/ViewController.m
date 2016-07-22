@@ -134,8 +134,11 @@
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
         [dict setObject:txtEmail.text forKey:@"email"];
         [dict setObject:txtPassword.text forKey:@"password"];
-        [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];
-        [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLon] forKey:@"longitude"];
+        if ([appDel.strLat length] != 0 && [appDel.strLon length] != 0)
+        {
+            [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];
+            [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLon] forKey:@"longitude"];
+        }
         
         [loginWS callWebServiceWithURLDict:LOGIN
                              andHTTPMethod:@"POST"
@@ -192,9 +195,11 @@
                              [dict setObject:strUserName forKey:@"vibe_name"];
                              [dict setObject:[result valueForKey:@"id"] forKey:@"fb_login"];
                              [dict setObject:strProfile forKey:@"profile_pic"];
-                             [dict setObject:appDel.strLat forKey:@"latitude"];
-                             [dict setObject:appDel.strLon forKey:@"longitude"];
-                             
+                             if ([appDel.strLat length] != 0 && [appDel.strLon length] != 0)
+                             {
+                                 [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];
+                                 [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLon] forKey:@"longitude"];
+                             }
                              [serFBLogin callWebServiceWithURLDict:OTHER_LOGIN
                                                      andHTTPMethod:@"POST"
                                                        andDictData:dict

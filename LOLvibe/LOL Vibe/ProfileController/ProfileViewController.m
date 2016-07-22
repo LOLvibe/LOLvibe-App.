@@ -148,40 +148,6 @@
     [self hideDatePicker];
 }
 
-//-(void)setUpdatedProfileView
-//{
-//    isUpdateImage = NO;
-//    txtName.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userFullName];
-//    txtVibeName.text = [NSString stringWithFormat:@"@%@",[LoggedInUser sharedUser].userVibeName];
-//    txtBirthDate.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userDOB];
-//    txtEmail.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userEmail];
-//    txtWebsite.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userWebsite];
-//    txtPhoneNumber.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userPhone];
-//    txtChangePassword.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userPassword];
-//    txtZipCode.text = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userLocation];
-//
-//    NSString *strProfile = [NSString stringWithFormat:@"%@",[LoggedInUser sharedUser].userProfilePic];
-//    [imgUserProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-//        imgUserProfile.image = image;
-//    }];
-//
-//    if([[LoggedInUser sharedUser].userGender intValue] == 0)
-//    {
-//        txtGender.text = @"Male";
-//        strGender = @"Male";
-//    }
-//    else if([[LoggedInUser sharedUser].userGender intValue] == 1)
-//    {
-//        txtGender.text = @"Female";
-//        strGender = @"Female";
-//    }
-//    else if([[LoggedInUser sharedUser].userGender intValue] == 2)
-//    {
-//        txtGender.text = @"Not Specified";
-//        strGender = @"Not Specified";
-//    }
-//}
-
 #pragma mark -- Open camera or  Gallery for take Photos--
 -(void)tapOnImageView:(UITapGestureRecognizer *)recognizer
 {
@@ -643,7 +609,7 @@
             {
                 gender = @"0";
             }
-            else if([txtGender.text isEqualToString:@"Male"])
+            else if([txtGender.text isEqualToString:@"Female"])
             {
                 gender = @"1";
             }
@@ -667,8 +633,11 @@
             [dictPara setValue:[NSString stringWithFormat:@"%d",swWebsite.on] forKey:@"show_website"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",swBirthDate.on] forKey:@"show_birthdate"];
             [dictPara setValue:txtChangePassword.text forKey:@"password"];
-            [dictPara setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];
-            [dictPara setObject:[NSString stringWithFormat:@"%@",appDel.strLon] forKey:@"longitude"];
+            if ([appDel.strLat length] != 0 && [appDel.strLon length] != 0)
+            {
+                [dictPara setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];
+                [dictPara setObject:[NSString stringWithFormat:@"%@",appDel.strLon] forKey:@"longitude"];
+            }
             
             NSData *imgData = UIImageJPEGRepresentation(imgUserProfile.image,0.8);
             
@@ -707,7 +676,7 @@
             {
                 gender = @"0";
             }
-            else if([txtGender.text isEqualToString:@"Male"])
+            else if([txtGender.text isEqualToString:@"Female"])
             {
                 gender = @"1";
             }
@@ -725,15 +694,18 @@
             [dictPara setValue:txtWebsite.text forKey:@"website"];
             [dictPara setValue:txtBirthDate.text forKey:@"birth_date"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",btnPrivateAccount.selected] forKey:@"private_account"];
-            //            [dictPara setValue:txtPhoneNumber.text forKey:@"phone"];
+            //  [dictPara setValue:txtPhoneNumber.text forKey:@"phone"];
             [dictPara setValue:gender forKey:@"gender"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",swZipCode.on] forKey:@"show_location"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",swWebsite.on] forKey:@"show_website"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",swBirthDate.on] forKey:@"show_birthdate"];
             [dictPara setValue:txtChangePassword.text forKey:@"password"];
             [dictPara setValue:[LoggedInUser sharedUser].userProfilePic forKey:@"profile_pic"];
-            [dictPara setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];
-            [dictPara setObject:[NSString stringWithFormat:@"%@",appDel.strLon] forKey:@"longitude"];
+            if ([appDel.strLat length] != 0 && [appDel.strLon length] != 0)
+            {
+                [dictPara setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];
+                [dictPara setObject:[NSString stringWithFormat:@"%@",appDel.strLon] forKey:@"longitude"];
+            }
 
             [serUpdateProfile callWebServiceWithURLDict:EDIT_PROFILE
                                           andHTTPMethod:@"POST"

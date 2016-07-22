@@ -592,7 +592,6 @@
         CGPoint offset = CGPointMake(0, tblComment.contentSize.height - tblComment.frame.size.height);
         [tblComment setContentOffset:offset animated:YES];
     }
-    
 }
 
 -(void) keyboardWillHide:(NSNotification *)note
@@ -600,7 +599,6 @@
     //isReply = NO;
     NSNumber *duration = [note.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSNumber *curve = [note.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey];
-    
     
     // animations settings
     [UIView beginAnimations:nil context:NULL];
@@ -614,10 +612,11 @@
     [UIView commitAnimations];
 }
 
--(void)pushBackButton
-{
-    [self.navigationController popViewControllerAnimated:YES];
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
 }
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

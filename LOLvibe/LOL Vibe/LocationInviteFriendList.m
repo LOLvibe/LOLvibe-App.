@@ -19,7 +19,6 @@
     NSMutableArray *arrFriendCopyArray;
     BOOL searching;
     NSString                *searchStr;
-
 }
 
 @end

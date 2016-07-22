@@ -244,10 +244,11 @@
 {
     NSString * proposedNewString = [[textField text] stringByReplacingCharactersInRange:range withString:string];
     
-    if (proposedNewString.length > 0)
+    //if (proposedNewString.length > 0)
     {
         [self getPeoples:proposedNewString withLoading:NO];
     }
+    
     return YES;
 }
 

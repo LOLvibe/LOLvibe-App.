@@ -38,7 +38,6 @@
 
     UIAlertAction *facebook = [UIAlertAction actionWithTitle:@"Share to Facebook"
                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                           
                                                            [self shareInFacebook:dictPostDetail];
                                                        }];
     
@@ -48,24 +47,28 @@
     
     UIAlertAction *instagram = [UIAlertAction actionWithTitle:@"Share to Instagram" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self instaGramWallPost:dictPostDetail Image:image];
-        }];
+    }];
     
     UIAlertAction *report = [UIAlertAction actionWithTitle:@"REPORT!" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         [self reportThisPost:dictPostDetail];
     }];
-    
+
+    UIAlertAction *block = [UIAlertAction actionWithTitle:@"BLOCK USER!" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [self blockThisUser:dictPostDetail];
+    }];
+
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
     
+    [alert addAction:report];
+    [alert addAction:block];
     [alert addAction:repost];
     [alert addAction:facebook];
     [alert addAction:twitter];
     [alert addAction:instagram];
-    [alert addAction:report];
     [alert addAction:cancel];
     
     [view_Process presentViewController:alert animated:YES completion:nil];
 }
-
 
 #pragma mark --Selt Opetion
 -(void)selfUserPostOptionClass:(NSDictionary *)dictPostDetail Image:(UIImage *)image;
@@ -151,7 +154,10 @@
 {
     [self.delegate callReportMethod:dict];
 }
-
+-(void)blockThisUser:(NSDictionary *)dict
+{
+    [self.delegate callBlockUserMethod:dict];
+}
 #pragma marm --Insta Share
 -(void)instaGramWallPost:(NSDictionary *)dictValue Image:(UIImage *)image
 {

@@ -13,7 +13,7 @@
 @interface SignUp ()<WebServiceDelegate>
 {
     WebService  *signupWS;
-
+    
     AppDelegate *appDel;
     
     UITextField *lastTextField;
@@ -149,9 +149,11 @@
             [dict setObject:txtPassword.text forKey:@"password"];
             [dict setObject:txtVibeUsername.text forKey:@"vibe_name"];
             [dict setObject:txtZipcode.text forKey:@"location"];
-            [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];
-            [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLon] forKey:@"longitude"];
-            
+            if ([appDel.strLat length] != 0 && [appDel.strLon length] != 0)
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];
+                [dict setObject:[NSString stringWithFormat:@"%@",appDel.strLon] forKey:@"longitude"];
+            }
             
             [signupWS callWebServiceWithURLDict:SIGN_UP
                                   andHTTPMethod:@"POST"
@@ -203,7 +205,15 @@
     }
     return NO;
 }
-
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    
+    if ([string isEqualToString:@" "] )
+    {
+        return NO;
+    }
+    
+    return YES;
+}
 - (void)webserviceCallFinishedWithSuccess:(BOOL)success andResponseObject:(id)responseObj andError:(NSError *)error forWebServiceTag:(NSString *)tagStr  {
     if (success)
     {

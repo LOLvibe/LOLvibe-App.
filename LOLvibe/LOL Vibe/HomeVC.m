@@ -39,7 +39,6 @@
     serGetFeed = [[WebService alloc] initWithView:self.view andDelegate:self];
     arrFeed = [[NSMutableArray alloc]init];
     
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(RefreshScreen:) name:kRefressHomeFeed object:nil];
     isLike = NO;
     self.navigationItem.title = @"";
     
@@ -55,6 +54,9 @@
     {
         [imageGuide setHidden:YES];
     }
+    
+    [self RefreshScreen:nil];
+    
 }
 -(void)tapOnUserGuide:(UITapGestureRecognizer *)sender
 {
@@ -66,9 +68,7 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    [self RefreshScreen:nil];
-    
+
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
     
@@ -224,16 +224,24 @@
         lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
         lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
         
-        if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+        if ([[dictObj valueForKey:@"like"] intValue] == 0)
         {
-            btnLike.selected= YES;
+            btnLike.selected= NO;
         }
+        else
+        {
+            if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+            {
+                btnLike.selected= YES;
+            }
+        }
+        
         
         if ([[dictObj valueForKey:@"is_friend"] intValue] == 0)
         {
             btnAddFriend.hidden = NO;
-            btnLocationInvite.hidden = YES;
             btnAddFriend.selected = NO;
+            btnLocationInvite.hidden = YES;
         }
         else if([[dictObj valueForKey:@"is_friend"] intValue] == 1)
         {
@@ -356,7 +364,6 @@
         UIButton *btnOption         =(UIButton *)   [cell viewWithTag:109];
         UIImageView *imgProfile     =(UIImageView *)[cell viewWithTag:110];
         
-        
         UILabel *lblUserVibeName    =(UILabel *)    [cell viewWithTag:111];
         UILabel *lblUserFullName    =(UILabel *)    [cell viewWithTag:112];
         UILabel *lblCity            =(UILabel *)    [cell viewWithTag:113];
@@ -410,9 +417,16 @@
         
         NSString *strURL = [dictObj valueForKey:@"image"];
         
-        if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+        if ([[dictObj valueForKey:@"like"] intValue] == 0)
         {
-            btnLike.selected= YES;
+            btnLike.selected= NO;
+        }
+        else
+        {
+            if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+            {
+                btnLike.selected= YES;
+            }
         }
         
         if ([[dictObj valueForKey:@"is_friend"] intValue] == 0)
@@ -582,6 +596,7 @@
     
     UILabel *lblLikeCount;
     int count = 0;
+    
     UICollectionViewCell *cell = (UICollectionViewCell *) [self superviewWithClassName:@"UICollectionViewCell" fromView:sender];
    
     if (cell)
@@ -756,7 +771,22 @@
         [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Instagram not install in your IPhone"];
     }
 }
-
+-(void)callBlockUserMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"feed_id"] forKey:@"report_for_id"];
+    [dictPara setValue:[dict valueForKey:@"user_id"] forKey:@"to_user_id"];
+    [dictPara setValue:@"post" forKey:@"report_for"];
+    
+    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [report callWebServiceWithURLDict:REPORT_POST_COMMENT
+                        andHTTPMethod:@"POST"
+                          andDictData:dictPara
+                          withLoading:YES
+                     andWebServiceTag:@"block"
+                             setToken:YES];
+}
 
 #pragma mark PrepareForSegue Method
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -822,6 +852,8 @@
     CommentController *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentController"];
     obj.dictPost = [arrFeed objectAtIndex:indexPath];
     obj.isInvite = NO;
+    obj.isHOME = YES;
+    
     [self.navigationController pushViewController:obj animated:YES];
 }
 
@@ -862,16 +894,11 @@
     if(success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-//        NSLog(@"%@",dictResult);
+        NSLog(@"%@",dictResult);
         if([tagStr isEqualToString:@"getFeed"])
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-//                if ([[dictResult valueForKey:@"feed_info"] count] ==0)
-//                {
-//                    [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Tap on the LOLvibe camera below to share those good #vibes around you :)"];
-//                }
-                
                 [arrFeed addObjectsFromArray:[dictResult valueForKey:@"feed_info"]];
                 [coolectionFeed reloadData];
                 
@@ -901,10 +928,6 @@
                 {
                     [coolectionFeed scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
                 }
-//                else if ([[dictResult valueForKey:@"feed_info"] count] ==0)
-//                {
-//                    [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Tap on the LOLvibe camera below to share those good #vibes around you :)"];
-//                }
             }
             else
             {
@@ -952,6 +975,18 @@
             {
                 [self getFeed:YES];
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Repost successful!"];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if ([tagStr isEqualToString:@"block"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This user is blocked. As of now you will not see any post of this user."];
+                [self RefreshScreen:nil];
             }
             else
             {

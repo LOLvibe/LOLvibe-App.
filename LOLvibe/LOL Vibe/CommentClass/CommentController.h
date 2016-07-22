@@ -20,6 +20,7 @@
 @property (strong, atomic) NSDictionary *dictPost;
 
 @property (atomic) BOOL isInvite;
+@property (atomic) BOOL isHOME;
 
 - (IBAction)btnSend:(UIButton *)sender;
 

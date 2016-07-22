@@ -37,7 +37,7 @@
     IBOutlet UILabel *lblFriendCount;
 
 }
-
+@property (atomic) BOOL isProfile;
 @property (strong,atomic) NSDictionary *dictUser;
 @property (strong ,atomic) UIDocumentInteractionController *documentController;
 

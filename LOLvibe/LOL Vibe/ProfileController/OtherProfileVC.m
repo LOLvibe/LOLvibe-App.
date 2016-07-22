@@ -75,7 +75,6 @@
     
     [self setDefulatValues];
     
-    
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
     
@@ -96,6 +95,17 @@
     
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    if (self.isMovingFromParentViewController)
+    {
+        if (_isProfile) {
+            [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"refresh_profile"];
+            [[NSUserDefaults standardUserDefaults]synchronize];
+        }
+    }
+}
 #pragma mark - CLLocationManagerDelegate
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
@@ -227,6 +237,11 @@
         btnAddFrnd.selected = YES;
     }
     
+    if([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"user_id"] integerValue] == [[LoggedInUser sharedUser].userId integerValue])
+    {
+        [btnAddFrnd setHidden:YES];
+    }
+
     [imgProfile sd_setImageWithURL:[NSURL URLWithString:[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         imgProfile.image = image;
     }];
@@ -302,11 +317,18 @@
         
         NSDictionary *dictObj = [arrPhotoPosts objectAtIndex:indexPath.row];
         
-        if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+        if ([[dictObj valueForKey:@"like"] intValue] == 0)
         {
-            btnLike.selected= YES;
+            btnLike.selected= NO;
         }
-        
+        else
+        {
+            if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+            {
+                btnLike.selected= YES;
+            }
+        }
+
         [btnOption addTarget:self action:@selector(btnOption:) forControlEvents:UIControlEventTouchUpInside];
         [btnComment addTarget:self action:@selector(btnCommentPhoto:) forControlEvents:UIControlEventTouchUpInside];
         [btnLike addTarget:self action:@selector(btnLikePhoto:) forControlEvents:UIControlEventTouchUpInside];
@@ -442,10 +464,19 @@
         btnComment.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)indexPath.row];
         btnOption.accessibilityLabel = @"location";
         
-        if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+       
+        if ([[dictObj valueForKey:@"like"] intValue] == 0)
         {
-            btnLike.selected= YES;
+            btnLike.selected= NO;
         }
+        else
+        {
+            if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+            {
+                btnLike.selected= YES;
+            }
+        }
+
         
         viewMain.layer.cornerRadius = 5.0;
         viewMain.layer.masksToBounds = YES;
@@ -696,7 +727,7 @@
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setValue:@"photo" forKey:@"feed_type"];
-    [dict setValue:[NSString stringWithFormat:@"%d",pageCountPost]     forKey:@"page"];
+    [dict setValue:[NSString stringWithFormat:@"%d",pageCountPost]  forKey:@"page"];
     [dict setValue:Post_Limit    forKey:@"limit"];
     [dict setValue:@"2"     forKey:@"is_home_feed"];
     [dict setValue:[dictUser valueForKey:@"user_id"] forKey:@"other_user_id"];
@@ -988,6 +1019,22 @@
                      andWebServiceTag:@"report"
                              setToken:YES];
 }
+-(void)callBlockUserMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"feed_id"] forKey:@"report_for_id"];
+    [dictPara setValue:[dict valueForKey:@"user_id"] forKey:@"to_user_id"];
+    [dictPara setValue:@"post" forKey:@"report_for"];
+    
+    WebService *report = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [report callWebServiceWithURLDict:REPORT_POST_COMMENT
+                        andHTTPMethod:@"POST"
+                          andDictData:dictPara
+                          withLoading:YES
+                     andWebServiceTag:@"block"
+                             setToken:YES];
+}
 -(void)btnAddFrnd:(UIButton *)sender
 {
     if(!sender.selected)
@@ -1178,6 +1225,7 @@
                 [tblFriendList reloadData];
                 lblFriendCount.text = [NSString stringWithFormat:@"(%d)",(int)[arrFriend count]];
                 
+                
             }
             else
             {
@@ -1235,6 +1283,18 @@
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        
+        else if ([tagStr isEqualToString:@"block"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This user is blocked. As of now you will not see any post of this user."];
             }
             else
             {

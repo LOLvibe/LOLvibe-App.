@@ -57,11 +57,18 @@
         lblStatus.text = @"Accepted";
         lblStatus.textColor = LOL_Vibe_Green_Color;
     }
-    else
+    else if ([[[arrFrined objectAtIndex:indexPath.row] valueForKey:@"is_come"] intValue] == 2)
     {
         lblStatus.text = @"Declined";
         lblStatus.textColor = [UIColor redColor];
     }
+    else
+    {
+        
+        lblStatus.text = @"Pending";
+        lblStatus.textColor = [UIColor blueColor];
+    }
+    
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
