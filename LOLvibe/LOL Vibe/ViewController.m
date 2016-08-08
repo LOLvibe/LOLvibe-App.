@@ -29,6 +29,7 @@
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
     {
         CGSize result = [[UIScreen mainScreen] bounds].size;
+        
         if(result.height == 480) // 4s
         {
             //gapConst.constant = 11.0;
@@ -189,9 +190,18 @@
                              
                              NSString *strProfile = [NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=large",[result valueForKey:@"id"]];
                              
+                             NSString *strEmail;
+                             if ([[result valueForKey:@"email"] length ] == 0) {
+                                 strEmail = [NSString stringWithFormat:@"%@_%@@lolvibe.com",[result valueForKey:@"first_name"],[result valueForKey:@"last_name"]];
+                             }
+                             else
+                             {
+                                 strEmail = [result valueForKey:@"email"];
+                             }
+                             
                              NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
                              
-                             [dict setObject:[result valueForKey:@"email"] forKey:@"email"];
+                             [dict setObject:strEmail forKey:@"email"];
                              [dict setObject:strUserName forKey:@"vibe_name"];
                              [dict setObject:[result valueForKey:@"id"] forKey:@"fb_login"];
                              [dict setObject:strProfile forKey:@"profile_pic"];

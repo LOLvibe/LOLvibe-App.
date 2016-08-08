@@ -633,6 +633,12 @@
             [dictPara setValue:[NSString stringWithFormat:@"%d",swWebsite.on] forKey:@"show_website"];
             [dictPara setValue:[NSString stringWithFormat:@"%d",swBirthDate.on] forKey:@"show_birthdate"];
             [dictPara setValue:txtChangePassword.text forKey:@"password"];
+            
+            if ([appDel.strCityStateCountry length] != 0)
+            {
+                [dictPara setValue:appDel.strCityStateCountry forKey:@"formatted_address"];
+            }
+            
             if ([appDel.strLat length] != 0 && [appDel.strLon length] != 0)
             {
                 [dictPara setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];
@@ -701,6 +707,11 @@
             [dictPara setValue:[NSString stringWithFormat:@"%d",swBirthDate.on] forKey:@"show_birthdate"];
             [dictPara setValue:txtChangePassword.text forKey:@"password"];
             [dictPara setValue:[LoggedInUser sharedUser].userProfilePic forKey:@"profile_pic"];
+            if ([appDel.strCityStateCountry length] != 0)
+            {
+                [dictPara setValue:appDel.strCityStateCountry forKey:@"formatted_address"];
+            }
+            
             if ([appDel.strLat length] != 0 && [appDel.strLon length] != 0)
             {
                 [dictPara setObject:[NSString stringWithFormat:@"%@",appDel.strLat] forKey:@"latitude"];

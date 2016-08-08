@@ -42,7 +42,7 @@
     }
     
     self.storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-
+    
     //----Push Notification Starts----
     
     [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
@@ -55,7 +55,7 @@
     [XmppHelper sharedInstance].groupChatDomainStr = XMPP_GROUP_DOMAIN;
     [XmppHelper sharedInstance].hostport = 5222;
     [[XmppHelper sharedInstance] setupStream];
-
+    
     LoggedInUser *loggedInUser=[LoggedInUser sharedUser];
     if(loggedInUser.isUserLoggedIn)
     {
@@ -103,7 +103,6 @@
             [_tabbarController showNotification];
         }
     }
-    
     return YES;
 }
 
@@ -124,8 +123,8 @@
 
 -(void)setLoginView
 {
-     UINavigationController *navChats = [self.storyboard instantiateViewControllerWithIdentifier:@"navController"];
-
+    UINavigationController *navChats = [self.storyboard instantiateViewControllerWithIdentifier:@"navController"];
+    
     [self.window setRootViewController:navChats];
     [self.window makeKeyAndVisible];
 }
@@ -133,7 +132,7 @@
 -(void)createTabbar
 {
     _tabbarController = [self.storyboard instantiateViewControllerWithIdentifier:@"CustomTabBarController"];
-        
+    
     [self.window setRootViewController:_tabbarController];
     [self.window makeKeyAndVisible];
 }
@@ -146,17 +145,17 @@
 #pragma mark - CLLocationManagerDelegate
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-//    NSString *message = @"Please allow to LOLvibe to use your Location in the Location Services Settings";
-//    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:App_Name message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Settings", nil];
-//    alertView.tag = 1;
-//    [alertView show];
+    //    NSString *message = @"Please allow to LOLvibe to use your Location in the Location Services Settings";
+    //    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:App_Name message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Settings", nil];
+    //    alertView.tag = 1;
+    //    [alertView show];
 }
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == 1) {
         if (buttonIndex == 1) {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-
+            
         }
     }
 }
@@ -174,6 +173,21 @@
         Longi =currentLocation.coordinate.longitude;
         
         [locationManager stopUpdatingLocation];
+        
+        geocoder= [[CLGeocoder alloc]init];
+        
+        [geocoder reverseGeocodeLocation:newLocation
+                       completionHandler:^(NSArray *placemarks, NSError *error)
+         {
+             if (error)
+             {
+                 return;
+             }
+             
+             placemark = [placemarks objectAtIndex:0];
+             
+             self.strCityStateCountry = [NSString stringWithFormat:@"%@, %@, %@",[placemark.addressDictionary valueForKey:@"City"],[placemark.addressDictionary valueForKey:@"State"],[placemark.addressDictionary valueForKey:@"CountryCode"]];
+         }];
     }
 }
 #pragma mark- Location Permision Method
@@ -221,8 +235,8 @@
 
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
 {
-//    [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:@"device_token"];
-//    [[NSUserDefaults standardUserDefaults] synchronize];
+    //    [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:@"device_token"];
+    //    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 //For interactive notification only
@@ -247,7 +261,7 @@
     self.pushNotifInfo = userInfo;
     
     UIApplicationState state = [application applicationState];
-
+    
     if (state == UIApplicationStateActive)
     {
         if ([[userInfo valueForKeyPath:@"aps.message_type"] integerValue] == 11 || [[userInfo valueForKeyPath:@"aps.message_type"] integerValue] == 12)
@@ -312,9 +326,6 @@
     [self setLastLogoutTimeForUser];
     [[XmppHelper sharedInstance] goOffline];
 }
-
-
-
 
 #pragma mark Logoot Time Out
 -(void)setLastLogoutTimeForUser
@@ -383,7 +394,7 @@
         dict[NSLocalizedFailureReasonErrorKey] = failureReason;
         dict[NSUnderlyingErrorKey] = error;
         error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:9999 userInfo:dict];
-      
+        
         abort();
     }
     
@@ -413,7 +424,7 @@
     if (managedObjectContext != nil) {
         NSError *error = nil;
         if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-           abort();
+            abort();
         }
     }
 }

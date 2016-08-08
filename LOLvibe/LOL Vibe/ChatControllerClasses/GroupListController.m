@@ -68,7 +68,10 @@
     
     [imgProfile  sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",[[arrGroup objectAtIndex:indexPath.row] valueForKey:@"group_photo"]]] placeholderImage:[UIImage imageNamed:@"default_user_image"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         imgProfile.image = image;
-        
+        if (!image)
+        {
+            imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+        }
     }];
     
     lblName.text = [NSString stringWithFormat:@"%@",[[arrGroup objectAtIndex:indexPath.row] valueForKey:@"group_name"]];

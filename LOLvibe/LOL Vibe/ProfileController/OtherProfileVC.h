@@ -35,12 +35,16 @@
     IBOutlet UIView *lockView;
     IBOutlet UIButton *btnAddFriend;
     IBOutlet UILabel *lblFriendCount;
+    
+    IBOutlet UIButton *btnUserBlock;
 
 }
+@property (atomic) BOOL isProfileFrnd;
 @property (atomic) BOOL isProfile;
 @property (strong,atomic) NSDictionary *dictUser;
 @property (strong ,atomic) UIDocumentInteractionController *documentController;
 
+- (IBAction)btnUserBlock:(id)sender;
 - (IBAction)btnAddFriend:(id)sender;
 
 - (IBAction)btnPostPhoto:(id)sender;

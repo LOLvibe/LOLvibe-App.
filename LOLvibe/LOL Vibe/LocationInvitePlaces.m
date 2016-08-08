@@ -298,8 +298,19 @@
                 [dict setValue:[dictSelected valueForKey:@"image_url"] forKey:@"location_photo"];
             }
             
-            [dict setValue:[dictSelected valueForKey:@"lat"] forKey:@"latitude"];
-            [dict setValue:[dictSelected valueForKey:@"lng"] forKey:@"longitude"];
+            NSString *strLat11 = [NSString stringWithFormat:@"%@",[dictSelected valueForKey:@"lat"]];
+            NSString *strLng11 = [NSString stringWithFormat:@"%@",[dictSelected valueForKey:@"lng"]];
+            
+            if ([strLat11 length] == 0 && [strLng11 length] == 0 )
+            {
+                [dict setValue:[dictSelected valueForKeyPath:@"geometry.location.lat"] forKey:@"latitude"];
+                [dict setValue:[dictSelected valueForKeyPath:@"geometry.location.lng"] forKey:@"longitude"];
+            }
+            else
+            {
+                [dict setValue:[dictSelected valueForKey:@"lat"] forKey:@"latitude"];
+                [dict setValue:[dictSelected valueForKey:@"lng"] forKey:@"longitude"];
+            }
             
             WebService *sendInvite = [[WebService alloc]initWithView:self.view andDelegate:self];
             
@@ -585,7 +596,7 @@
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
                 [self.navigationController popToRootViewControllerAnimated:YES];
-                  [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"You have successfully sent your #vibeInvite :)\nTo view go to -> Notifications -> Requests/Invites"];
             }
             else if ([[dictResult valueForKey:@"status_code"] integerValue]== 14)
             {

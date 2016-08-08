@@ -119,6 +119,10 @@
     
     [imgProfile sd_setImageWithURL:[NSURL URLWithString:[dictComment valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         imgProfile.image = image;
+        if (!image)
+        {
+            imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+        }
     }];
     cell.selectionStyle = UITableViewCellAccessoryNone;
     return cell;
@@ -190,6 +194,10 @@
     
     [imgProfile sd_setImageWithURL:[NSURL URLWithString:[dictComment valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         imgProfile.image = image;
+        if (!image)
+        {
+            imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+        }
     }];
     
     btnReply.accessibilityLabel = [NSString stringWithFormat:@"%ld",(long)section];
@@ -475,7 +483,6 @@
                 isReply = NO;
                 txtAddComment.text = @"";
                 [self getComment:YES page:@"1"];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kRefressHomeFeed object:nil];
             }
             else
             {

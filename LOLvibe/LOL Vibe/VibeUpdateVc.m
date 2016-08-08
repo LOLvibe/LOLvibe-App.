@@ -17,6 +17,7 @@
     WebService *vibePostWS;
     NSString *strPublicOrFrnd;
     NSString *strAddress;
+    NSMutableDictionary *dictcurrLoc;
     
     CLLocationManager   *locationManager;
     CLGeocoder          *geocoder;
@@ -129,28 +130,19 @@
              placemark = [placemarks objectAtIndex:0];
              
              strAddress = [NSString stringWithFormat:@"%@, %@, %@",[placemark.addressDictionary valueForKey:@"City"],[placemark.addressDictionary valueForKey:@"State"],[placemark.addressDictionary valueForKey:@"Country"]];
+             
+             NSString *strURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?center=%@,%@&markers=icon:|%@,%@&zoom=16&size=500x500",strLat,strLon,strLat,strLon];
+             
+             dictcurrLoc = [[NSMutableDictionary alloc]init];
+             [dictcurrLoc setValue:strURL forKey:@"icon"];
+             [dictcurrLoc setValue:[[placemark.addressDictionary valueForKey:@"FormattedAddressLines"] componentsJoinedByString:@", "] forKey:@"address"];
+             NSDictionary *dictLatLon = @{@"location":@{@"lat":strLat,@"lng":strLon}};
+             [dictcurrLoc setValue:dictLatLon forKey:@"geometry"];
          }];
     }
 }
 
-//-(void)getGoogleAdrressFromLatLong : (NSString *)lat lon:(NSString *)lon
-//{
-//    NSString *str = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%@,%@&sensor=true",lat,lon];
-//
-//    NSCharacterSet *set = [NSCharacterSet URLQueryAllowedCharacterSet];
-//    NSString *result = [str stringByAddingPercentEncodingWithAllowedCharacters:set];
-//    WebService *getAddress = [[WebService alloc]initWithView:self.view andDelegate:self];
-//
-//
-//    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-//
-//    [getAddress callSimpleWebServiceWithURLDict:result
-//                                  andHTTPMethod:@"POST"
-//                                    andDictData:dict
-//                                    withLoading:YES
-//                               andWebServiceTag:@"getAddress"
-//                                       setToken:NO];
-//}
+
 
 -(void)getNearByPlaces: (NSString *)lat lon:(NSString *)lon
 {
@@ -186,31 +178,38 @@
     UIImageView     *imgPlace       =(UIImageView *)[cell viewWithTag:10];
     UILabel         *lblPlace       =(UILabel *)    [cell viewWithTag:11];
     
-    
-    
     NSDictionary *dictObj =[arrNearbyPlaces objectAtIndex:indexPath.row];
     
-    
-    if ([dictObj valueForKey:@"photos"])
+    if (indexPath.row == 0)
     {
-        NSArray *arrPhotos =[dictObj valueForKey:@"photos"];
-        
-        NSString *strURL = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=%@&key=%@",[[arrPhotos objectAtIndex:0] valueForKey:@"photo_reference"],GOOGLE_API_KEY];
+        NSString *strURL = [dictObj valueForKey:@"icon"];
         
         strURL = [strURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         [imgPlace sd_setImageWithURL:[NSURL URLWithString:strURL]];
+        lblPlace.text = @"Current Location";
     }
     else
     {
-        NSString *strURL = [dictObj valueForKey:@"icon"];
-        strURL = [strURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        [imgPlace sd_setImageWithURL:[NSURL URLWithString:strURL]];
+        if ([dictObj valueForKey:@"photos"])
+        {
+            NSArray *arrPhotos =[dictObj valueForKey:@"photos"];
+            
+            NSString *strURL = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=%@&key=%@",[[arrPhotos objectAtIndex:0] valueForKey:@"photo_reference"],GOOGLE_API_KEY];
+            
+            strURL = [strURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            [imgPlace sd_setImageWithURL:[NSURL URLWithString:strURL]];
+        }
+        else
+        {
+            NSString *strURL = [dictObj valueForKey:@"icon"];
+            strURL = [strURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            [imgPlace sd_setImageWithURL:[NSURL URLWithString:strURL]];
+        }
+        
+        NSString *strName = [NSString stringWithFormat:@"%@\n%@",[dictObj valueForKey:@"name"],[dictObj valueForKey:@"vicinity"]];
+        
+        lblPlace.text = strName;
     }
-    
-    NSString *strName = [NSString stringWithFormat:@"%@\n%@",[dictObj valueForKey:@"name"],[dictObj valueForKey:@"vicinity"]];
-    
-    lblPlace.text = strName;
-    
     return cell;
 }
 
@@ -219,25 +218,32 @@
     [self.navigationController setNavigationBarHidden:NO];
     dictSelected =[arrNearbyPlaces objectAtIndex:indexPath.row];
     
-    NSString *strURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?center=%@,%@&markers=icon:|%@,%@&zoom=12&size=1024x780",
-                        [dictSelected valueForKeyPath:@"geometry.location.lat"],
-                        [dictSelected valueForKeyPath:@"geometry.location.lng"],
-                        [dictSelected valueForKeyPath:@"geometry.location.lat"],
-                        [dictSelected valueForKeyPath:@"geometry.location.lng"]];
-    
-    strURL = [strURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [dummyImage sd_setImageWithURL:[NSURL URLWithString:strURL]];
+    if (indexPath.row == 0)
+    {
+        NSString *strURL = [dictSelected valueForKey:@"icon"];
+        
+        strURL = [strURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        [dummyImage sd_setImageWithURL:[NSURL URLWithString:strURL]];
+        textCaption.text = [dictSelected valueForKey:@"address"];
+    }
+    else
+    {
+        NSString *strURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?center=%@,%@&markers=icon:|%@,%@&zoom=12&size=1024x780",
+                            [dictSelected valueForKeyPath:@"geometry.location.lat"],
+                            [dictSelected valueForKeyPath:@"geometry.location.lng"],
+                            [dictSelected valueForKeyPath:@"geometry.location.lat"],
+                            [dictSelected valueForKeyPath:@"geometry.location.lng"]];
+        
+        strURL = [strURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        [dummyImage sd_setImageWithURL:[NSURL URLWithString:strURL]];
+        
+        NSString *strName = [NSString stringWithFormat:@"%@\n%@",[dictSelected valueForKey:@"name"],[dictSelected valueForKey:@"vicinity"]];
+        
+        textCaption.text = strName;
+    }
     
     [self btnCancelNearByPlaes:nil];
-    
-    //    [self getGoogleAdrressFromLatLong:[dictSelected valueForKeyPath:@"geometry.location.lat"] lon:[dictSelected valueForKeyPath:@"geometry.location.lng"]];
-    
-    NSString *strName = [NSString stringWithFormat:@"%@\n%@",[dictSelected valueForKey:@"name"],[dictSelected valueForKey:@"vicinity"]];
-    
-    textCaption.text = strName;
-    
     [btnVibePost setSelected:YES];
-    
 }
 
 #pragma mark- Location Permision Method
@@ -331,6 +337,11 @@
             }
             NSData *imgData = UIImageJPEGRepresentation(image.image,0.6);
             
+            if (!imgData)
+            {
+                return;
+            }
+            
             [vibePostWS callWebServiceWithURL:CREATE_POST
                                 andHTTPMethod:@"POST"
                                   andDictData:dictPara
@@ -342,7 +353,7 @@
         }
         else
         {
-            NSData *imgData = UIImageJPEGRepresentation(dummyImage.image,1.0);
+            NSData *imgData = UIImageJPEGRepresentation(dummyImage.image,0.6);
             
             if (!imgData)
             {
@@ -351,7 +362,6 @@
             }
             [dictPara setValue:@"photo" forKey:@"post_type"];
             [dictPara setValue:strAddress forKey:@"location_text"];
-            
             [dictPara setValue:strPublicOrFrnd forKey:@"post_share"];
             
             NSString *uniText = [NSString stringWithUTF8String:[textCaption.text UTF8String]];
@@ -371,8 +381,6 @@
         }
     }
 }
-
-
 
 - (IBAction)btnLocation:(id)sender
 {
@@ -487,11 +495,15 @@ CGFloat _currentKeyboardHeight = 0.0f;
     if (success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-//        NSLog(@"tempDict = %@",dictResult);
-
+        //        NSLog(@"tempDict = %@",dictResult);
+        
         if ([tagStr isEqualToString:@"getNearByPlaces"])
         {
             [arrNearbyPlaces removeAllObjects];
+            if (dictcurrLoc)
+            {
+                [arrNearbyPlaces addObject:dictcurrLoc];    
+            }
             [arrNearbyPlaces addObjectsFromArray:[dictResult valueForKey:@"results"]];
             [tableNearbyPlaces reloadData];
         }

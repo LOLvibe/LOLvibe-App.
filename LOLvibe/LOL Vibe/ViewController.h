@@ -22,7 +22,6 @@
     IBOutlet UIButton *btnSignUp;
     
     IBOutlet NSLayoutConstraint *gapConst;
-
     IBOutlet NSLayoutConstraint *topConst;
     IBOutlet NSLayoutConstraint *midGapConst;
     

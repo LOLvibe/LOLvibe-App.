@@ -111,6 +111,10 @@
     
     [imgProfile sd_setImageWithURL:[NSURL URLWithString:[techDict valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         imgProfile.image = image;
+        if (!image)
+        {
+            imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+        }
     }];
     
     
@@ -152,6 +156,22 @@
     if ([string length] == 0)
     {
         searching = NO;
+        
+        for (NSDictionary *dict1 in arrFriendCopyArray )
+        {
+            if ([[dict1 valueForKey:@"isSelected"] isEqualToString:@"1"])
+            {
+                for (int i = 0 ; i < [arrFriend count]; i++)
+                {
+                    if ([[dict1 valueForKey:@"user_id"] isEqualToString:[[arrFriend objectAtIndex:i] valueForKey:@"user_id"]])
+                    {
+                        NSMutableDictionary *dict = [[NSMutableDictionary alloc]initWithDictionary:dict1];
+                        [arrFriend replaceObjectAtIndex:i withObject:dict];
+                    }
+                }
+            }
+        }
+        
         [arrFriendCopyArray removeAllObjects];
         [tableInvite reloadData];
         return YES;
@@ -163,7 +183,6 @@
         [self searchTableView];
         return YES;
     }
-    
     return YES;
 }
 - (void)searchTableView
@@ -192,19 +211,53 @@
 {
     UITableViewCell *cell = (UITableViewCell *)[sender findSuperViewWithClass:[UITableViewCell class]];
     NSIndexPath *indexPath = [tableInvite indexPathForCell:cell];
-    
-    if ([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"isSelected"] isEqualToString:@"1"])
+    if (searching)
     {
-        NSMutableDictionary *dict = [[NSMutableDictionary alloc]initWithDictionary:[arrFriend objectAtIndex:indexPath.row]];
-        [dict setValue:@"0" forKey:@"isSelected"];
-        [arrFriend replaceObjectAtIndex:indexPath.row withObject:dict];
+        if ([[[arrFriendCopyArray objectAtIndex:indexPath.row] valueForKey:@"isSelected"] isEqualToString:@"1"])
+        {
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc]initWithDictionary:[arrFriendCopyArray objectAtIndex:indexPath.row]];
+            [dict setValue:@"0" forKey:@"isSelected"];
+            [arrFriendCopyArray replaceObjectAtIndex:indexPath.row withObject:dict];
+        }
+        else
+        {
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc]initWithDictionary:[arrFriendCopyArray objectAtIndex:indexPath.row]];
+            [dict setValue:@"1" forKey:@"isSelected"];
+            [arrFriendCopyArray replaceObjectAtIndex:indexPath.row withObject:dict];
+        }
+        
+        for (NSDictionary *dict1 in arrFriendCopyArray )
+        {
+            if ([[dict1 valueForKey:@"isSelected"] isEqualToString:@"1"])
+            {
+                for (int i = 0 ; i < [arrFriend count]; i++)
+                {
+                    if ([[dict1 valueForKey:@"user_id"] isEqualToString:[[arrFriend objectAtIndex:i] valueForKey:@"user_id"]])
+                    {
+                        NSMutableDictionary *dict = [[NSMutableDictionary alloc]initWithDictionary:dict1];
+                        [arrFriend replaceObjectAtIndex:i withObject:dict];
+                    }
+                }
+            }
+        }
+
     }
     else
     {
-        NSMutableDictionary *dict = [[NSMutableDictionary alloc]initWithDictionary:[arrFriend objectAtIndex:indexPath.row]];
-        [dict setValue:@"1" forKey:@"isSelected"];
-        [arrFriend replaceObjectAtIndex:indexPath.row withObject:dict];
+        if ([[[arrFriend objectAtIndex:indexPath.row] valueForKey:@"isSelected"] isEqualToString:@"1"])
+        {
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc]initWithDictionary:[arrFriend objectAtIndex:indexPath.row]];
+            [dict setValue:@"0" forKey:@"isSelected"];
+            [arrFriend replaceObjectAtIndex:indexPath.row withObject:dict];
+        }
+        else
+        {
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc]initWithDictionary:[arrFriend objectAtIndex:indexPath.row]];
+            [dict setValue:@"1" forKey:@"isSelected"];
+            [arrFriend replaceObjectAtIndex:indexPath.row withObject:dict];
+        }
     }
+
     [tableInvite reloadData];
 }
 
@@ -219,10 +272,8 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                
                 [arrFriend addObjectsFromArray:[dictResult valueForKey:@"friend-location"]];
                 [arrFriend addObjectsFromArray:[dictResult valueForKey:@"friend-suggetion"]];
-                
                 
                 for(int i = 0 ; i < [arrFriend count]; i++)
                 {

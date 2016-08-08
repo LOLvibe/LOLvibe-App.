@@ -48,11 +48,11 @@
     
     WebService *getPostDetails = [[WebService alloc] initWithView:self.view andDelegate:self];
     [getPostDetails callWebServiceWithURLDict:GET_SINGLE_POST
-                                 andHTTPMethod:@"POST"
-                                   andDictData:dict
-                                   withLoading:loading
-                              andWebServiceTag:@"getPostDetails"
-                                      setToken:YES];
+                                andHTTPMethod:@"POST"
+                                  andDictData:dict
+                                  withLoading:loading
+                             andWebServiceTag:@"getPostDetails"
+                                     setToken:YES];
 }
 
 -(void)pushBackButton
@@ -119,122 +119,132 @@
     imgProfile.layer.borderWidth = 1;
     imgProfile.layer.borderColor = [UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1.0].CGColor;
     
-    NSDictionary *dictObj = [_array objectAtIndex:indexPath.row];
-    
-    NSString *strURL = [dictObj valueForKey:@"image"];
-    
-    [imgMain sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"post_bg.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-        imgMain.image = image;
-    }];
-    PatternTapResponder hashTagTapAction = ^(NSString *tappedString)
+    if ([_array count] != 0)
     {
-        HashTagVC *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"HashTagVC"];
-        obj.strHashTag = tappedString;
+        NSDictionary *dictObj = [_array objectAtIndex:indexPath.row];
         
-        [self.navigationController pushViewController:obj animated:YES];
+        NSString *strURL = [dictObj valueForKey:@"image"];
         
-    };
-    
-    [lblCaption enableHashTagDetectionWithAttributes:@{NSForegroundColorAttributeName:LOL_Vibe_Green_Color,
-                                                       RLHighlightedBackgroundColorAttributeName:[UIColor clearColor],NSBackgroundColorAttributeName:[UIColor clearColor],RLHighlightedBackgroundCornerRadius:@5,
-                                                       RLTapResponderAttributeName:hashTagTapAction}];
-    lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
-    lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
-    
-  
-    if ([[dictObj valueForKey:@"like"] intValue] == 0)
-    {
-        btnLike.selected= NO;
-    }
-    else
-    {
-        if([[dictObj valueForKey:@"is_like"] intValue] == 1)
-        {
-            btnLike.selected= YES;
+        if (strURL.length != 0) {
+            
+            [imgMain sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"post_bg.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                imgMain.image = image;
+            }];
         }
-    }
-
-    
-    if ([[dictObj valueForKey:@"is_friend"] intValue] == 0)
-    {
-        btnAddFriend.hidden = NO;
-        btnLocationInvite.hidden = YES;
-        btnAddFriend.selected = NO;
-    }
-    else if([[dictObj valueForKey:@"is_friend"] intValue] == 1)
-    {
-        btnLocationInvite.hidden = NO;
-        btnAddFriend.hidden = YES;
-    }
-    else if ([[dictObj valueForKey:@"is_friend"] intValue] == 2)
-    {
-        btnAddFriend.hidden = YES;
-        btnLocationInvite.hidden = YES;
-    }
-    else if ([[dictObj valueForKey:@"is_friend"] intValue] == 3)
-    {
-        btnAddFriend.hidden = NO;
-        btnAddFriend.selected = YES;
-        btnLocationInvite.hidden = YES;
-    }
-    
-    const char *jsonString = [[dictObj valueForKey:@"feed_text"] UTF8String];
-    NSData *jsonData = [NSData dataWithBytes:jsonString length:strlen(jsonString)];
-    NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
-    lblCaption.text=goodMsg;
-    
-    lblLocation.text =[dictObj valueForKey:@"location_text"];
-    lblTime.text = [dictObj valueForKey:@"created_at"];
-    
-    [btnOption addTarget:self action:@selector(btnOption:) forControlEvents:UIControlEventTouchUpInside];
-    [btnComment addTarget:self action:@selector(btnComment:) forControlEvents:UIControlEventTouchUpInside];
-    [btnLike addTarget:self action:@selector(btnLike:) forControlEvents:UIControlEventTouchUpInside];
-    [btnAddFriend addTarget:self action:@selector(isFriendOrNot:) forControlEvents:UIControlEventTouchUpInside];
-    [btnLocationInvite addTarget:self action:@selector(btnLocationInvite:) forControlEvents:UIControlEventTouchUpInside];
-    
-    if ([[dictObj valueForKey:@"vibe_name"] length] > 0)
-    {
-        lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[dictObj valueForKey:@"vibe_name"]];
-    }
-    else
-    {
-        lblUserVibeName.text = @"";
-    }
-    
-    if ([[dictObj valueForKey:@"formatted_address"] length] > 0)
-    {
-        NSArray *arr = [[dictObj valueForKey:@"formatted_address"] componentsSeparatedByString:@","];
+        PatternTapResponder hashTagTapAction = ^(NSString *tappedString)
+        {
+            HashTagVC *obj = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"HashTagVC"];
+            obj.strHashTag = tappedString;
+            
+            [self.navigationController pushViewController:obj animated:YES];
+            
+        };
         
-        lblCity.text = [NSString stringWithFormat:@"%@,%@",[arr objectAtIndex:0],[arr objectAtIndex:1]];
+        [lblCaption enableHashTagDetectionWithAttributes:@{NSForegroundColorAttributeName:LOL_Vibe_Green_Color,
+                                                           RLHighlightedBackgroundColorAttributeName:[UIColor clearColor],NSBackgroundColorAttributeName:[UIColor clearColor],RLHighlightedBackgroundCornerRadius:@5,
+                                                           RLTapResponderAttributeName:hashTagTapAction}];
+        if ([[dictObj valueForKey:@"like"] intValue] <= 0)
+        {
+            btnLike.selected= NO;
+            lblLikeCount.text = @"0";
+        }
+        else
+        {
+            if([[dictObj valueForKey:@"is_like"] intValue] == 1)
+            {
+                btnLike.selected= YES;
+            }
+            else
+            {
+                btnLike.selected= NO;
+            }
+        }
+        lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
+        lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
+        
+        
+        if ([[dictObj valueForKey:@"is_friend"] intValue] == 0)
+        {
+            btnAddFriend.hidden = NO;
+            btnLocationInvite.hidden = YES;
+            btnAddFriend.selected = NO;
+        }
+        else if([[dictObj valueForKey:@"is_friend"] intValue] == 1)
+        {
+            btnLocationInvite.hidden = NO;
+            btnAddFriend.hidden = YES;
+        }
+        else if ([[dictObj valueForKey:@"is_friend"] intValue] == 2)
+        {
+            btnAddFriend.hidden = YES;
+            btnLocationInvite.hidden = YES;
+        }
+        else if ([[dictObj valueForKey:@"is_friend"] intValue] == 3)
+        {
+            btnAddFriend.hidden = NO;
+            btnAddFriend.selected = YES;
+            btnLocationInvite.hidden = YES;
+        }
+        
+        const char *jsonString = [[dictObj valueForKey:@"feed_text"] UTF8String];
+        NSData *jsonData = [NSData dataWithBytes:jsonString length:strlen(jsonString)];
+        NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
+        lblCaption.text=goodMsg;
+        
+        lblLocation.text =[dictObj valueForKey:@"location_text"];
+        lblTime.text = [dictObj valueForKey:@"created_at"];
+        
+        [btnOption addTarget:self action:@selector(btnOption:) forControlEvents:UIControlEventTouchUpInside];
+        [btnComment addTarget:self action:@selector(btnComment:) forControlEvents:UIControlEventTouchUpInside];
+        [btnLike addTarget:self action:@selector(btnLike:) forControlEvents:UIControlEventTouchUpInside];
+        [btnAddFriend addTarget:self action:@selector(isFriendOrNot:) forControlEvents:UIControlEventTouchUpInside];
+        [btnLocationInvite addTarget:self action:@selector(btnLocationInvite:) forControlEvents:UIControlEventTouchUpInside];
+        
+        if ([[dictObj valueForKey:@"vibe_name"] length] > 0)
+        {
+            lblUserVibeName.text = [NSString stringWithFormat:@"@%@",[dictObj valueForKey:@"vibe_name"]];
+        }
+        else
+        {
+            lblUserVibeName.text = @"";
+        }
+        
+        if ([[dictObj valueForKey:@"formatted_address"] length] > 0)
+        {
+            NSArray *arr = [[dictObj valueForKey:@"formatted_address"] componentsSeparatedByString:@","];
+            
+            lblCity.text = [NSString stringWithFormat:@"%@,%@",[arr objectAtIndex:0],[arr objectAtIndex:1]];
+        }
+        else
+        {
+            lblCity.text =  @"";
+        }
+        
+        if ([[dictObj valueForKey:@"website"] length] > 0)
+        {
+            lblWebsite.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"website"]];
+        }
+        else
+        {
+            lblWebsite.text =  @"";
+        }
+        
+        if ([[dictObj valueForKey:@"age"] length] > 0)
+        {
+            lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[dictObj valueForKey:@"name"],[dictObj valueForKey:@"age"]];
+        }
+        else
+        {
+            lblUserFullName.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"name"]];
+        }
+        
+        NSString *strProfile = [dictObj valueForKey:@"profile_pic"];
+        
+        [imgProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+            imgProfile.image = image;
+        }];
+
     }
-    else
-    {
-        lblCity.text =  @"";
-    }
-    
-    if ([[dictObj valueForKey:@"website"] length] > 0)
-    {
-        lblWebsite.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"website"]];
-    }
-    else
-    {
-        lblWebsite.text =  @"";
-    }
-    
-    if ([[dictObj valueForKey:@"age"] length] > 0)
-    {
-        lblUserFullName.text = [NSString stringWithFormat:@"%@, %@",[dictObj valueForKey:@"name"],[dictObj valueForKey:@"age"]];
-    }
-    else
-    {
-        lblUserFullName.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"name"]];
-    }
-    
-    NSString *strProfile = [dictObj valueForKey:@"profile_pic"];
-    
-    [imgProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-        imgProfile.image = image;
-    }];
     
     return cell;
 }
@@ -320,7 +330,7 @@
     }
     else
     {
-        [share selfUserPostOptionClass:dictVal Image:img.image];
+        [share UserProfileSharingOption:dictVal Image:img.image];
     }
 }
 
@@ -337,6 +347,7 @@
         
         _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:imagePath]];
         _documentController.delegate = self;
+        [_documentController setAnnotation:@{@"InstagramCaption" : @"#LOLvibe"}];
         _documentController.UTI = @"com.instagram.exclusivegram";
         
         [_documentController presentOpenInMenuFromRect:self.view.frame inView:self.view animated:YES];
@@ -466,6 +477,21 @@
                      andWebServiceTag:@"block"
                              setToken:YES];
 }
+-(void)callDeleteMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"feed_id"] forKey:@"feed_id"];
+    
+    WebService *unfriend = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [unfriend callWebServiceWithURLDict:DELETE_FEED
+                          andHTTPMethod:@"POST"
+                            andDictData:dictPara
+                            withLoading:YES
+                       andWebServiceTag:@"deletefeed"
+                               setToken:YES];
+}
+
 #pragma mark Werbservice Delegate Method
 -(void)webserviceCallFinishedWithSuccess:(BOOL)success andResponseObject:(id)responseObj andError:(NSError *)error forWebServiceTag:(NSString *)tagStr
 {
@@ -489,9 +515,19 @@
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
                 self.array = [[NSMutableArray alloc]init];
-                
-                [self.array addObject:[dictResult valueForKey:@"post"]];
-                [collectionViewPost reloadData];
+                if ([[dictResult valueForKey:@"post"] isKindOfClass:[NSArray class]])
+                {
+                    if ([[dictResult valueForKey:@"post"] count] != 0)
+                    {
+                        self.array =[dictResult valueForKey:@"post"];
+                        [collectionViewPost reloadData];
+                    }
+                }
+                else
+                {
+                    [self.array addObject:[dictResult valueForKey:@"post"]];
+                    [collectionViewPost reloadData];
+                }
             }
             else
             {
@@ -540,6 +576,17 @@
             {
                 [self.navigationController popToRootViewControllerAnimated:YES];
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This user is blocked. As of now you will not see any post of this user."];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if ([tagStr isEqualToString:@"deletefeed"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
+                [self.navigationController popViewControllerAnimated:YES];
             }
             else
             {

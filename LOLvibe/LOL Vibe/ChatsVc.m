@@ -68,7 +68,10 @@
     
     [imgProfilePic  sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",[[arrRecentChat objectAtIndex:indexPath.row] valueForKey:@"profile_pic"]]] placeholderImage:[UIImage imageNamed:@"default_user_image"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         imgProfilePic.image = image;
-        
+        if (!image)
+        {
+            imgProfilePic.image =[UIImage imageNamed:@"default_user_image.png"];
+        }
     }];
     
     lblPersonName.text = [[arrRecentChat objectAtIndex:indexPath.row] valueForKey:@"name"];

@@ -175,7 +175,7 @@
     {
         SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
         
-        [controller setInitialText:[NSString stringWithFormat:@"%@",goodMsg]];
+        [controller setInitialText:[NSString stringWithFormat:@"%@\n\n#LOLvibe",goodMsg]];
         [controller addImage:image];
         [controller addURL:[NSURL URLWithString:APP_ITUNES_LINK]];
         

@@ -97,6 +97,10 @@
         
         [cell.imgProfile sd_setImageWithURL:[NSURL URLWithString:[[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             cell.imgProfile.image = image;
+            if (!image)
+            {
+                cell.imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+            }
         }];
         
         if([[[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"notification_type"] intValue] == 4)
@@ -112,6 +116,10 @@
         
         [cell.imgOther sd_setImageWithURL:[NSURL URLWithString:[[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"image"]] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             cell.imgOther.image = image;
+            if (!image)
+            {
+                cell.imgOther.image =[UIImage imageNamed:@"default_user_image.png"];
+            }
         }];
         cell.lblTime.text = [[arrRecentNotification objectAtIndex:indexPath.row] valueForKey:@"created_at"];
         
@@ -147,6 +155,10 @@
         
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:[dictvalue valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgProfile.image = image;
+            if (!image)
+            {
+                imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+            }
         }];
         
         NSString *fullString = [dictvalue valueForKey:@"text"];
@@ -167,6 +179,11 @@
         NSString *strURL = [[dictvalue valueForKey:@"image"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         [imgLoation sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgLoation.image = image;
+            
+            if (!image)
+            {
+                imgLoation.image =[UIImage imageNamed:@"default_user_image.png"];
+            }
         }];
         
         if([[dictvalue valueForKey:@"notification_type"] intValue] == 7)

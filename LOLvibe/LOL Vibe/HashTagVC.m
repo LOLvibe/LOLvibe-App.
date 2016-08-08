@@ -133,7 +133,7 @@
         UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cellPhotos" forIndexPath:indexPath];
         cell.alpha = 0;
         cell.layer.transform = CATransform3DMakeScale(0.5, 0.5, 0.5);
-        [UIView animateWithDuration:0.7 animations:^{
+        [UIView animateWithDuration:0.3 animations:^{
             cell.alpha = 1;
             cell.layer.transform = CATransform3DScale(CATransform3DIdentity, 1, 1, 1);
         }];
@@ -200,14 +200,17 @@
         
         [imgMain sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"post_bg.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgMain.image = image;
+            if (!image)
+            {
+                imgMain.image =[UIImage imageNamed:@"post_bg.png"];
+            }
+
         }];
         
-        lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
-        lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
-        
-        if ([[dictObj valueForKey:@"like"] intValue] == 0)
+        if ([[dictObj valueForKey:@"like"] intValue] <= 0)
         {
             btnLike.selected= NO;
+            lblLikeCount.text = @"0";
         }
         else
         {
@@ -215,9 +218,13 @@
             {
                 btnLike.selected= YES;
             }
+            else
+            {
+                btnLike.selected= NO;
+            }
         }
-
-        
+        lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
+        lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
         
         if ([[dictObj valueForKey:@"is_friend"] intValue] == 0)
         {
@@ -299,6 +306,10 @@
         
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgProfile.image = image;
+            if (!image)
+            {
+                imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+            }
         }];
         
         return cell;
@@ -308,7 +319,7 @@
         UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"locationCell" forIndexPath:indexPath];
         cell.alpha = 0;
         cell.layer.transform = CATransform3DMakeScale(0.5, 0.5, 0.5);
-        [UIView animateWithDuration:0.7 animations:^{
+        [UIView animateWithDuration:0.3 animations:^{
             cell.alpha = 1;
             cell.layer.transform = CATransform3DScale(CATransform3DIdentity, 1, 1, 1);
         }];
@@ -381,9 +392,10 @@
         NSString *strURL = [dictObj valueForKey:@"image"];
         
        
-        if ([[dictObj valueForKey:@"like"] intValue] == 0)
+        if ([[dictObj valueForKey:@"like"] intValue] <= 0)
         {
             btnLike.selected= NO;
+            lblLikeCount.text = @"0";
         }
         else
         {
@@ -391,9 +403,13 @@
             {
                 btnLike.selected= YES;
             }
+            else
+            {
+                btnLike.selected= NO;
+            }
         }
-
-        
+        lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
+        lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
         
         if ([[dictObj valueForKey:@"is_friend"] intValue] == 0)
         {
@@ -434,6 +450,11 @@
         
         [imgCity sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"post_bg.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgCity.image = image;
+            if (!image)
+            {
+                imgMain.image =[UIImage imageNamed:@"post_bg.png"];
+            }
+
         }];
         
         NSString *strLocURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?center=%@,%@&markers=icon:|%@,%@&zoom=12&size=1024x780",
@@ -447,6 +468,11 @@
         
         [imgMain sd_setImageWithURL:[NSURL URLWithString:strLocURL] placeholderImage:[UIImage imageNamed:@"post_bg.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgMain.image = image;
+            if (!image)
+            {
+                imgMain.image =[UIImage imageNamed:@"post_bg.png"];
+            }
+
         }];
         
         const char *jsonString = [[dictObj valueForKey:@"feed_text"] UTF8String];
@@ -455,9 +481,6 @@
         lblCaption.text=goodMsg;
         
         lblLocation.text =[NSString stringWithFormat:@"%@",[dictObj valueForKey:@"created_at"]];
-        
-        lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
-        lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
         
         lblCityName.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:0];
         lblLocatopmCity.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:1];
@@ -505,6 +528,10 @@
         
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgProfile.image = image;
+            if (!image)
+            {
+                imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+            }
         }];
         
         return cell;
@@ -622,6 +649,7 @@
         
         _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:imagePath]];
         _documentController.delegate = self;
+        [_documentController setAnnotation:@{@"InstagramCaption" : @"#LOLvibe"}];
         _documentController.UTI = @"com.instagram.exclusivegram";
         
         [_documentController presentOpenInMenuFromRect:self.view.frame inView:self.view animated:YES];

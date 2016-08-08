@@ -325,8 +325,11 @@
                 
                 [imgMain sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"post_bg.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
                     imgMain.image = image;
+                    if (!image)
+                    {
+                        imgMain.image =[UIImage imageNamed:@"post_bg.png"];
+                    }
                 }];
-                
                 
                 if ([[dictObj valueForKey:@"vibe_name"] length] > 0)
                 {
@@ -370,6 +373,11 @@
                 
                 [imgProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
                     imgProfile.image = image;
+                    
+                    if (!image)
+                    {
+                        imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+                    }
                 }];
                 
             }

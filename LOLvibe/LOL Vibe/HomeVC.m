@@ -20,7 +20,6 @@
     WebService          *serGetFeed;
     NSMutableArray      *arrFeed;
     NSIndexPath         *indexPathSelected;
-    BOOL                isLike;
     NSInteger           likeInteger;
     CLLocationManager   *locationManager;
     float               sourceLat,sourceLong;
@@ -38,8 +37,6 @@
     [super viewDidLoad];
     serGetFeed = [[WebService alloc] initWithView:self.view andDelegate:self];
     arrFeed = [[NSMutableArray alloc]init];
-    
-    isLike = NO;
     self.navigationItem.title = @"";
     
     if (![[NSUserDefaults standardUserDefaults]boolForKey:@"isDone"])
@@ -54,8 +51,9 @@
     {
         [imageGuide setHidden:YES];
     }
-    
     [self RefreshScreen:nil];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(RefreshScreen:) name:kRefressHomeFeed object:nil];
     
 }
 -(void)tapOnUserGuide:(UITapGestureRecognizer *)sender
@@ -154,7 +152,7 @@
         UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cellPhotos" forIndexPath:indexPath];
         cell.alpha = 0;
         cell.layer.transform = CATransform3DMakeScale(0.5, 0.5, 0.5);
-        [UIView animateWithDuration:0.7 animations:^{
+        [UIView animateWithDuration:0.3 animations:^{
             cell.alpha = 1;
             cell.layer.transform = CATransform3DScale(CATransform3DIdentity, 1, 1, 1);
         }];
@@ -219,14 +217,16 @@
         
         [imgMain sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"post_bg.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgMain.image = image;
+            if (!image)
+            {
+                imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+            }
         }];
-        
-        lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
-        lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
-        
-        if ([[dictObj valueForKey:@"like"] intValue] == 0)
+
+        if ([[dictObj valueForKey:@"like"] intValue] <= 0)
         {
             btnLike.selected= NO;
+            lblLikeCount.text = @"0";
         }
         else
         {
@@ -234,8 +234,13 @@
             {
                 btnLike.selected= YES;
             }
+            else
+            {
+                btnLike.selected= NO;
+            }
         }
-        
+        lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
+        lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
         
         if ([[dictObj valueForKey:@"is_friend"] intValue] == 0)
         {
@@ -259,6 +264,8 @@
             btnAddFriend.selected = YES;
             btnLocationInvite.hidden = YES;
         }
+        
+       
         
         const char *jsonString = [[dictObj valueForKey:@"feed_text"] UTF8String];
         NSData *jsonData = [NSData dataWithBytes:jsonString length:strlen(jsonString)];
@@ -337,6 +344,10 @@
         
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgProfile.image = image;
+            if (!image)
+            {
+                imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+            }
         }];
         
         return cell;
@@ -346,7 +357,7 @@
         UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"locationCell" forIndexPath:indexPath];
         cell.alpha = 0;
         cell.layer.transform = CATransform3DMakeScale(0.5, 0.5, 0.5);
-        [UIView animateWithDuration:0.7 animations:^{
+        [UIView animateWithDuration:0.3 animations:^{
             cell.alpha = 1;
             cell.layer.transform = CATransform3DScale(CATransform3DIdentity, 1, 1, 1);
         }];
@@ -417,9 +428,10 @@
         
         NSString *strURL = [dictObj valueForKey:@"image"];
         
-        if ([[dictObj valueForKey:@"like"] intValue] == 0)
+        if ([[dictObj valueForKey:@"like"] intValue] <= 0)
         {
             btnLike.selected= NO;
+            lblLikeCount.text = @"0";
         }
         else
         {
@@ -427,7 +439,14 @@
             {
                 btnLike.selected= YES;
             }
+            else
+            {
+                btnLike.selected= NO;
+            }
         }
+        
+        lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
+        lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
         
         if ([[dictObj valueForKey:@"is_friend"] intValue] == 0)
         {
@@ -468,6 +487,10 @@
         
         [imgCity sd_setImageWithURL:[NSURL URLWithString:strURL] placeholderImage:[UIImage imageNamed:@"post_bg.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgCity.image = image;
+            if (!image)
+            {
+                imgMain.image =[UIImage imageNamed:@"post_bg.png"];
+            }
         }];
         
         NSString *strLocURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?center=%@,%@&markers=icon:|%@,%@&zoom=12&size=1024x780",
@@ -481,21 +504,22 @@
         
         [imgMain sd_setImageWithURL:[NSURL URLWithString:strLocURL] placeholderImage:[UIImage imageNamed:@"post_bg.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgMain.image = image;
+       
+            if (!image)
+            {
+                imgMain.image =[UIImage imageNamed:@"post_bg.png"];
+            }
+
         }];
         
         const char *jsonString = [[dictObj valueForKey:@"feed_text"] UTF8String];
         NSData *jsonData = [NSData dataWithBytes:jsonString length:strlen(jsonString)];
         NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
+        
         lblCaption.text=goodMsg;
-        
         lblLocation.text =[NSString stringWithFormat:@"%@",[dictObj valueForKey:@"created_at"]];
-        
-        lblLikeCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"like"]];
-        lblCommentCount.text = [NSString stringWithFormat:@"%@",[dictObj valueForKey:@"comment"]];
-        
         lblCityName.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:0];
         lblLocatopmCity.text = [[[dictObj valueForKey:@"location_text"] componentsSeparatedByString:@","] objectAtIndex:1];
-        
         
         if ([[dictObj valueForKey:@"vibe_name"] length] > 0)
         {
@@ -539,6 +563,10 @@
         
         [imgProfile sd_setImageWithURL:[NSURL URLWithString:strProfile] placeholderImage:[UIImage imageNamed:@"default_user_image.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             imgProfile.image = image;
+            if (!image)
+            {
+                imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+            }
         }];
         
         return cell;
@@ -598,7 +626,7 @@
     int count = 0;
     
     UICollectionViewCell *cell = (UICollectionViewCell *) [self superviewWithClassName:@"UICollectionViewCell" fromView:sender];
-   
+
     if (cell)
     {
         indexPathSelected = [coolectionFeed indexPathForCell:cell];
@@ -611,7 +639,7 @@
         {
             lblLikeCount = (UILabel *)[cell viewWithTag:116];
         }
-        
+
         count = [[[arrFeed objectAtIndex:indexPathSelected.row] valueForKey:@"like"] intValue];
     }
     
@@ -619,17 +647,28 @@
     if(sender.selected)
     {
         count = count + 1;
+        
+        NSMutableDictionary *dictTemp = [[NSMutableDictionary alloc]init];
+        dictTemp = [[arrFeed objectAtIndex:indexPathSelected.row] mutableCopy];
+        [dictTemp setObject:[NSString stringWithFormat:@"%d",count] forKey:@"like"];
+        [dictTemp setObject:@"1" forKey:@"is_like"];
+        [arrFeed replaceObjectAtIndex:indexPathSelected.row withObject:dictTemp];
+        
         [serLikePost callWebServiceWithURLDict:LIKE_POST andHTTPMethod:@"POST" andDictData:dict withLoading:NO andWebServiceTag:@"likepost" setToken:YES];
     }
     else
     {
         count = count - 1;
+        
+        NSMutableDictionary *dictTemp = [[NSMutableDictionary alloc]init];
+        dictTemp = [[arrFeed objectAtIndex:indexPathSelected.row] mutableCopy];
+        [dictTemp setObject:[NSString stringWithFormat:@"%d",count] forKey:@"like"];
+        [dictTemp setObject:@"0" forKey:@"is_like"];
+        [arrFeed replaceObjectAtIndex:indexPathSelected.row withObject:dictTemp];
+        
         [serLikePost callWebServiceWithURLDict:UNLIKE_POST andHTTPMethod:@"POST" andDictData:dict withLoading:NO andWebServiceTag:@"likepost" setToken:YES];
     }
-    
-    likeInteger = indexPath;
-    
-    lblLikeCount.text = [NSString stringWithFormat:@"%d",count];
+    [coolectionFeed reloadItemsAtIndexPaths:@[indexPathSelected]];
 }
 -(void)btnOption:(UIButton *)sender
 {
@@ -653,7 +692,6 @@
 
 -(void)isFriendOrNot:(UIButton *)sender
 {
-//    NSLog(@"%d",sender.selected);
     if(!sender.selected)
     {
         NSMutableDictionary *dictval = [[NSMutableDictionary alloc] init];
@@ -699,10 +737,8 @@
     {
         [dictPara setValue:[dict valueForKey:@"post_type"] forKey:@"post_type"];
         [dictPara setValue:[dict valueForKey:@"location_text"] forKey:@"location_text"];
-        
         [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
-        [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
-        
+        [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];        
         [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
         
         [vibePostWS callWebServiceWithURLDict:CREATE_POST
@@ -720,7 +756,6 @@
         [dictPara setValue:[dict valueForKey:@"location_text"] forKey:@"location_text"];
         [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
         [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
-        
         [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
         
         [vibePostWS callWebServiceWithURLDict:CREATE_POST
@@ -762,6 +797,7 @@
         
         _documentController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:imagePath]];
         _documentController.delegate = self;
+        [_documentController setAnnotation:@{@"InstagramCaption" : @"#LOLvibe"}];
         _documentController.UTI = @"com.instagram.exclusivegram";
         
        [_documentController presentOpenInMenuFromRect:self.view.frame inView:self.view animated:YES];
@@ -938,8 +974,7 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                isLike = YES;
-                [self changeLikeInFeedArray:[[dictResult valueForKey:@"like"] intValue]];
+                //[self changeLikeInFeedArray:[[dictResult valueForKey:@"like"] intValue]];
             }
             else
             {
@@ -998,17 +1033,20 @@
 
 -(void)changeLikeInFeedArray:(int)likes
 {
-    NSMutableArray *arrTempFeed = [[NSMutableArray alloc] init];
-    [arrTempFeed addObjectsFromArray:arrFeed];
+//    NSMutableArray *arrTempFeed = [[NSMutableArray alloc] init];
+//    [arrTempFeed addObjectsFromArray:arrFeed];
     
     NSMutableDictionary *dictTemp = [[NSMutableDictionary alloc]init];
-    dictTemp = [[arrTempFeed objectAtIndex:likeInteger] mutableCopy];
+    dictTemp = [[arrFeed objectAtIndex:indexPathSelected.row] mutableCopy];
     
     [dictTemp setObject:[NSString stringWithFormat:@"%d",likes] forKey:@"like"];
+    [dictTemp setObject:@"1" forKey:@"is_like"];
     
-    [arrTempFeed replaceObjectAtIndex:likeInteger withObject:dictTemp];
+    [arrFeed replaceObjectAtIndex:indexPathSelected.row withObject:dictTemp];
     
-    arrFeed = arrTempFeed;
+    //arrFeed = arrTempFeed;
+//    [coolectionFeed reloadData];
+    [coolectionFeed reloadItemsAtIndexPaths:@[indexPathSelected]];
 }
 
 - (void)didReceiveMemoryWarning

@@ -93,3 +93,4 @@
 #define kRefressGroupList               @"Refress Group list"
 #define kNewMsgRecived                  @"New Message Recived"
 #define kPendingMessage                 @"Pending Message"
+#define kRefreshFriends                 @"RefreshFriends"

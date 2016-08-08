@@ -25,6 +25,7 @@
 @property (strong, nonatomic)ViewController *vc;
 @property (strong, nonatomic)NSString   *strLon;
 @property (strong, nonatomic)NSString   *strLat;
+@property (strong, nonatomic)NSString   *strCityStateCountry;
 @property (retain, nonatomic)UIStoryboard *storyboard;
 
 - (void)saveContext;

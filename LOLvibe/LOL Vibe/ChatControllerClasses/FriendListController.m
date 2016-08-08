@@ -57,6 +57,10 @@
     
     [imgProfile sd_setImageWithURL:[NSURL URLWithString:[[arrFrined objectAtIndex:indexPath.row] valueForKey:@"profile_pic"]] placeholderImage:[UIImage imageNamed:@"default_user_image"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         imgProfile.image = image;
+        if (!image)
+        {
+            imgProfile.image =[UIImage imageNamed:@"default_user_image.png"];
+        }
     }];
     lblName.text = [NSString stringWithFormat:@"%@",[[arrFrined objectAtIndex:indexPath.row] valueForKey:@"vibe_name"]];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
