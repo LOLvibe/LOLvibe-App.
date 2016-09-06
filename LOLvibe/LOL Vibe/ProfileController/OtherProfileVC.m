@@ -342,7 +342,7 @@
         [btnOption addTarget:self action:@selector(btnOption:) forControlEvents:UIControlEventTouchUpInside];
         [btnComment addTarget:self action:@selector(btnCommentPhoto:) forControlEvents:UIControlEventTouchUpInside];
         [btnLike addTarget:self action:@selector(btnLikePhoto:) forControlEvents:UIControlEventTouchUpInside];
-         [btnLocationInvite addTarget:self action:@selector(btnLocationInvitePost:) forControlEvents:UIControlEventTouchUpInside];
+        [btnLocationInvite addTarget:self action:@selector(btnLocationInvitePost:) forControlEvents:UIControlEventTouchUpInside];
         
         viewMain.layer.cornerRadius = 5.0;
         viewMain.layer.masksToBounds = YES;
@@ -888,7 +888,7 @@
         
         
         NSDictionary *dictVal = [arrPhotoPosts objectAtIndex:indexPath.row];
-        [share UserProfileSharingOption:dictVal Image:img.image];
+        [share otherUserPostOptionClass:dictVal Image:img.image];
         
     }
     else if ([sender.accessibilityLabel isEqualToString:@"location"])
@@ -898,7 +898,7 @@
         NSIndexPath *indexPath = [locationCollection indexPathForCell:cell];
         
         NSDictionary *dictVal = [arrLocationPosts objectAtIndex:indexPath.row];
-        [share UserProfileSharingOption:dictVal Image:img.image];
+        [share otherUserPostOptionClass:dictVal Image:img.image];
     }
 }
 -(void)callInstagramMethod:(NSDictionary *)dict Image:(UIImage *)image
@@ -997,8 +997,7 @@
         
         [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
         [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
-        
-        [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
+        [dictPara setValue:[NSString stringWithFormat:@"#REPOSTED \n%@",[dict valueForKey:@"feed_text"]] forKey:@"feed_text"];
         
         [vibePostWS callWebServiceWithURLDict:CREATE_POST
                                 andHTTPMethod:@"POST"
@@ -1016,8 +1015,7 @@
         [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
         [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
         
-        [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
-        
+        [dictPara setValue:[NSString stringWithFormat:@"#REPOSTED \n%@",[dict valueForKey:@"feed_text"]] forKey:@"feed_text"];
         [vibePostWS callWebServiceWithURLDict:CREATE_POST
                                 andHTTPMethod:@"POST"
                                   andDictData:dictPara
@@ -1100,9 +1098,9 @@
     
     
     UIAlertAction *unfriend = [UIAlertAction actionWithTitle:@"Unfriend" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-
+        
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-
+        
         if (self.isProfileFrnd)
         {
             [dict setValue:[dictUser valueForKey:@"friend_id"] forKey:@"friend_id"];
@@ -1146,26 +1144,26 @@
     
     UIAlertAction *add_friend = [UIAlertAction actionWithTitle:@"Add Friend" style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction * _Nonnull action) {
-        
-        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-        [dict setValue:[dictUser valueForKey:@"user_id"] forKey:@"other_user_id"];
-        
-        WebService *addfriend = [[WebService alloc] initWithView:self.view andDelegate:self];
-        
-        [addfriend callWebServiceWithURLDict:SEND_REQUEST
-                               andHTTPMethod:@"POST"
-                                 andDictData:dict
-                                 withLoading:YES
-                            andWebServiceTag:@"addfriend"
-                                    setToken:YES];
-        
-    }];
+                                                           
+                                                           NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+                                                           [dict setValue:[dictUser valueForKey:@"user_id"] forKey:@"other_user_id"];
+                                                           
+                                                           WebService *addfriend = [[WebService alloc] initWithView:self.view andDelegate:self];
+                                                           
+                                                           [addfriend callWebServiceWithURLDict:SEND_REQUEST
+                                                                                  andHTTPMethod:@"POST"
+                                                                                    andDictData:dict
+                                                                                    withLoading:YES
+                                                                               andWebServiceTag:@"addfriend"
+                                                                                       setToken:YES];
+                                                           
+                                                       }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
     
     if ([[dictUser valueForKey:@"is_friend"] intValue] == 0 || [[dictUser valueForKey:@"is_friend"] intValue] == 3)
     {
-         [alert addAction:add_friend];
+        [alert addAction:add_friend];
         [alert addAction:cancel];
         [self presentViewController:alert animated:YES completion:nil];
     }
@@ -1381,7 +1379,7 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Repost successful!"];
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Repost Successful!"];
             }
             else
             {

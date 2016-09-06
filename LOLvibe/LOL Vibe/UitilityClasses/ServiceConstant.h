@@ -26,8 +26,6 @@
 #import "NSAttributedString+Processing.h"
 #import "WebBrowserVc.h"
 
-
-
 #define App_Name                        @"LOLvibe"
 #define APP_ITUNES_LINK                 @"https://itunes.apple.com/us/app/lolvibe-discover.-chat.-invite/id1132231241?ls=1&mt=8"
 #define YOUR_APP_STORE_ID               1132231241

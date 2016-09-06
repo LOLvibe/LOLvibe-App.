@@ -265,13 +265,11 @@
             btnLocationInvite.hidden = YES;
         }
         
-       
-        
         const char *jsonString = [[dictObj valueForKey:@"feed_text"] UTF8String];
         NSData *jsonData = [NSData dataWithBytes:jsonString length:strlen(jsonString)];
         NSString *goodMsg = [[NSString alloc] initWithData:jsonData encoding:NSNonLossyASCIIStringEncoding];
         lblCaption.text=goodMsg;
-        
+
         lblLocation.text =[dictObj valueForKey:@"location_text"];
         lblTime.text = [dictObj valueForKey:@"created_at"];
         
@@ -686,7 +684,7 @@
     }
     else
     {
-        [share selfUserPostOptionClass:dictVal Image:img.image];
+        [share UserProfileSharingOption:dictVal Image:img.image];
     }
 }
 
@@ -739,7 +737,7 @@
         [dictPara setValue:[dict valueForKey:@"location_text"] forKey:@"location_text"];
         [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
         [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];        
-        [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
+        [dictPara setValue:[NSString stringWithFormat:@"#REPOSTED \n%@",[dict valueForKey:@"feed_text"]] forKey:@"feed_text"];
         
         [vibePostWS callWebServiceWithURLDict:CREATE_POST
                                 andHTTPMethod:@"POST"
@@ -756,7 +754,7 @@
         [dictPara setValue:[dict valueForKey:@"location_text"] forKey:@"location_text"];
         [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
         [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
-        [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
+        [dictPara setValue:[NSString stringWithFormat:@"#REPOSTED \n%@",[dict valueForKey:@"feed_text"]] forKey:@"feed_text"];
         
         [vibePostWS callWebServiceWithURLDict:CREATE_POST
                                 andHTTPMethod:@"POST"
@@ -822,6 +820,20 @@
                           withLoading:YES
                      andWebServiceTag:@"block"
                              setToken:YES];
+}
+-(void)callDeleteMethod:(NSDictionary *)dict
+{
+    NSMutableDictionary *dictPara = [[NSMutableDictionary alloc] init];
+    [dictPara setValue:[dict valueForKey:@"feed_id"] forKey:@"feed_id"];
+    
+    WebService *unfriend = [[WebService alloc] initWithView:self.view andDelegate:self];
+    
+    [unfriend callWebServiceWithURLDict:DELETE_FEED
+                          andHTTPMethod:@"POST"
+                            andDictData:dictPara
+                            withLoading:YES
+                       andWebServiceTag:@"deletefeed"
+                               setToken:YES];
 }
 
 #pragma mark PrepareForSegue Method
@@ -1008,8 +1020,8 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [self getFeed:YES];
-                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Repost successful!"];
+                [self RefreshScreen:nil];
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Repost Successful!"];
             }
             else
             {
@@ -1021,6 +1033,17 @@
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
                 [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"This user is blocked. As of now you will not see any post of this user."];
+                [self RefreshScreen:nil];
+            }
+            else
+            {
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:[dictResult valueForKey:@"msg"]];
+            }
+        }
+        else if ([tagStr isEqualToString:@"deletefeed"])
+        {
+            if([[dictResult valueForKey:@"status_code"] intValue] == 1)
+            {
                 [self RefreshScreen:nil];
             }
             else
@@ -1044,8 +1067,8 @@
     
     [arrFeed replaceObjectAtIndex:indexPathSelected.row withObject:dictTemp];
     
-    //arrFeed = arrTempFeed;
-//    [coolectionFeed reloadData];
+//   arrFeed = arrTempFeed;
+//  [coolectionFeed reloadData];
     [coolectionFeed reloadItemsAtIndexPaths:@[indexPathSelected]];
 }
 

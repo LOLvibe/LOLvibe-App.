@@ -32,6 +32,8 @@
     [self showPostView];
     self.title = @"Top Posts";
     [self TopPosts];
+    
+    [btnCancel setHidden:YES];
 }
 
 #pragma mark --Show and Hide View--
@@ -58,13 +60,18 @@
 
 - (IBAction)btnFilter:(id)sender
 {
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Search"
-                                                       delegate:self
-                                              cancelButtonTitle:@"Cancel"
-                                         destructiveButtonTitle:nil
-                                              otherButtonTitles:@"People",@"Top Posts",@"Trending", nil];
-    sheet.tag = 1111;
-    [sheet showInView:self.view];
+    UISegmentedControl *segControll = (UISegmentedControl *)sender;
+    
+    if (segControll.selectedSegmentIndex == 0)
+    {
+        [self showPostView];
+        [self TopPosts];
+    }
+    else
+    {
+        [self showPostView];
+        [self Tranding];
+    }
 }
 
 
@@ -97,9 +104,12 @@
 }
 
 
-- (IBAction)btnSearch:(id)sender
+- (IBAction)btnCancel:(id)sender
 {
+    txtSearchPeople.text = @"";
+    [btnCancel setHidden:YES];
     [self.activeField resignFirstResponder];
+    [self showPostView];
 }
 
 #pragma mark --Tableview Delegate Method--
@@ -224,6 +234,9 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
+    [btnCancel setHidden:NO];
+    [self showPeopleView];
+    [self getPeoples:@"" withLoading:YES];
     self.activeField = textField;
 }
 
@@ -243,12 +256,7 @@
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     NSString * proposedNewString = [[textField text] stringByReplacingCharactersInRange:range withString:string];
-    
-    //if (proposedNewString.length > 0)
-    {
-        [self getPeoples:proposedNewString withLoading:NO];
-    }
-    
+    [self getPeoples:proposedNewString withLoading:NO];
     return YES;
 }
 

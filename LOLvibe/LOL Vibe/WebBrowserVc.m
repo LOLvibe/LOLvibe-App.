@@ -19,7 +19,14 @@
 
     self.title = _strURL;
     
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://%@",_strURL]]]];
+        NSURL *myURL;
+    if ([_strURL.lowercaseString hasPrefix:@"http://"]) {
+        myURL = [NSURL URLWithString:_strURL];
+    } else {
+        myURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@",_strURL]];
+    }
+    
+    [webView loadRequest:[NSURLRequest requestWithURL:myURL]];
 }
 
 - (void)didReceiveMemoryWarning {

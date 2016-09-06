@@ -15,6 +15,11 @@
 - (IBAction)AboutUS:(id)sender;
 - (IBAction)btnFeedback:(id)sender;
 - (IBAction)btnICON:(id)sender;
+- (IBAction)btnTutorial:(id)sender;
+- (IBAction)btnFB:(id)sender;
+- (IBAction)btnTwitter:(id)sender;
+- (IBAction)btnInsta:(id)sender;
+
 
 @property (strong, nonatomic) IBOutlet UIButton *btnFeedback;
 

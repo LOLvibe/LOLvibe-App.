@@ -417,7 +417,7 @@
         [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
         [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
         
-        [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
+        [dictPara setValue:[NSString stringWithFormat:@"#REPOSTED \n%@",[dict valueForKey:@"feed_text"]] forKey:@"feed_text"];
         
         [vibePostWS callWebServiceWithURLDict:CREATE_POST
                                 andHTTPMethod:@"POST"
@@ -435,7 +435,7 @@
         [dictPara setValue:[dict valueForKey:@"post_share"] forKey:@"post_share"];
         [dictPara setValue:[dict valueForKey:@"image"] forKey:@"image"];
         
-        [dictPara setValue:[dict valueForKey:@"feed_text"] forKey:@"feed_text"];
+        [dictPara setValue:[NSString stringWithFormat:@"#REPOSTED \n%@",[dict valueForKey:@"feed_text"]] forKey:@"feed_text"];
         
         [vibePostWS callWebServiceWithURLDict:CREATE_POST
                                 andHTTPMethod:@"POST"
@@ -551,7 +551,7 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Repost successful!"];
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Repost Successful!"];
             }
             else
             {

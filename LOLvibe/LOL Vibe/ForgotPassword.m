@@ -49,17 +49,16 @@
     else
     {
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-        [dict setObject:txtEmail.text forKey:@"forgotPassWS"];
+        [dict setObject:txtEmail.text forKey:@"email"];
         
         [forgotPassWS callWebServiceWithURLDict:FORGOT_PASSWORD
                              andHTTPMethod:@"POST"
                                andDictData:dict
                                withLoading:YES
-                          andWebServiceTag:@"login"
+                          andWebServiceTag:@"forgotPassWS"
                                   setToken:NO];
         
     }
-    
     [txtEmail resignFirstResponder];
 }
 
@@ -77,7 +76,7 @@
     if (success)
     {
         NSDictionary *dictResult = (NSDictionary *)responseObj;
-        //NSLog(@"tempDict = %@",dictResult);
+        NSLog(@"tempDict = %@",dictResult);
         if([tagStr isEqualToString:@"forgotPassWS"])
         {
             if ([[dictResult valueForKey:@"status_code"] integerValue]== 1)

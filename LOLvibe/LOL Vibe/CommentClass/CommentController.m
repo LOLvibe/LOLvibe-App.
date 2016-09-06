@@ -482,6 +482,7 @@
             {
                 isReply = NO;
                 txtAddComment.text = @"";
+                lblCount.text =@"100";
                 [self getComment:YES page:@"1"];
             }
             else
@@ -504,7 +505,7 @@
         {
             if([[dictResult valueForKey:@"status_code"] intValue] == 1)
             {
-                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Your request send successfully."];
+                [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"Your Friend Request has been sent successfully."];
             }
             else
             {

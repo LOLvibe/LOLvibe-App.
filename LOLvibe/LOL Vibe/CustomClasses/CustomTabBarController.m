@@ -137,7 +137,12 @@
     {
         if (self.selectedViewController == selectedViewController)
         {
-            [(UINavigationController *)self.selectedViewController popToRootViewControllerAnimated:NO]; // pop to root if tapped the same controller twice
+            [(UINavigationController *)self.selectedViewController popToRootViewControllerAnimated:NO];
+            
+            if ([self.viewControllers indexOfObject:selectedViewController] == 0)
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"Refress Home Feed" object:nil];
+            }
         }
         [super setSelectedViewController:selectedViewController];
     }

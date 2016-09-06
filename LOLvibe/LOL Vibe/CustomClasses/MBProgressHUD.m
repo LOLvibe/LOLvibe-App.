@@ -172,13 +172,13 @@ static const CGFloat kDetailsLabelFontSize = 12.f;
 		self.labelText = nil;
 		self.detailsLabelText = nil;
 		self.opacity = 0.8f;
-        self.color = [UIColor colorWithRed:82.0/255.0 green:164.0/255.0 blue:56.0/255.0 alpha:1.0];
-;
+        self.color = [UIColor clearColor];
+        
 		self.labelFont = [UIFont boldSystemFontOfSize:kLabelFontSize];
 		self.labelColor = [UIColor whiteColor];
 		self.detailsLabelFont = [UIFont boldSystemFontOfSize:kDetailsLabelFontSize];
 		self.detailsLabelColor = [UIColor whiteColor];
-		self.activityIndicatorColor = [UIColor whiteColor];
+		self.activityIndicatorColor = [UIColor colorWithRed:82.0/255.0 green:164.0/255.0 blue:56.0/255.0 alpha:1.0];
 		self.xOffset = 0.0f;
 		self.yOffset = 0.0f;
 		self.dimBackground = NO;

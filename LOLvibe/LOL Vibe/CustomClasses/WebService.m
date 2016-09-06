@@ -27,7 +27,7 @@
 -(void)showLoader
 {
     mbProcess=[MBProgressHUD showHUDAddedTo:view_Process animated:YES];
-    mbProcess.labelText = @"Please Wait";
+    //mbProcess.labelText = @"Please Wait";
     [mbProcess setDelegate:self];
     [mbProcess show:YES];
 }
@@ -49,7 +49,9 @@
         [GlobalMethods displayAlertWithTitle:App_Name andMessage:@"No Internet Connection"];
         return;
     }
-
+    
+    
+    [self hideLoader];
     if (loading)
     {
         [self showLoader];
@@ -121,6 +123,7 @@
         return;
     }
     
+    [self hideLoader];
     if (loading)
     {
         [self showLoader];
@@ -206,6 +209,7 @@
                  withLoading:(BOOL)loading
             andWebServiceTag:(NSString *)tagStr
 {
+    [self hideLoader];
     if (loading)
     {
         [self showLoader];

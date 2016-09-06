@@ -28,7 +28,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
+   
     NSString *UUID = [[NSUserDefaults standardUserDefaults] objectForKey:@"device_id"];
     if (!UUID)
     {
@@ -103,6 +103,7 @@
             [_tabbarController showNotification];
         }
     }
+
     return YES;
 }
 
@@ -278,10 +279,12 @@
         if ([[userInfo valueForKeyPath:@"aps.message_type"] integerValue] == 11 || [[userInfo valueForKeyPath:@"aps.message_type"] integerValue] == 12)
         {
             [_tabbarController showChatScreen];
+            [_tabbarController showNotifIconCHAT];
         }
         else
         {
             [_tabbarController showNotification];
+            [_tabbarController showNotifIcon];
         }
     }
 }

@@ -38,9 +38,39 @@
     [self.navigationController pushViewController:web animated:YES];
 }
 
+- (IBAction)btnTutorial:(id)sender
+{
+}
+
+- (IBAction)btnFB:(id)sender {
+    WebBrowserVc *web = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"WebBrowserVc"];
+    
+    web.strURL = @"http://www.facebook.com/LOLvibeapp/";
+    
+    [self.navigationController pushViewController:web animated:YES];
+}
+
+- (IBAction)btnTwitter:(id)sender {
+    WebBrowserVc *web = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"WebBrowserVc"];
+    
+    web.strURL = @"http://twitter.com/lolvibeapp";
+    
+    [self.navigationController pushViewController:web animated:YES];
+}
+
+
+- (IBAction)btnInsta:(id)sender {
+    WebBrowserVc *web = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"WebBrowserVc"];
+    
+    web.strURL = @"http://www.instagram.com/lolvibeapp/";
+    
+    [self.navigationController pushViewController:web animated:YES];
+}
+
+
 - (IBAction)btnFeedback:(id)sender
 {
-    NSString *emailTitle = @"Feedback";
+    NSString *emailTitle = @"iOS Feedback";
     
     MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
     mc.mailComposeDelegate = self;

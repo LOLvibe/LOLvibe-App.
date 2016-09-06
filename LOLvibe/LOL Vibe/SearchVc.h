@@ -19,9 +19,11 @@
     IBOutlet UIView *viewPeople;
     
     IBOutlet UIView *viewPost;
+    
+    IBOutlet UIButton *btnCancel;
 }
 - (IBAction)btnFilter:(id)sender;
 
-- (IBAction)btnSearch:(id)sender;
+- (IBAction)btnCancel:(id)sender;
 
 @end
